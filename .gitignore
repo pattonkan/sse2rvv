@@ -1,0 +1,8 @@
+*.exe
+*.o
+*.gch
+tests/*.d
+tests/main
+.vs/
+Debug/
+Release/
