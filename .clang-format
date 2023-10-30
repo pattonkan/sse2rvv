@@ -10,4 +10,3 @@ BraceWrapping:
   AfterExternBlock: true
   SplitEmptyFunction: false
   SplitEmptyRecord: false
-  

@@ -545,7 +545,7 @@ namespace SSE2RVV {
 // A short C implementation of every intrinsic is implemented and compared to
 // the actual expected results from the corresponding SSE intrinsic against all
 // of the 10,000 randomized input vectors. When running on RISCV, then the
-// results are compared to the NEON approximate version.
+// results are compared to the RISCV approximate version.
 extern const char *instruction_string[];
 enum INSTRUCTION_TEST {
 #define _(x) it_##x,

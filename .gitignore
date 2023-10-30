@@ -6,3 +6,4 @@ tests/main
 .vs/
 Debug/
 Release/
+*.log

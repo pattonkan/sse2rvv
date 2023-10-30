@@ -28,8 +28,6 @@ else # CROSS_COMPILE was set
 		$(error Unsupported cross-compiler)
 	endif
 
-	ARCH_CFLAGS = -march=$(processor)gcv_zba
-
 	ifeq ($(SIMULATOR_TYPE), qemu)
 		SIMULATOR += qemu-riscv64
 		SIMULATOR_FLAGS = -cpu $(processor),v=true,zba=true,vlen=128
@@ -38,6 +36,14 @@ else # CROSS_COMPILE was set
 		SIMULATOR_FLAGS = --isa=$(processor)gcv_zba
 		PROXY_KERNEL = pk
 	endif
+endif
+
+ifeq ($(processor),$(filter $(processor),rv64 rv32))
+    ARCH_CFLAGS = -march=$(processor)gcv_zba
+else ifeq ($(processor),$(filter $(processor),i386 x86_64))
+    ARCH_CFLAGS = -maes -mpclmul -mssse3 -msse4.2
+else
+    $(error Unsupported architecture)
 endif
 
 CXXFLAGS += -Wall -Wcast-qual -I. $(ARCH_CFLAGS)

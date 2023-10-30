@@ -11229,6 +11229,12 @@ result_t SSE2RVV_TEST_IMPL::run_single_test(INSTRUCTION_TEST test, uint32_t i) {
   return ret;
 }
 
+const char *instruction_string[] = {
+#define _(x) #x,
+    INTRIN_LIST
+#undef _
+};
+
 SSE2RVV_TEST *SSE2RVV_TEST::create(void) {
   SSE2RVV_TEST_IMPL *st = new SSE2RVV_TEST_IMPL;
   return static_cast<SSE2RVV_TEST *>(st);
