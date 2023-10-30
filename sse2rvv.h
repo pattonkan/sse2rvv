@@ -26,35 +26,29 @@
  * SOFTWARE.
  */
 
-/* Tunable configurations */
+// /* Tunable configurations */
 
-/* Enable precise implementation of math operations
- * This would slow down the computation a bit, but gives consistent result with
- * x86 SSE. (e.g. would solve a hole or NaN pixel in the rendering result)
- */
-/* _mm_min|max_ps|ss|pd|sd */
-#ifndef SSE2RVV_PRECISE_MINMAX
-#define SSE2RVV_PRECISE_MINMAX (0)
-#endif
-/* _mm_rcp_ps and _mm_div_ps */
-#ifndef SSE2RVV_PRECISE_DIV
-#define SSE2RVV_PRECISE_DIV (0)
-#endif
-/* _mm_sqrt_ps and _mm_rsqrt_ps */
-#ifndef SSE2RVV_PRECISE_SQRT
-#define SSE2RVV_PRECISE_SQRT (0)
-#endif
-/* _mm_dp_pd */
-#ifndef SSE2RVV_PRECISE_DP
-#define SSE2RVV_PRECISE_DP (0)
-#endif
-
-/* Enable inclusion of windows.h on MSVC platforms
- * This makes _mm_clflush functional on windows, as there is no builtin.
- */
-#ifndef SSE2RVV_INCLUDE_WINDOWS_H
-#define SSE2RVV_INCLUDE_WINDOWS_H (0)
-#endif
+// /* Enable precise implementation of math operations
+//  * This would slow down the computation a bit, but gives consistent result
+//  with
+//  * x86 SSE. (e.g. would solve a hole or NaN pixel in the rendering result)
+//  */
+// /* _mm_min|max_ps|ss|pd|sd */
+// #ifndef SSE2RVV_PRECISE_MINMAX
+// #define SSE2RVV_PRECISE_MINMAX (0)
+// #endif
+// /* _mm_rcp_ps and _mm_div_ps */
+// #ifndef SSE2RVV_PRECISE_DIV
+// #define SSE2RVV_PRECISE_DIV (0)
+// #endif
+// /* _mm_sqrt_ps and _mm_rsqrt_ps */
+// #ifndef SSE2RVV_PRECISE_SQRT
+// #define SSE2RVV_PRECISE_SQRT (0)
+// #endif
+// /* _mm_dp_pd */
+// #ifndef SSE2RVV_PRECISE_DP
+// #define SSE2RVV_PRECISE_DP (0)
+// #endif
 
 /* compiler specific definitions */
 #if defined(__GNUC__) || defined(__clang__)
@@ -64,18 +58,6 @@
 #define ALIGN_STRUCT(x) __attribute__((aligned(x)))
 #define _sse2rvv_likely(x) __builtin_expect(!!(x), 1)
 #define _sse2rvv_unlikely(x) __builtin_expect(!!(x), 0)
-#elif defined(_MSC_VER)
-#if _MSVC_TRADITIONAL
-#error Using the traditional MSVC preprocessor is not supported! Use /Zc:preprocessor instead.
-#endif
-#ifndef FORCE_INLINE
-#define FORCE_INLINE static inline
-#endif
-#ifndef ALIGN_STRUCT
-#define ALIGN_STRUCT(x) __declspec(align(x))
-#endif
-#define _sse2rvv_likely(x) (x)
-#define _sse2rvv_unlikely(x) (x)
 #else
 #pragma message("Macro name collisions may happen with unsupported compilers.")
 #endif
@@ -92,45 +74,39 @@
 #include <stdlib.h>
 
 #if defined(__GNUC__) || defined(__clang__)
-#define _sse2rvv_define0(type, s, body) \
-    __extension__({                     \
-        type _a = (s);                  \
-        body                            \
-    })
-#define _sse2rvv_define1(type, s, body) \
-    __extension__({                     \
-        type _a = (s);                  \
-        body                            \
-    })
-#define _sse2rvv_define2(type, a, b, body) \
-    __extension__({                        \
-        type _a = (a), _b = (b);           \
-        body                               \
-    })
+#define _sse2rvv_define0(type, s, body)                                        \
+  __extension__({                                                              \
+    type _a = (s);                                                             \
+    body                                                                       \
+  })
+#define _sse2rvv_define1(type, s, body)                                        \
+  __extension__({                                                              \
+    type _a = (s);                                                             \
+    body                                                                       \
+  })
+#define _sse2rvv_define2(type, a, b, body)                                     \
+  __extension__({                                                              \
+    type _a = (a), _b = (b);                                                   \
+    body                                                                       \
+  })
 #define _sse2rvv_return(ret) (ret)
 #else
 #define _sse2rvv_define0(type, a, body) [=](type _a) { body }(a)
 #define _sse2rvv_define1(type, a, body) [](type _a) { body }(a)
-#define _sse2rvv_define2(type, a, b, body) \
-    [](type _a, type _b) { body }((a), (b))
+#define _sse2rvv_define2(type, a, b, body)                                     \
+  [](type _a, type _b) { body }((a), (b))
 #define _sse2rvv_return(ret) return ret
 #endif
 
-#define _sse2rvv_init(...) \
-    {                      \
-        __VA_ARGS__        \
-    }
+#define _sse2rvv_init(...)                                                     \
+  { __VA_ARGS__ }
 
 /* Compiler barrier */
-#if defined(_MSC_VER)
-#define SSE2RVV_BARRIER() _ReadWriteBarrier()
-#else
-#define SSE2RVV_BARRIER()                      \
-    do {                                       \
-        __asm__ __volatile__("" ::: "memory"); \
-        (void) 0;                              \
-    } while (0)
-#endif
+#define SSE2RVV_BARRIER()                                                      \
+  do {                                                                         \
+    __asm__ __volatile__("" ::: "memory");                                     \
+    (void)0;                                                                   \
+  } while (0)
 
 /* Memory barriers
  * __atomic_thread_fence does not include a compiler barrier; instead,
@@ -141,14 +117,13 @@
 #include <stdatomic.h>
 #endif
 
-FORCE_INLINE void _sse2rvv_smp_mb(void)
-{
-    SSE2RVV_BARRIER();
-#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L) && \
+FORCE_INLINE void _sse2rvv_smp_mb(void) {
+  SSE2RVV_BARRIER();
+#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L) &&              \
     !defined(__STDC_NO_ATOMICS__)
-    atomic_thread_fence(memory_order_seq_cst);
+  atomic_thread_fence(memory_order_seq_cst);
 #elif defined(__GNUC__) || defined(__clang__)
-    __atomic_thread_fence(__ATOMIC_SEQ_CST);
+  __atomic_thread_fence(__ATOMIC_SEQ_CST);
 #endif
 }
 
@@ -184,18 +159,18 @@ FORCE_INLINE void _sse2rvv_smp_mb(void)
  * argument "a" of mm_shuffle_ps that will be places in fp1 of result.
  * fp0 is the same for fp0 of result.
  */
-#define _MM_SHUFFLE(fp3, fp2, fp1, fp0) \
-    (((fp3) << 6) | ((fp2) << 4) | ((fp1) << 2) | ((fp0)))
+#define _MM_SHUFFLE(fp3, fp2, fp1, fp0)                                        \
+  (((fp3) << 6) | ((fp2) << 4) | ((fp1) << 2) | ((fp0)))
 
 #if __has_builtin(__builtin_shufflevector)
-#define _sse2rvv_shuffle(type, a, b, ...) \
-    __builtin_shufflevector(a, b, __VA_ARGS__)
+#define _sse2rvv_shuffle(type, a, b, ...)                                      \
+  __builtin_shufflevector(a, b, __VA_ARGS__)
 #elif __has_builtin(__builtin_shuffle)
-#define _sse2rvv_shuffle(type, a, b, ...) \
-    __extension__({                       \
-        type tmp = {__VA_ARGS__};         \
-        __builtin_shuffle(a, b, tmp);     \
-    })
+#define _sse2rvv_shuffle(type, a, b, ...)                                      \
+  __extension__({                                                              \
+    type tmp = {__VA_ARGS__};                                                  \
+    __builtin_shuffle(a, b, tmp);                                              \
+  })
 #endif
 
 #ifdef _sse2rvv_shuffle
@@ -247,6 +222,7 @@ typedef vint64m1_t __m64;
 typedef vfloat32m1_t __m128;  /* 128-bit vector containing 4 floats */
 typedef vfloat64m1_t __m128d; /* 128-bit vector containing 2 doubles */
 typedef vint64m1_t __m128i;   /* 128-bit vector containing integers */
+typedef vuint8m1x4_t uint8x16x4_t;
 
 // __int64 is defined in the Intrinsics Guide which maps to different datatype
 // in different data model
@@ -282,15 +258,15 @@ typedef vint64m1_t __m128i;   /* 128-bit vector containing integers */
 // that is used throughout the codebase to access the members instead of always
 // declaring this type of variable.
 typedef union ALIGN_STRUCT(16) SIMDVec {
-    float m128_f32[4];     // as floats - DON'T USE. Added for convenience.
-    int8_t m128_i8[16];    // as signed 8-bit integers.
-    int16_t m128_i16[8];   // as signed 16-bit integers.
-    int32_t m128_i32[4];   // as signed 32-bit integers.
-    int64_t m128_i64[2];   // as signed 64-bit integers.
-    uint8_t m128_u8[16];   // as unsigned 8-bit integers.
-    uint16_t m128_u16[8];  // as unsigned 16-bit integers.
-    uint32_t m128_u32[4];  // as unsigned 32-bit integers.
-    uint64_t m128_u64[2];  // as unsigned 64-bit integers.
+  float m128_f32[4];    // as floats - DON'T USE. Added for convenience.
+  int8_t m128_i8[16];   // as signed 8-bit integers.
+  int16_t m128_i16[8];  // as signed 16-bit integers.
+  int32_t m128_i32[4];  // as signed 32-bit integers.
+  int64_t m128_i64[2];  // as signed 64-bit integers.
+  uint8_t m128_u8[16];  // as unsigned 8-bit integers.
+  uint16_t m128_u16[8]; // as unsigned 16-bit integers.
+  uint32_t m128_u32[4]; // as unsigned 32-bit integers.
+  uint64_t m128_u64[2]; // as unsigned 64-bit integers.
 } SIMDVec;
 
 /* SSE macros */
@@ -327,81 +303,6 @@ FORCE_INLINE unsigned int _MM_GET_ROUNDING_MODE(void);
 // FORCE_INLINE __m128 _mm_round_ps(__m128, int);
 // SSE4.2
 // FORCE_INLINE uint32_t _mm_crc32_u8(uint32_t, uint8_t);
-
-/* Backwards compatibility for compilers with lack of specific type support */
-
-// Older gcc does not define vld1q_u8_x4 type
-#if defined(__GNUC__) && !defined(__clang__) &&                        \
-    ((__GNUC__ <= 13 && defined(__arm__)) ||                           \
-     (__GNUC__ == 10 && __GNUC_MINOR__ < 3 && defined(__aarch64__)) || \
-     (__GNUC__ <= 9 && defined(__aarch64__)))
-FORCE_INLINE uint8x16x4_t _sse2rvv_vld1q_u8_x4(const uint8_t *p)
-{
-    uint8x16x4_t ret;
-    ret.val[0] = vld1q_u8(p + 0);
-    ret.val[1] = vld1q_u8(p + 16);
-    ret.val[2] = vld1q_u8(p + 32);
-    ret.val[3] = vld1q_u8(p + 48);
-    return ret;
-}
-#else
-// Wraps vld1q_u8_x4
-FORCE_INLINE uint8x16x4_t _sse2rvv_vld1q_u8_x4(const uint8_t *p)
-{
-    return vld1q_u8_x4(p);
-}
-#endif
-
-#if !defined(__aarch64__) && !defined(_M_ARM64)
-/* emulate vaddv u8 variant */
-FORCE_INLINE uint8_t _sse2rvv_vaddv_u8(uint8x8_t v8)
-{
-    const uint64x1_t v1 = vpaddl_u32(vpaddl_u16(vpaddl_u8(v8)));
-    return vget_lane_u8(vreinterpret_u8_u64(v1), 0);
-}
-#else
-// Wraps vaddv_u8
-FORCE_INLINE uint8_t _sse2rvv_vaddv_u8(uint8x8_t v8)
-{
-    return vaddv_u8(v8);
-}
-#endif
-
-#if !defined(__aarch64__) && !defined(_M_ARM64)
-/* emulate vaddvq u8 variant */
-FORCE_INLINE uint8_t _sse2rvv_vaddvq_u8(uint8x16_t a)
-{
-    uint8x8_t tmp = vpadd_u8(vget_low_u8(a), vget_high_u8(a));
-    uint8_t res = 0;
-    for (int i = 0; i < 8; ++i)
-        res += tmp[i];
-    return res;
-}
-#else
-// Wraps vaddvq_u8
-FORCE_INLINE uint8_t _sse2rvv_vaddvq_u8(uint8x16_t a)
-{
-    return vaddvq_u8(a);
-}
-#endif
-
-#if !defined(__aarch64__) && !defined(_M_ARM64)
-/* emulate vaddvq u16 variant */
-FORCE_INLINE uint16_t _sse2rvv_vaddvq_u16(uint16x8_t a)
-{
-    uint32x4_t m = vpaddlq_u16(a);
-    uint64x2_t n = vpaddlq_u32(m);
-    uint64x1_t o = vget_low_u64(n) + vget_high_u64(n);
-
-    return vget_lane_u32((uint32x2_t) o, 0);
-}
-#else
-// Wraps vaddvq_u16
-FORCE_INLINE uint16_t _sse2rvv_vaddvq_u16(uint16x8_t a)
-{
-    return vaddvq_u16(a);
-}
-#endif
 
 /* Function Naming Conventions
  * The naming convention of SSE intrinsics is straightforward. A generic SSE
@@ -441,22 +342,22 @@ FORCE_INLINE uint16_t _sse2rvv_vaddvq_u16(uint16x8_t a)
 
 /* Constants for use with _mm_prefetch. */
 enum _mm_hint {
-    _MM_HINT_NTA = 0, /* load data to L1 and L2 cache, mark it as NTA */
-    _MM_HINT_T0 = 1,  /* load data to L1 and L2 cache */
-    _MM_HINT_T1 = 2,  /* load data to L2 cache only */
-    _MM_HINT_T2 = 3,  /* load data to L2 cache only, mark it as NTA */
+  _MM_HINT_NTA = 0, /* load data to L1 and L2 cache, mark it as NTA */
+  _MM_HINT_T0 = 1,  /* load data to L1 and L2 cache */
+  _MM_HINT_T1 = 2,  /* load data to L2 cache only */
+  _MM_HINT_T2 = 3,  /* load data to L2 cache only, mark it as NTA */
 };
 
 // The bit field mapping to the FPCR(floating-point control register)
 typedef struct {
-    uint16_t res0;
-    uint8_t res1 : 6;
-    uint8_t bit22 : 1;
-    uint8_t bit23 : 1;
-    uint8_t bit24 : 1;
-    uint8_t res2 : 7;
+  uint16_t res0;
+  uint8_t res1 : 6;
+  uint8_t bit22 : 1;
+  uint8_t bit23 : 1;
+  uint8_t bit24 : 1;
+  uint8_t res2 : 7;
 #if defined(__aarch64__) || defined(_M_ARM64)
-    uint32_t res3;
+  uint32_t res3;
 #endif
 } fpcr_bitfield;
 
@@ -582,7 +483,7 @@ typedef struct {
 /* MMX */
 
 //_mm_empty is a no-op on arm
-// FORCE_INLINE void _mm_empty(void) {} 
+// FORCE_INLINE void _mm_empty(void) {}
 /* SSE */
 
 // Add packed single-precision (32-bit) floating-point elements in a and b, and
@@ -939,23 +840,21 @@ typedef struct {
 // FORCE_INLINE void _mm_free(void *addr) {}
 #endif
 
-FORCE_INLINE uint64_t _sse2rvv_get_fpcr(void)
-{
-    uint64_t value;
+FORCE_INLINE uint64_t _sse2rvv_get_fpcr(void) {
+  uint64_t value;
 #if defined(_MSC_VER)
-    value = _ReadStatusReg(ARM64_FPCR);
+  value = _ReadStatusReg(ARM64_FPCR);
 #else
-    __asm__ __volatile__("mrs %0, FPCR" : "=r"(value)); /* read */
+  __asm__ __volatile__("mrs %0, FPCR" : "=r"(value)); /* read */
 #endif
-    return value;
+  return value;
 }
 
-FORCE_INLINE void _sse2rvv_set_fpcr(uint64_t value)
-{
+FORCE_INLINE void _sse2rvv_set_fpcr(uint64_t value) {
 #if defined(_MSC_VER)
-    _WriteStatusReg(ARM64_FPCR, value);
+  _WriteStatusReg(ARM64_FPCR, value);
 #else
-    __asm__ __volatile__("msr FPCR, %0" ::"r"(value)); /* write */
+  __asm__ __volatile__("msr FPCR, %0" ::"r"(value)); /* write */
 #endif
 }
 
@@ -969,28 +868,27 @@ FORCE_INLINE void _sse2rvv_set_fpcr(uint64_t value)
 // The rounding mode may contain any of the following flags: _MM_ROUND_NEAREST,
 // _MM_ROUND_DOWN, _MM_ROUND_UP, _MM_ROUND_TOWARD_ZERO
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_MM_GET_ROUNDING_MODE
-FORCE_INLINE unsigned int _MM_GET_ROUNDING_MODE(void)
-{
-    union {
-        fpcr_bitfield field;
+FORCE_INLINE unsigned int _MM_GET_ROUNDING_MODE(void) {
+  union {
+    fpcr_bitfield field;
 #if defined(__aarch64__) || defined(_M_ARM64)
-        uint64_t value;
+    uint64_t value;
 #else
-        uint32_t value;
+    uint32_t value;
 #endif
-    } r;
+  } r;
 
 #if defined(__aarch64__) || defined(_M_ARM64)
-    r.value = _sse2rvv_get_fpcr();
+  r.value = _sse2rvv_get_fpcr();
 #else
-    __asm__ __volatile__("vmrs %0, FPSCR" : "=r"(r.value)); /* read */
+  __asm__ __volatile__("vmrs %0, FPSCR" : "=r"(r.value)); /* read */
 #endif
 
-    if (r.field.bit22) {
-        return r.field.bit23 ? _MM_ROUND_TOWARD_ZERO : _MM_ROUND_UP;
-    } else {
-        return r.field.bit23 ? _MM_ROUND_DOWN : _MM_ROUND_NEAREST;
-    }
+  if (r.field.bit22) {
+    return r.field.bit23 ? _MM_ROUND_TOWARD_ZERO : _MM_ROUND_UP;
+  } else {
+    return r.field.bit23 ? _MM_ROUND_DOWN : _MM_ROUND_NEAREST;
+  }
 }
 
 // Copy a to dst, and insert the 16-bit integer i into dst at the location
@@ -1300,45 +1198,44 @@ FORCE_INLINE unsigned int _MM_GET_ROUNDING_MODE(void)
 // the following flags: _MM_ROUND_NEAREST, _MM_ROUND_DOWN, _MM_ROUND_UP,
 // _MM_ROUND_TOWARD_ZERO
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_MM_SET_ROUNDING_MODE
-FORCE_INLINE void _MM_SET_ROUNDING_MODE(int rounding)
-{
-    union {
-        fpcr_bitfield field;
+FORCE_INLINE void _MM_SET_ROUNDING_MODE(int rounding) {
+  union {
+    fpcr_bitfield field;
 #if defined(__aarch64__) || defined(_M_ARM64)
-        uint64_t value;
+    uint64_t value;
 #else
-        uint32_t value;
+    uint32_t value;
 #endif
-    } r;
+  } r;
 
 #if defined(__aarch64__) || defined(_M_ARM64)
-    r.value = _sse2rvv_get_fpcr();
+  r.value = _sse2rvv_get_fpcr();
 #else
-    __asm__ __volatile__("vmrs %0, FPSCR" : "=r"(r.value)); /* read */
+  __asm__ __volatile__("vmrs %0, FPSCR" : "=r"(r.value)); /* read */
 #endif
 
-    switch (rounding) {
-    case _MM_ROUND_TOWARD_ZERO:
-        r.field.bit22 = 1;
-        r.field.bit23 = 1;
-        break;
-    case _MM_ROUND_DOWN:
-        r.field.bit22 = 0;
-        r.field.bit23 = 1;
-        break;
-    case _MM_ROUND_UP:
-        r.field.bit22 = 1;
-        r.field.bit23 = 0;
-        break;
-    default:  //_MM_ROUND_NEAREST
-        r.field.bit22 = 0;
-        r.field.bit23 = 0;
-    }
+  switch (rounding) {
+  case _MM_ROUND_TOWARD_ZERO:
+    r.field.bit22 = 1;
+    r.field.bit23 = 1;
+    break;
+  case _MM_ROUND_DOWN:
+    r.field.bit22 = 0;
+    r.field.bit23 = 1;
+    break;
+  case _MM_ROUND_UP:
+    r.field.bit22 = 1;
+    r.field.bit23 = 0;
+    break;
+  default: //_MM_ROUND_NEAREST
+    r.field.bit22 = 0;
+    r.field.bit23 = 0;
+  }
 
 #if defined(__aarch64__) || defined(_M_ARM64)
-    _sse2rvv_set_fpcr(r.value);
+  _sse2rvv_set_fpcr(r.value);
 #else
-    __asm__ __volatile__("vmsr FPSCR, %0" ::"r"(r)); /* write */
+  __asm__ __volatile__("vmsr FPSCR, %0" ::"r"(r)); /* write */
 #endif
 }
 
@@ -1407,7 +1304,7 @@ FORCE_INLINE void _MM_SET_ROUNDING_MODE(int rounding)
 // int imm)
 #ifdef _sse2rvv_shuffle
 // #define _mm_shuffle_ps(a, b, imm)
-#else  // generic
+#else // generic
 // #define _mm_shuffle_ps(a, b, imm)
 #endif
 
@@ -1505,19 +1402,19 @@ FORCE_INLINE void _MM_SET_ROUNDING_MODE(int rounding)
 // (32-bit) floating-point elements in row0, row1, row2, and row3, and store the
 // transposed matrix in these vectors (row0 now contains column 0, etc.).
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=MM_TRANSPOSE4_PS
-#define _MM_TRANSPOSE4_PS(row0, row1, row2, row3)         \
-    do {                                                  \
-        float32x4x2_t ROW01 = vtrnq_f32(row0, row1);      \
-        float32x4x2_t ROW23 = vtrnq_f32(row2, row3);      \
-        row0 = vcombine_f32(vget_low_f32(ROW01.val[0]),   \
-                            vget_low_f32(ROW23.val[0]));  \
-        row1 = vcombine_f32(vget_low_f32(ROW01.val[1]),   \
-                            vget_low_f32(ROW23.val[1]));  \
-        row2 = vcombine_f32(vget_high_f32(ROW01.val[0]),  \
-                            vget_high_f32(ROW23.val[0])); \
-        row3 = vcombine_f32(vget_high_f32(ROW01.val[1]),  \
-                            vget_high_f32(ROW23.val[1])); \
-    } while (0)
+#define _MM_TRANSPOSE4_PS(row0, row1, row2, row3)                              \
+  do {                                                                         \
+    float32x4x2_t ROW01 = vtrnq_f32(row0, row1);                               \
+    float32x4x2_t ROW23 = vtrnq_f32(row2, row3);                               \
+    row0 =                                                                     \
+        vcombine_f32(vget_low_f32(ROW01.val[0]), vget_low_f32(ROW23.val[0]));  \
+    row1 =                                                                     \
+        vcombine_f32(vget_low_f32(ROW01.val[1]), vget_low_f32(ROW23.val[1]));  \
+    row2 = vcombine_f32(vget_high_f32(ROW01.val[0]),                           \
+                        vget_high_f32(ROW23.val[0]));                          \
+    row3 = vcombine_f32(vget_high_f32(ROW01.val[1]),                           \
+                        vget_high_f32(ROW23.val[1]));                          \
+  } while (0)
 
 // according to the documentation, these intrinsics behave the same as the
 // non-'u' versions.  We'll just alias them here.
@@ -2144,7 +2041,8 @@ FORCE_INLINE void _MM_SET_ROUNDING_MODE(int rounding)
 // element) and a non-temporal memory hint. mem_addr does not need to be aligned
 // on any particular boundary.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_maskmoveu_si128
-// FORCE_INLINE void _mm_maskmoveu_si128(__m128i a, __m128i mask, char *mem_addr) {}
+// FORCE_INLINE void _mm_maskmoveu_si128(__m128i a, __m128i mask, char
+// *mem_addr) {}
 
 // Compare packed signed 16-bit integers in a and b, and store packed maximum
 // values in dst.
@@ -2436,7 +2334,7 @@ FORCE_INLINE void _MM_SET_ROUNDING_MODE(int rounding)
 //                                        __constrange(0,255) int imm)
 #if defined(_sse2rvv_shuffle)
 // #define _mm_shuffle_epi32(a, imm)
-#else  // generic
+#else // generic
 // #define _mm_shuffle_epi32(a, imm)
 #endif
 
@@ -2453,7 +2351,7 @@ FORCE_INLINE void _MM_SET_ROUNDING_MODE(int rounding)
 //                                          __constrange(0,255) int imm)
 #if defined(_sse2rvv_shuffle)
 // #define _mm_shufflehi_epi16(a, imm)
-#else  // generic
+#else // generic
 // #define _mm_shufflehi_epi16(a, imm) _mm_shufflehi_epi16_function((a), (imm))
 #endif
 
@@ -2461,7 +2359,7 @@ FORCE_INLINE void _MM_SET_ROUNDING_MODE(int rounding)
 //                                          __constrange(0,255) int imm)
 #if defined(_sse2rvv_shuffle)
 // #define _mm_shufflelo_epi16(a, imm)
-#else  // generic
+#else // generic
 // #define _mm_shufflelo_epi16(a, imm) _mm_shufflelo_epi16_function((a), (imm))
 #endif
 
@@ -3050,7 +2948,8 @@ FORCE_INLINE void _MM_SET_ROUNDING_MODE(int rounding)
 // Blend packed 8-bit integers from a and b using mask, and store the results in
 // dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_blendv_epi8
-// FORCE_INLINE __m128i _mm_blendv_epi8(__m128i _a, __m128i _b, __m128i _mask) {}
+// FORCE_INLINE __m128i _mm_blendv_epi8(__m128i _a, __m128i _b, __m128i _mask)
+// {}
 
 // Blend packed double-precision (64-bit) floating-point elements from a and b
 // using mask, and store the results in dst.
@@ -3180,11 +3079,13 @@ FORCE_INLINE void _MM_SET_ROUNDING_MODE(int rounding)
 // the lower element of dst. FORCE_INLINE int _mm_extract_epi8(__m128i a,
 // __constrange(0,16) int imm)
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_extract_epi8
-// #define _mm_extract_epi8(a, imm) vgetq_lane_u8(vreinterpretq_u8_m128i(a), (imm))
+// #define _mm_extract_epi8(a, imm) vgetq_lane_u8(vreinterpretq_u8_m128i(a),
+// (imm))
 
 // Extracts the selected single-precision (32-bit) floating-point from a.
 // FORCE_INLINE int _mm_extract_ps(__m128 a, __constrange(0,4) int imm)
-// #define _mm_extract_ps(a, imm) vgetq_lane_s32(vreinterpretq_s32_m128(a), (imm))
+// #define _mm_extract_ps(a, imm) vgetq_lane_s32(vreinterpretq_s32_m128(a),
+// (imm))
 
 // Round the packed double-precision (64-bit) floating-point elements in a down
 // to an integer value, and store the results as packed double-precision
@@ -3416,8 +3317,8 @@ static const uint8_t ALIGN_STRUCT(16) _sse2rvv_cmpestr_mask8b[16] = {
 #define _SIDD_POSITIVE_POLARITY 0x00
 #define _SIDD_MASKED_POSITIVE_POLARITY 0x20
 #define _SIDD_NEGATIVE_POLARITY 0x10 /* negate results */
-#define _SIDD_MASKED_NEGATIVE_POLARITY \
-    0x30 /* negate results only before end of string */
+#define _SIDD_MASKED_NEGATIVE_POLARITY                                         \
+  0x30 /* negate results only before end of string */
 
 /* specify the output selection in _mm_cmpXstri */
 #define _SIDD_LEAST_SIGNIFICANT 0x00
@@ -3485,19 +3386,19 @@ static const uint8_t ALIGN_STRUCT(16) _sse2rvv_cmpestr_mask8b[16] = {
 #define SSE2RVV_OBSTRUCT(...) __VA_ARGS__ SSE2RVV_DEFER(SSE2RVV_EMPTY)()
 #define SSE2RVV_EXPAND(...) __VA_ARGS__
 
-#define SSE2RVV_EVAL(...) \
-    SSE2RVV_EVAL1(SSE2RVV_EVAL1(SSE2RVV_EVAL1(__VA_ARGS__)))
-#define SSE2RVV_EVAL1(...) \
-    SSE2RVV_EVAL2(SSE2RVV_EVAL2(SSE2RVV_EVAL2(__VA_ARGS__)))
-#define SSE2RVV_EVAL2(...) \
-    SSE2RVV_EVAL3(SSE2RVV_EVAL3(SSE2RVV_EVAL3(__VA_ARGS__)))
+#define SSE2RVV_EVAL(...)                                                      \
+  SSE2RVV_EVAL1(SSE2RVV_EVAL1(SSE2RVV_EVAL1(__VA_ARGS__)))
+#define SSE2RVV_EVAL1(...)                                                     \
+  SSE2RVV_EVAL2(SSE2RVV_EVAL2(SSE2RVV_EVAL2(__VA_ARGS__)))
+#define SSE2RVV_EVAL2(...)                                                     \
+  SSE2RVV_EVAL3(SSE2RVV_EVAL3(SSE2RVV_EVAL3(__VA_ARGS__)))
 #define SSE2RVV_EVAL3(...) __VA_ARGS__
 
-#define SSE2RVV_REPEAT(count, macro, ...)         \
-    SSE2RVV_WHEN(count)                           \
-    (SSE2RVV_OBSTRUCT(SSE2RVV_REPEAT_INDIRECT)()( \
-        SSE2RVV_DEC(count), macro,                \
-        __VA_ARGS__) SSE2RVV_OBSTRUCT(macro)(SSE2RVV_DEC(count), __VA_ARGS__))
+#define SSE2RVV_REPEAT(count, macro, ...)                                      \
+  SSE2RVV_WHEN(count)                                                          \
+  (SSE2RVV_OBSTRUCT(SSE2RVV_REPEAT_INDIRECT)()(                                \
+      SSE2RVV_DEC(count), macro,                                               \
+      __VA_ARGS__)SSE2RVV_OBSTRUCT(macro)(SSE2RVV_DEC(count), __VA_ARGS__))
 #define SSE2RVV_REPEAT_INDIRECT() SSE2RVV_REPEAT
 
 #define SSE2RVV_SIZE_OF_byte 8
@@ -3506,129 +3407,123 @@ static const uint8_t ALIGN_STRUCT(16) _sse2rvv_cmpestr_mask8b[16] = {
 #define SSE2RVV_NUMBER_OF_LANES_word 8
 
 #define SSE2RVV_COMPARE_EQUAL_THEN_FILL_LANE(i, type)                          \
-    mtx[i] = vreinterpretq_m128i_##type(vceqq_##type(                          \
-        vdupq_n_##type(vgetq_lane_##type(vreinterpretq_##type##_m128i(b), i)), \
-        vreinterpretq_##type##_m128i(a)));
+  mtx[i] = vreinterpretq_m128i_##type(vceqq_##type(                            \
+      vdupq_n_##type(vgetq_lane_##type(vreinterpretq_##type##_m128i(b), i)),   \
+      vreinterpretq_##type##_m128i(a)));
 
-#define SSE2RVV_FILL_LANE(i, type) \
-    vec_b[i] =                     \
-        vdupq_n_##type(vgetq_lane_##type(vreinterpretq_##type##_m128i(b), i));
+#define SSE2RVV_FILL_LANE(i, type)                                             \
+  vec_b[i] =                                                                   \
+      vdupq_n_##type(vgetq_lane_##type(vreinterpretq_##type##_m128i(b), i));
 
 #define PCMPSTR_RANGES(a, b, mtx, data_type_prefix, type_prefix, size,         \
                        number_of_lanes, byte_or_word)                          \
-    do {                                                                       \
-        SSE2RVV_CAT(                                                           \
-            data_type_prefix,                                                  \
-            SSE2RVV_CAT(size,                                                  \
-                        SSE2RVV_CAT(x, SSE2RVV_CAT(number_of_lanes, _t))))     \
-        vec_b[number_of_lanes];                                                \
-        __m128i mask = SSE2RVV_IIF(byte_or_word)(                              \
-            vreinterpretq_m128i_u16(vdupq_n_u16(0xff)),                        \
-            vreinterpretq_m128i_u32(vdupq_n_u32(0xffff)));                     \
-        SSE2RVV_EVAL(SSE2RVV_REPEAT(number_of_lanes, SSE2RVV_FILL_LANE,        \
-                                    SSE2RVV_CAT(type_prefix, size)))           \
-        for (int i = 0; i < number_of_lanes; i++) {                            \
-            mtx[i] = SSE2RVV_CAT(vreinterpretq_m128i_u,                        \
-                                 size)(SSE2RVV_CAT(vbslq_u, size)(             \
-                SSE2RVV_CAT(vreinterpretq_u, SSE2RVV_CAT(size, _m128i))(mask), \
-                SSE2RVV_CAT(vcgeq_, SSE2RVV_CAT(type_prefix, size))(           \
-                    vec_b[i],                                                  \
-                    SSE2RVV_CAT(vreinterpretq_,                                \
-                                SSE2RVV_CAT(type_prefix,                       \
-                                            SSE2RVV_CAT(size, _m128i(a))))),   \
-                SSE2RVV_CAT(vcleq_, SSE2RVV_CAT(type_prefix, size))(           \
-                    vec_b[i],                                                  \
-                    SSE2RVV_CAT(vreinterpretq_,                                \
-                                SSE2RVV_CAT(type_prefix,                       \
-                                            SSE2RVV_CAT(size, _m128i(a))))))); \
-        }                                                                      \
-    } while (0)
+  do {                                                                         \
+    SSE2RVV_CAT(                                                               \
+        data_type_prefix,                                                      \
+        SSE2RVV_CAT(size, SSE2RVV_CAT(x, SSE2RVV_CAT(number_of_lanes, _t))))   \
+    vec_b[number_of_lanes];                                                    \
+    __m128i mask = SSE2RVV_IIF(byte_or_word)(                                  \
+        vreinterpretq_m128i_u16(vdupq_n_u16(0xff)),                            \
+        vreinterpretq_m128i_u32(vdupq_n_u32(0xffff)));                         \
+    SSE2RVV_EVAL(SSE2RVV_REPEAT(number_of_lanes, SSE2RVV_FILL_LANE,            \
+                                SSE2RVV_CAT(type_prefix, size)))               \
+    for (int i = 0; i < number_of_lanes; i++) {                                \
+      mtx[i] =                                                                 \
+          SSE2RVV_CAT(vreinterpretq_m128i_u, size)(SSE2RVV_CAT(vbslq_u, size)( \
+              SSE2RVV_CAT(vreinterpretq_u, SSE2RVV_CAT(size, _m128i))(mask),   \
+              SSE2RVV_CAT(vcgeq_, SSE2RVV_CAT(type_prefix, size))(             \
+                  vec_b[i],                                                    \
+                  SSE2RVV_CAT(vreinterpretq_,                                  \
+                              SSE2RVV_CAT(type_prefix,                         \
+                                          SSE2RVV_CAT(size, _m128i(a))))),     \
+              SSE2RVV_CAT(vcleq_, SSE2RVV_CAT(type_prefix, size))(             \
+                  vec_b[i],                                                    \
+                  SSE2RVV_CAT(vreinterpretq_,                                  \
+                              SSE2RVV_CAT(type_prefix,                         \
+                                          SSE2RVV_CAT(size, _m128i(a)))))));   \
+    }                                                                          \
+  } while (0)
 
-#define PCMPSTR_EQ(a, b, mtx, size, number_of_lanes)                      \
-    do {                                                                  \
-        SSE2RVV_EVAL(SSE2RVV_REPEAT(number_of_lanes,                      \
-                                    SSE2RVV_COMPARE_EQUAL_THEN_FILL_LANE, \
-                                    SSE2RVV_CAT(u, size)))                \
-    } while (0)
+#define PCMPSTR_EQ(a, b, mtx, size, number_of_lanes)                           \
+  do {                                                                         \
+    SSE2RVV_EVAL(SSE2RVV_REPEAT(number_of_lanes,                               \
+                                SSE2RVV_COMPARE_EQUAL_THEN_FILL_LANE,          \
+                                SSE2RVV_CAT(u, size)))                         \
+  } while (0)
 
-#define SSE2RVV_CMP_EQUAL_ANY_IMPL(type)                                     \
-    static int _sse2rvv_cmp_##type##_equal_any(__m128i a, int la, __m128i b, \
-                                               int lb)                       \
-    {                                                                        \
-        __m128i mtx[16];                                                     \
-        PCMPSTR_EQ(a, b, mtx, SSE2RVV_CAT(SSE2RVV_SIZE_OF_, type),           \
-                   SSE2RVV_CAT(SSE2RVV_NUMBER_OF_LANES_, type));             \
-        return SSE2RVV_CAT(                                                  \
-            _sse2rvv_aggregate_equal_any_,                                   \
-            SSE2RVV_CAT(SSE2RVV_CAT(SSE2RVV_SIZE_OF_, type),                 \
-                        SSE2RVV_CAT(x, SSE2RVV_CAT(SSE2RVV_NUMBER_OF_LANES_, \
-                                                   type))))(la, lb, mtx);    \
-    }
+#define SSE2RVV_CMP_EQUAL_ANY_IMPL(type)                                       \
+  static int _sse2rvv_cmp_##type##_equal_any(__m128i a, int la, __m128i b,     \
+                                             int lb) {                         \
+    __m128i mtx[16];                                                           \
+    PCMPSTR_EQ(a, b, mtx, SSE2RVV_CAT(SSE2RVV_SIZE_OF_, type),                 \
+               SSE2RVV_CAT(SSE2RVV_NUMBER_OF_LANES_, type));                   \
+    return SSE2RVV_CAT(                                                        \
+        _sse2rvv_aggregate_equal_any_,                                         \
+        SSE2RVV_CAT(SSE2RVV_CAT(SSE2RVV_SIZE_OF_, type),                       \
+                    SSE2RVV_CAT(x, SSE2RVV_CAT(SSE2RVV_NUMBER_OF_LANES_,       \
+                                               type))))(la, lb, mtx);          \
+  }
 
-#define SSE2RVV_CMP_RANGES_IMPL(type, data_type, us, byte_or_word)            \
-    static int _sse2rvv_cmp_##us##type##_ranges(__m128i a, int la, __m128i b, \
-                                                int lb)                       \
-    {                                                                         \
-        __m128i mtx[16];                                                      \
-        PCMPSTR_RANGES(                                                       \
-            a, b, mtx, data_type, us, SSE2RVV_CAT(SSE2RVV_SIZE_OF_, type),    \
-            SSE2RVV_CAT(SSE2RVV_NUMBER_OF_LANES_, type), byte_or_word);       \
-        return SSE2RVV_CAT(                                                   \
-            _sse2rvv_aggregate_ranges_,                                       \
-            SSE2RVV_CAT(SSE2RVV_CAT(SSE2RVV_SIZE_OF_, type),                  \
-                        SSE2RVV_CAT(x, SSE2RVV_CAT(SSE2RVV_NUMBER_OF_LANES_,  \
-                                                   type))))(la, lb, mtx);     \
-    }
+#define SSE2RVV_CMP_RANGES_IMPL(type, data_type, us, byte_or_word)             \
+  static int _sse2rvv_cmp_##us##type##_ranges(__m128i a, int la, __m128i b,    \
+                                              int lb) {                        \
+    __m128i mtx[16];                                                           \
+    PCMPSTR_RANGES(a, b, mtx, data_type, us,                                   \
+                   SSE2RVV_CAT(SSE2RVV_SIZE_OF_, type),                        \
+                   SSE2RVV_CAT(SSE2RVV_NUMBER_OF_LANES_, type), byte_or_word); \
+    return SSE2RVV_CAT(                                                        \
+        _sse2rvv_aggregate_ranges_,                                            \
+        SSE2RVV_CAT(SSE2RVV_CAT(SSE2RVV_SIZE_OF_, type),                       \
+                    SSE2RVV_CAT(x, SSE2RVV_CAT(SSE2RVV_NUMBER_OF_LANES_,       \
+                                               type))))(la, lb, mtx);          \
+  }
 
 #define SSE2RVV_CMP_EQUAL_ORDERED_IMPL(type)                                   \
-    static int _sse2rvv_cmp_##type##_equal_ordered(__m128i a, int la,          \
-                                                   __m128i b, int lb)          \
-    {                                                                          \
-        __m128i mtx[16];                                                       \
-        PCMPSTR_EQ(a, b, mtx, SSE2RVV_CAT(SSE2RVV_SIZE_OF_, type),             \
-                   SSE2RVV_CAT(SSE2RVV_NUMBER_OF_LANES_, type));               \
-        return SSE2RVV_CAT(                                                    \
-            _sse2rvv_aggregate_equal_ordered_,                                 \
-            SSE2RVV_CAT(                                                       \
-                SSE2RVV_CAT(SSE2RVV_SIZE_OF_, type),                           \
-                SSE2RVV_CAT(x, SSE2RVV_CAT(SSE2RVV_NUMBER_OF_LANES_, type))))( \
-            SSE2RVV_CAT(SSE2RVV_NUMBER_OF_LANES_, type), la, lb, mtx);         \
-    }
+  static int _sse2rvv_cmp_##type##_equal_ordered(__m128i a, int la, __m128i b, \
+                                                 int lb) {                     \
+    __m128i mtx[16];                                                           \
+    PCMPSTR_EQ(a, b, mtx, SSE2RVV_CAT(SSE2RVV_SIZE_OF_, type),                 \
+               SSE2RVV_CAT(SSE2RVV_NUMBER_OF_LANES_, type));                   \
+    return SSE2RVV_CAT(                                                        \
+        _sse2rvv_aggregate_equal_ordered_,                                     \
+        SSE2RVV_CAT(                                                           \
+            SSE2RVV_CAT(SSE2RVV_SIZE_OF_, type),                               \
+            SSE2RVV_CAT(x, SSE2RVV_CAT(SSE2RVV_NUMBER_OF_LANES_, type))))(     \
+        SSE2RVV_CAT(SSE2RVV_NUMBER_OF_LANES_, type), la, lb, mtx);             \
+  }
 
-static int _sse2rvv_aggregate_equal_any_8x16(int la, int lb, __m128i mtx[16])
-{
-    int res = 0;
-    int m = (1 << la) - 1;
-    uint8x8_t vec_mask = vld1_u8(_sse2rvv_cmpestr_mask8b);
-    uint8x8_t t_lo = vtst_u8(vdup_n_u8(m & 0xff), vec_mask);
-    uint8x8_t t_hi = vtst_u8(vdup_n_u8(m >> 8), vec_mask);
-    uint8x16_t vec = vcombine_u8(t_lo, t_hi);
-    for (int j = 0; j < lb; j++) {
-        mtx[j] = vreinterpretq_m128i_u8(
-            vandq_u8(vec, vreinterpretq_u8_m128i(mtx[j])));
-        mtx[j] = vreinterpretq_m128i_u8(
-            vshrq_n_u8(vreinterpretq_u8_m128i(mtx[j]), 7));
-        int tmp = _sse2rvv_vaddvq_u8(vreinterpretq_u8_m128i(mtx[j])) ? 1 : 0;
-        res |= (tmp << j);
-    }
-    return res;
+static int _sse2rvv_aggregate_equal_any_8x16(int la, int lb, __m128i mtx[16]) {
+  int res = 0;
+  int m = (1 << la) - 1;
+  uint8x8_t vec_mask = vld1_u8(_sse2rvv_cmpestr_mask8b);
+  uint8x8_t t_lo = vtst_u8(vdup_n_u8(m & 0xff), vec_mask);
+  uint8x8_t t_hi = vtst_u8(vdup_n_u8(m >> 8), vec_mask);
+  uint8x16_t vec = vcombine_u8(t_lo, t_hi);
+  for (int j = 0; j < lb; j++) {
+    mtx[j] =
+        vreinterpretq_m128i_u8(vandq_u8(vec, vreinterpretq_u8_m128i(mtx[j])));
+    mtx[j] =
+        vreinterpretq_m128i_u8(vshrq_n_u8(vreinterpretq_u8_m128i(mtx[j]), 7));
+    int tmp = _sse2rvv_vaddvq_u8(vreinterpretq_u8_m128i(mtx[j])) ? 1 : 0;
+    res |= (tmp << j);
+  }
+  return res;
 }
 
-static int _sse2rvv_aggregate_equal_any_16x8(int la, int lb, __m128i mtx[16])
-{
-    int res = 0;
-    int m = (1 << la) - 1;
-    uint16x8_t vec =
-        vtstq_u16(vdupq_n_u16(m), vld1q_u16(_sse2rvv_cmpestr_mask16b));
-    for (int j = 0; j < lb; j++) {
-        mtx[j] = vreinterpretq_m128i_u16(
-            vandq_u16(vec, vreinterpretq_u16_m128i(mtx[j])));
-        mtx[j] = vreinterpretq_m128i_u16(
-            vshrq_n_u16(vreinterpretq_u16_m128i(mtx[j]), 15));
-        int tmp = _sse2rvv_vaddvq_u16(vreinterpretq_u16_m128i(mtx[j])) ? 1 : 0;
-        res |= (tmp << j);
-    }
-    return res;
+static int _sse2rvv_aggregate_equal_any_16x8(int la, int lb, __m128i mtx[16]) {
+  int res = 0;
+  int m = (1 << la) - 1;
+  uint16x8_t vec =
+      vtstq_u16(vdupq_n_u16(m), vld1q_u16(_sse2rvv_cmpestr_mask16b));
+  for (int j = 0; j < lb; j++) {
+    mtx[j] = vreinterpretq_m128i_u16(
+        vandq_u16(vec, vreinterpretq_u16_m128i(mtx[j])));
+    mtx[j] = vreinterpretq_m128i_u16(
+        vshrq_n_u16(vreinterpretq_u16_m128i(mtx[j]), 15));
+    int tmp = _sse2rvv_vaddvq_u16(vreinterpretq_u16_m128i(mtx[j])) ? 1 : 0;
+    res |= (tmp << j);
+  }
+  return res;
 }
 
 /* clang-format off */
@@ -3639,53 +3534,51 @@ static int _sse2rvv_aggregate_equal_any_16x8(int la, int lb, __m128i mtx[16])
 
 SSE2RVV_GENERATE_CMP_EQUAL_ANY(SSE2RVV_CMP_EQUAL_ANY_)
 
-static int _sse2rvv_aggregate_ranges_16x8(int la, int lb, __m128i mtx[16])
-{
-    int res = 0;
-    int m = (1 << la) - 1;
-    uint16x8_t vec =
-        vtstq_u16(vdupq_n_u16(m), vld1q_u16(_sse2rvv_cmpestr_mask16b));
-    for (int j = 0; j < lb; j++) {
-        mtx[j] = vreinterpretq_m128i_u16(
-            vandq_u16(vec, vreinterpretq_u16_m128i(mtx[j])));
-        mtx[j] = vreinterpretq_m128i_u16(
-            vshrq_n_u16(vreinterpretq_u16_m128i(mtx[j]), 15));
-        __m128i tmp = vreinterpretq_m128i_u32(
-            vshrq_n_u32(vreinterpretq_u32_m128i(mtx[j]), 16));
-        uint32x4_t vec_res = vandq_u32(vreinterpretq_u32_m128i(mtx[j]),
-                                       vreinterpretq_u32_m128i(tmp));
+static int _sse2rvv_aggregate_ranges_16x8(int la, int lb, __m128i mtx[16]) {
+  int res = 0;
+  int m = (1 << la) - 1;
+  uint16x8_t vec =
+      vtstq_u16(vdupq_n_u16(m), vld1q_u16(_sse2rvv_cmpestr_mask16b));
+  for (int j = 0; j < lb; j++) {
+    mtx[j] = vreinterpretq_m128i_u16(
+        vandq_u16(vec, vreinterpretq_u16_m128i(mtx[j])));
+    mtx[j] = vreinterpretq_m128i_u16(
+        vshrq_n_u16(vreinterpretq_u16_m128i(mtx[j]), 15));
+    __m128i tmp = vreinterpretq_m128i_u32(
+        vshrq_n_u32(vreinterpretq_u32_m128i(mtx[j]), 16));
+    uint32x4_t vec_res = vandq_u32(vreinterpretq_u32_m128i(mtx[j]),
+                                   vreinterpretq_u32_m128i(tmp));
 #if defined(__aarch64__) || defined(_M_ARM64)
-        int t = vaddvq_u32(vec_res) ? 1 : 0;
+    int t = vaddvq_u32(vec_res) ? 1 : 0;
 #else
-        uint64x2_t sumh = vpaddlq_u32(vec_res);
-        int t = vgetq_lane_u64(sumh, 0) + vgetq_lane_u64(sumh, 1);
+    uint64x2_t sumh = vpaddlq_u32(vec_res);
+    int t = vgetq_lane_u64(sumh, 0) + vgetq_lane_u64(sumh, 1);
 #endif
-        res |= (t << j);
-    }
-    return res;
+    res |= (t << j);
+  }
+  return res;
 }
 
-static int _sse2rvv_aggregate_ranges_8x16(int la, int lb, __m128i mtx[16])
-{
-    int res = 0;
-    int m = (1 << la) - 1;
-    uint8x8_t vec_mask = vld1_u8(_sse2rvv_cmpestr_mask8b);
-    uint8x8_t t_lo = vtst_u8(vdup_n_u8(m & 0xff), vec_mask);
-    uint8x8_t t_hi = vtst_u8(vdup_n_u8(m >> 8), vec_mask);
-    uint8x16_t vec = vcombine_u8(t_lo, t_hi);
-    for (int j = 0; j < lb; j++) {
-        mtx[j] = vreinterpretq_m128i_u8(
-            vandq_u8(vec, vreinterpretq_u8_m128i(mtx[j])));
-        mtx[j] = vreinterpretq_m128i_u8(
-            vshrq_n_u8(vreinterpretq_u8_m128i(mtx[j]), 7));
-        __m128i tmp = vreinterpretq_m128i_u16(
-            vshrq_n_u16(vreinterpretq_u16_m128i(mtx[j]), 8));
-        uint16x8_t vec_res = vandq_u16(vreinterpretq_u16_m128i(mtx[j]),
-                                       vreinterpretq_u16_m128i(tmp));
-        int t = _sse2rvv_vaddvq_u16(vec_res) ? 1 : 0;
-        res |= (t << j);
-    }
-    return res;
+static int _sse2rvv_aggregate_ranges_8x16(int la, int lb, __m128i mtx[16]) {
+  int res = 0;
+  int m = (1 << la) - 1;
+  uint8x8_t vec_mask = vld1_u8(_sse2rvv_cmpestr_mask8b);
+  uint8x8_t t_lo = vtst_u8(vdup_n_u8(m & 0xff), vec_mask);
+  uint8x8_t t_hi = vtst_u8(vdup_n_u8(m >> 8), vec_mask);
+  uint8x16_t vec = vcombine_u8(t_lo, t_hi);
+  for (int j = 0; j < lb; j++) {
+    mtx[j] =
+        vreinterpretq_m128i_u8(vandq_u8(vec, vreinterpretq_u8_m128i(mtx[j])));
+    mtx[j] =
+        vreinterpretq_m128i_u8(vshrq_n_u8(vreinterpretq_u8_m128i(mtx[j]), 7));
+    __m128i tmp = vreinterpretq_m128i_u16(
+        vshrq_n_u16(vreinterpretq_u16_m128i(mtx[j]), 8));
+    uint16x8_t vec_res = vandq_u16(vreinterpretq_u16_m128i(mtx[j]),
+                                   vreinterpretq_u16_m128i(tmp));
+    int t = _sse2rvv_vaddvq_u16(vec_res) ? 1 : 0;
+    res |= (t << j);
+  }
+  return res;
 }
 
 #define SSE2RVV_CMP_RANGES_IS_BYTE 1
@@ -3704,87 +3597,84 @@ SSE2RVV_GENERATE_CMP_RANGES(SSE2RVV_CMP_RANGES_)
 #undef SSE2RVV_CMP_RANGES_IS_BYTE
 #undef SSE2RVV_CMP_RANGES_IS_WORD
 
-static int _sse2rvv_cmp_byte_equal_each(__m128i a, int la, __m128i b, int lb)
-{
-    uint8x16_t mtx =
-        vceqq_u8(vreinterpretq_u8_m128i(a), vreinterpretq_u8_m128i(b));
-    int m0 = (la < lb) ? 0 : ((1 << la) - (1 << lb));
-    int m1 = 0x10000 - (1 << la);
-    int tb = 0x10000 - (1 << lb);
-    uint8x8_t vec_mask, vec0_lo, vec0_hi, vec1_lo, vec1_hi;
-    uint8x8_t tmp_lo, tmp_hi, res_lo, res_hi;
-    vec_mask = vld1_u8(_sse2rvv_cmpestr_mask8b);
-    vec0_lo = vtst_u8(vdup_n_u8(m0), vec_mask);
-    vec0_hi = vtst_u8(vdup_n_u8(m0 >> 8), vec_mask);
-    vec1_lo = vtst_u8(vdup_n_u8(m1), vec_mask);
-    vec1_hi = vtst_u8(vdup_n_u8(m1 >> 8), vec_mask);
-    tmp_lo = vtst_u8(vdup_n_u8(tb), vec_mask);
-    tmp_hi = vtst_u8(vdup_n_u8(tb >> 8), vec_mask);
+static int _sse2rvv_cmp_byte_equal_each(__m128i a, int la, __m128i b, int lb) {
+  uint8x16_t mtx =
+      vceqq_u8(vreinterpretq_u8_m128i(a), vreinterpretq_u8_m128i(b));
+  int m0 = (la < lb) ? 0 : ((1 << la) - (1 << lb));
+  int m1 = 0x10000 - (1 << la);
+  int tb = 0x10000 - (1 << lb);
+  uint8x8_t vec_mask, vec0_lo, vec0_hi, vec1_lo, vec1_hi;
+  uint8x8_t tmp_lo, tmp_hi, res_lo, res_hi;
+  vec_mask = vld1_u8(_sse2rvv_cmpestr_mask8b);
+  vec0_lo = vtst_u8(vdup_n_u8(m0), vec_mask);
+  vec0_hi = vtst_u8(vdup_n_u8(m0 >> 8), vec_mask);
+  vec1_lo = vtst_u8(vdup_n_u8(m1), vec_mask);
+  vec1_hi = vtst_u8(vdup_n_u8(m1 >> 8), vec_mask);
+  tmp_lo = vtst_u8(vdup_n_u8(tb), vec_mask);
+  tmp_hi = vtst_u8(vdup_n_u8(tb >> 8), vec_mask);
 
-    res_lo = vbsl_u8(vec0_lo, vdup_n_u8(0), vget_low_u8(mtx));
-    res_hi = vbsl_u8(vec0_hi, vdup_n_u8(0), vget_high_u8(mtx));
-    res_lo = vbsl_u8(vec1_lo, tmp_lo, res_lo);
-    res_hi = vbsl_u8(vec1_hi, tmp_hi, res_hi);
-    res_lo = vand_u8(res_lo, vec_mask);
-    res_hi = vand_u8(res_hi, vec_mask);
+  res_lo = vbsl_u8(vec0_lo, vdup_n_u8(0), vget_low_u8(mtx));
+  res_hi = vbsl_u8(vec0_hi, vdup_n_u8(0), vget_high_u8(mtx));
+  res_lo = vbsl_u8(vec1_lo, tmp_lo, res_lo);
+  res_hi = vbsl_u8(vec1_hi, tmp_hi, res_hi);
+  res_lo = vand_u8(res_lo, vec_mask);
+  res_hi = vand_u8(res_hi, vec_mask);
 
-    int res = _sse2rvv_vaddv_u8(res_lo) + (_sse2rvv_vaddv_u8(res_hi) << 8);
-    return res;
+  int res = _sse2rvv_vaddv_u8(res_lo) + (_sse2rvv_vaddv_u8(res_hi) << 8);
+  return res;
 }
 
-static int _sse2rvv_cmp_word_equal_each(__m128i a, int la, __m128i b, int lb)
-{
-    uint16x8_t mtx =
-        vceqq_u16(vreinterpretq_u16_m128i(a), vreinterpretq_u16_m128i(b));
-    int m0 = (la < lb) ? 0 : ((1 << la) - (1 << lb));
-    int m1 = 0x100 - (1 << la);
-    int tb = 0x100 - (1 << lb);
-    uint16x8_t vec_mask = vld1q_u16(_sse2rvv_cmpestr_mask16b);
-    uint16x8_t vec0 = vtstq_u16(vdupq_n_u16(m0), vec_mask);
-    uint16x8_t vec1 = vtstq_u16(vdupq_n_u16(m1), vec_mask);
-    uint16x8_t tmp = vtstq_u16(vdupq_n_u16(tb), vec_mask);
-    mtx = vbslq_u16(vec0, vdupq_n_u16(0), mtx);
-    mtx = vbslq_u16(vec1, tmp, mtx);
-    mtx = vandq_u16(mtx, vec_mask);
-    return _sse2rvv_vaddvq_u16(mtx);
+static int _sse2rvv_cmp_word_equal_each(__m128i a, int la, __m128i b, int lb) {
+  uint16x8_t mtx =
+      vceqq_u16(vreinterpretq_u16_m128i(a), vreinterpretq_u16_m128i(b));
+  int m0 = (la < lb) ? 0 : ((1 << la) - (1 << lb));
+  int m1 = 0x100 - (1 << la);
+  int tb = 0x100 - (1 << lb);
+  uint16x8_t vec_mask = vld1q_u16(_sse2rvv_cmpestr_mask16b);
+  uint16x8_t vec0 = vtstq_u16(vdupq_n_u16(m0), vec_mask);
+  uint16x8_t vec1 = vtstq_u16(vdupq_n_u16(m1), vec_mask);
+  uint16x8_t tmp = vtstq_u16(vdupq_n_u16(tb), vec_mask);
+  mtx = vbslq_u16(vec0, vdupq_n_u16(0), mtx);
+  mtx = vbslq_u16(vec1, tmp, mtx);
+  mtx = vandq_u16(mtx, vec_mask);
+  return _sse2rvv_vaddvq_u16(mtx);
 }
 
 #define SSE2RVV_AGGREGATE_EQUAL_ORDER_IS_UBYTE 1
 #define SSE2RVV_AGGREGATE_EQUAL_ORDER_IS_UWORD 0
 
 #define SSE2RVV_AGGREGATE_EQUAL_ORDER_IMPL(size, number_of_lanes, data_type)   \
-    static int _sse2rvv_aggregate_equal_ordered_##size##x##number_of_lanes(    \
-        int bound, int la, int lb, __m128i mtx[16])                            \
-    {                                                                          \
-        int res = 0;                                                           \
-        int m1 = SSE2RVV_IIF(data_type)(0x10000, 0x100) - (1 << la);           \
-        uint##size##x8_t vec_mask = SSE2RVV_IIF(data_type)(                    \
-            vld1_u##size(_sse2rvv_cmpestr_mask##size##b),                      \
-            vld1q_u##size(_sse2rvv_cmpestr_mask##size##b));                    \
-        uint##size##x##number_of_lanes##_t vec1 = SSE2RVV_IIF(data_type)(      \
-            vcombine_u##size(vtst_u##size(vdup_n_u##size(m1), vec_mask),       \
-                             vtst_u##size(vdup_n_u##size(m1 >> 8), vec_mask)), \
-            vtstq_u##size(vdupq_n_u##size(m1), vec_mask));                     \
-        uint##size##x##number_of_lanes##_t vec_minusone = vdupq_n_u##size(-1); \
-        uint##size##x##number_of_lanes##_t vec_zero = vdupq_n_u##size(0);      \
-        for (int j = 0; j < lb; j++) {                                         \
-            mtx[j] = vreinterpretq_m128i_u##size(vbslq_u##size(                \
-                vec1, vec_minusone, vreinterpretq_u##size##_m128i(mtx[j])));   \
-        }                                                                      \
-        for (int j = lb; j < bound; j++) {                                     \
-            mtx[j] = vreinterpretq_m128i_u##size(                              \
-                vbslq_u##size(vec1, vec_minusone, vec_zero));                  \
-        }                                                                      \
-        unsigned SSE2RVV_IIF(data_type)(char, short) *ptr =                    \
-            (unsigned SSE2RVV_IIF(data_type)(char, short) *) mtx;              \
-        for (int i = 0; i < bound; i++) {                                      \
-            int val = 1;                                                       \
-            for (int j = 0, k = i; j < bound - i && k < bound; j++, k++)       \
-                val &= ptr[k * bound + j];                                     \
-            res += val << i;                                                   \
-        }                                                                      \
-        return res;                                                            \
-    }
+  static int _sse2rvv_aggregate_equal_ordered_##size##x##number_of_lanes(      \
+      int bound, int la, int lb, __m128i mtx[16]) {                            \
+    int res = 0;                                                               \
+    int m1 = SSE2RVV_IIF(data_type)(0x10000, 0x100) - (1 << la);               \
+    uint##size##x8_t vec_mask =                                                \
+        SSE2RVV_IIF(data_type)(vld1_u##size(_sse2rvv_cmpestr_mask##size##b),   \
+                               vld1q_u##size(_sse2rvv_cmpestr_mask##size##b)); \
+    uint##size##x##number_of_lanes##_t vec1 = SSE2RVV_IIF(data_type)(          \
+        vcombine_u##size(vtst_u##size(vdup_n_u##size(m1), vec_mask),           \
+                         vtst_u##size(vdup_n_u##size(m1 >> 8), vec_mask)),     \
+        vtstq_u##size(vdupq_n_u##size(m1), vec_mask));                         \
+    uint##size##x##number_of_lanes##_t vec_minusone = vdupq_n_u##size(-1);     \
+    uint##size##x##number_of_lanes##_t vec_zero = vdupq_n_u##size(0);          \
+    for (int j = 0; j < lb; j++) {                                             \
+      mtx[j] = vreinterpretq_m128i_u##size(vbslq_u##size(                      \
+          vec1, vec_minusone, vreinterpretq_u##size##_m128i(mtx[j])));         \
+    }                                                                          \
+    for (int j = lb; j < bound; j++) {                                         \
+      mtx[j] = vreinterpretq_m128i_u##size(                                    \
+          vbslq_u##size(vec1, vec_minusone, vec_zero));                        \
+    }                                                                          \
+    unsigned SSE2RVV_IIF(data_type)(char, short) *ptr =                        \
+        (unsigned SSE2RVV_IIF(data_type)(char, short) *)mtx;                   \
+    for (int i = 0; i < bound; i++) {                                          \
+      int val = 1;                                                             \
+      for (int j = 0, k = i; j < bound - i && k < bound; j++, k++)             \
+        val &= ptr[k * bound + j];                                             \
+      res += val << i;                                                         \
+    }                                                                          \
+    return res;                                                                \
+  }
 
 /* clang-format off */
 #define SSE2RVV_GENERATE_AGGREGATE_EQUAL_ORDER(prefix) \
@@ -3805,27 +3695,27 @@ SSE2RVV_GENERATE_AGGREGATE_EQUAL_ORDER(SSE2RVV_AGGREGATE_EQUAL_ORDER_)
 
 SSE2RVV_GENERATE_CMP_EQUAL_ORDERED(SSE2RVV_CMP_EQUAL_ORDERED_)
 
-#define SSE2RVV_CMPESTR_LIST                           \
-    _(CMP_UBYTE_EQUAL_ANY, cmp_byte_equal_any)         \
-    _(CMP_UWORD_EQUAL_ANY, cmp_word_equal_any)         \
-    _(CMP_SBYTE_EQUAL_ANY, cmp_byte_equal_any)         \
-    _(CMP_SWORD_EQUAL_ANY, cmp_word_equal_any)         \
-    _(CMP_UBYTE_RANGES, cmp_ubyte_ranges)              \
-    _(CMP_UWORD_RANGES, cmp_uword_ranges)              \
-    _(CMP_SBYTE_RANGES, cmp_sbyte_ranges)              \
-    _(CMP_SWORD_RANGES, cmp_sword_ranges)              \
-    _(CMP_UBYTE_EQUAL_EACH, cmp_byte_equal_each)       \
-    _(CMP_UWORD_EQUAL_EACH, cmp_word_equal_each)       \
-    _(CMP_SBYTE_EQUAL_EACH, cmp_byte_equal_each)       \
-    _(CMP_SWORD_EQUAL_EACH, cmp_word_equal_each)       \
-    _(CMP_UBYTE_EQUAL_ORDERED, cmp_byte_equal_ordered) \
-    _(CMP_UWORD_EQUAL_ORDERED, cmp_word_equal_ordered) \
-    _(CMP_SBYTE_EQUAL_ORDERED, cmp_byte_equal_ordered) \
-    _(CMP_SWORD_EQUAL_ORDERED, cmp_word_equal_ordered)
+#define SSE2RVV_CMPESTR_LIST                                                   \
+  _(CMP_UBYTE_EQUAL_ANY, cmp_byte_equal_any)                                   \
+  _(CMP_UWORD_EQUAL_ANY, cmp_word_equal_any)                                   \
+  _(CMP_SBYTE_EQUAL_ANY, cmp_byte_equal_any)                                   \
+  _(CMP_SWORD_EQUAL_ANY, cmp_word_equal_any)                                   \
+  _(CMP_UBYTE_RANGES, cmp_ubyte_ranges)                                        \
+  _(CMP_UWORD_RANGES, cmp_uword_ranges)                                        \
+  _(CMP_SBYTE_RANGES, cmp_sbyte_ranges)                                        \
+  _(CMP_SWORD_RANGES, cmp_sword_ranges)                                        \
+  _(CMP_UBYTE_EQUAL_EACH, cmp_byte_equal_each)                                 \
+  _(CMP_UWORD_EQUAL_EACH, cmp_word_equal_each)                                 \
+  _(CMP_SBYTE_EQUAL_EACH, cmp_byte_equal_each)                                 \
+  _(CMP_SWORD_EQUAL_EACH, cmp_word_equal_each)                                 \
+  _(CMP_UBYTE_EQUAL_ORDERED, cmp_byte_equal_ordered)                           \
+  _(CMP_UWORD_EQUAL_ORDERED, cmp_word_equal_ordered)                           \
+  _(CMP_SBYTE_EQUAL_ORDERED, cmp_byte_equal_ordered)                           \
+  _(CMP_SWORD_EQUAL_ORDERED, cmp_word_equal_ordered)
 
 enum {
 #define _(name, func_suffix) name,
-    SSE2RVV_CMPESTR_LIST
+  SSE2RVV_CMPESTR_LIST
 #undef _
 };
 typedef int (*cmpestr_func_t)(__m128i a, int la, __m128i b, int lb);
@@ -3835,62 +3725,58 @@ static cmpestr_func_t _sse2rvv_cmpfunc_table[] = {
 #undef _
 };
 
-FORCE_INLINE int _sse2rvv_sido_negative(int res, int lb, int imm8, int bound)
-{
-    switch (imm8 & 0x30) {
-    case _SIDD_NEGATIVE_POLARITY:
-        res ^= 0xffffffff;
-        break;
-    case _SIDD_MASKED_NEGATIVE_POLARITY:
-        res ^= (1 << lb) - 1;
-        break;
-    default:
-        break;
-    }
+FORCE_INLINE int _sse2rvv_sido_negative(int res, int lb, int imm8, int bound) {
+  switch (imm8 & 0x30) {
+  case _SIDD_NEGATIVE_POLARITY:
+    res ^= 0xffffffff;
+    break;
+  case _SIDD_MASKED_NEGATIVE_POLARITY:
+    res ^= (1 << lb) - 1;
+    break;
+  default:
+    break;
+  }
 
-    return res & ((bound == 8) ? 0xFF : 0xFFFF);
+  return res & ((bound == 8) ? 0xFF : 0xFFFF);
 }
 
-FORCE_INLINE int _sse2rvv_clz(unsigned int x)
-{
+FORCE_INLINE int _sse2rvv_clz(unsigned int x) {
 #ifdef _MSC_VER
-    unsigned long cnt = 0;
-    if (_BitScanReverse(&cnt, x))
-        return 31 - cnt;
-    return 32;
+  unsigned long cnt = 0;
+  if (_BitScanReverse(&cnt, x))
+    return 31 - cnt;
+  return 32;
 #else
-    return x != 0 ? __builtin_clz(x) : 32;
+  return x != 0 ? __builtin_clz(x) : 32;
 #endif
 }
 
-FORCE_INLINE int _sse2rvv_ctz(unsigned int x)
-{
+FORCE_INLINE int _sse2rvv_ctz(unsigned int x) {
 #ifdef _MSC_VER
-    unsigned long cnt = 0;
-    if (_BitScanForward(&cnt, x))
-        return cnt;
-    return 32;
+  unsigned long cnt = 0;
+  if (_BitScanForward(&cnt, x))
+    return cnt;
+  return 32;
 #else
-    return x != 0 ? __builtin_ctz(x) : 32;
+  return x != 0 ? __builtin_ctz(x) : 32;
 #endif
 }
 
-FORCE_INLINE int _sse2rvv_ctzll(unsigned long long x)
-{
+FORCE_INLINE int _sse2rvv_ctzll(unsigned long long x) {
 #ifdef _MSC_VER
-    unsigned long cnt;
+  unsigned long cnt;
 #if defined(SSE2RVV_HAS_BITSCAN64)
-    if (_BitScanForward64(&cnt, x))
-        return (int) (cnt);
+  if (_BitScanForward64(&cnt, x))
+    return (int)(cnt);
 #else
-    if (_BitScanForward(&cnt, (unsigned long) (x)))
-        return (int) cnt;
-    if (_BitScanForward(&cnt, (unsigned long) (x >> 32)))
-        return (int) (cnt + 32);
+  if (_BitScanForward(&cnt, (unsigned long)(x)))
+    return (int)cnt;
+  if (_BitScanForward(&cnt, (unsigned long)(x >> 32)))
+    return (int)(cnt + 32);
 #endif /* SSE2RVV_HAS_BITSCAN64 */
-    return 64;
+  return 64;
 #else /* assume GNU compatible compilers */
-    return x != 0 ? __builtin_ctzll(x) : 64;
+  return x != 0 ? __builtin_ctzll(x) : 64;
 #endif
 }
 
@@ -3898,56 +3784,54 @@ FORCE_INLINE int _sse2rvv_ctzll(unsigned long long x)
 
 #define SSE2RVV_CMPSTR_SET_UPPER(var, imm) const int var = (imm & 0x01) ? 8 : 16
 
-#define SSE2RVV_CMPESTRX_LEN_PAIR(a, b, la, lb) \
-    int tmp1 = la ^ (la >> 31);                 \
-    la = tmp1 - (la >> 31);                     \
-    int tmp2 = lb ^ (lb >> 31);                 \
-    lb = tmp2 - (lb >> 31);                     \
-    la = SSE2RVV_MIN(la, bound);                \
-    lb = SSE2RVV_MIN(lb, bound)
+#define SSE2RVV_CMPESTRX_LEN_PAIR(a, b, la, lb)                                \
+  int tmp1 = la ^ (la >> 31);                                                  \
+  la = tmp1 - (la >> 31);                                                      \
+  int tmp2 = lb ^ (lb >> 31);                                                  \
+  lb = tmp2 - (lb >> 31);                                                      \
+  la = SSE2RVV_MIN(la, bound);                                                 \
+  lb = SSE2RVV_MIN(lb, bound)
 
 // Compare all pairs of character in string a and b,
 // then aggregate the result.
 // As the only difference of PCMPESTR* and PCMPISTR* is the way to calculate the
 // length of string, we use SSE2RVV_CMP{I,E}STRX_GET_LEN to get the length of
 // string a and b.
-#define SSE2RVV_COMP_AGG(a, b, la, lb, imm8, IE)                  \
-    SSE2RVV_CMPSTR_SET_UPPER(bound, imm8);                        \
-    SSE2RVV_##IE##_LEN_PAIR(a, b, la, lb);                        \
-    int r2 = (_sse2rvv_cmpfunc_table[imm8 & 0x0f])(a, la, b, lb); \
-    r2 = _sse2rvv_sido_negative(r2, lb, imm8, bound)
+#define SSE2RVV_COMP_AGG(a, b, la, lb, imm8, IE)                               \
+  SSE2RVV_CMPSTR_SET_UPPER(bound, imm8);                                       \
+  SSE2RVV_##IE##_LEN_PAIR(a, b, la, lb);                                       \
+  int r2 = (_sse2rvv_cmpfunc_table[imm8 & 0x0f])(a, la, b, lb);                \
+  r2 = _sse2rvv_sido_negative(r2, lb, imm8, bound)
 
-#define SSE2RVV_CMPSTR_GENERATE_INDEX(r2, bound, imm8) \
-    return (r2 == 0)                                   \
-               ? bound                                 \
-               : ((imm8 & 0x40) ? (31 - _sse2rvv_clz(r2)) : _sse2rvv_ctz(r2))
+#define SSE2RVV_CMPSTR_GENERATE_INDEX(r2, bound, imm8)                         \
+  return (r2 == 0)                                                             \
+             ? bound                                                           \
+             : ((imm8 & 0x40) ? (31 - _sse2rvv_clz(r2)) : _sse2rvv_ctz(r2))
 
 #define SSE2RVV_CMPSTR_GENERATE_MASK(dst)                                      \
-    __m128i dst = vreinterpretq_m128i_u8(vdupq_n_u8(0));                       \
-    if (imm8 & 0x40) {                                                         \
-        if (bound == 8) {                                                      \
-            uint16x8_t tmp = vtstq_u16(vdupq_n_u16(r2),                        \
-                                       vld1q_u16(_sse2rvv_cmpestr_mask16b));   \
-            dst = vreinterpretq_m128i_u16(vbslq_u16(                           \
-                tmp, vdupq_n_u16(-1), vreinterpretq_u16_m128i(dst)));          \
-        } else {                                                               \
-            uint8x16_t vec_r2 =                                                \
-                vcombine_u8(vdup_n_u8(r2), vdup_n_u8(r2 >> 8));                \
-            uint8x16_t tmp =                                                   \
-                vtstq_u8(vec_r2, vld1q_u8(_sse2rvv_cmpestr_mask8b));           \
-            dst = vreinterpretq_m128i_u8(                                      \
-                vbslq_u8(tmp, vdupq_n_u8(-1), vreinterpretq_u8_m128i(dst)));   \
-        }                                                                      \
+  __m128i dst = vreinterpretq_m128i_u8(vdupq_n_u8(0));                         \
+  if (imm8 & 0x40) {                                                           \
+    if (bound == 8) {                                                          \
+      uint16x8_t tmp =                                                         \
+          vtstq_u16(vdupq_n_u16(r2), vld1q_u16(_sse2rvv_cmpestr_mask16b));     \
+      dst = vreinterpretq_m128i_u16(                                           \
+          vbslq_u16(tmp, vdupq_n_u16(-1), vreinterpretq_u16_m128i(dst)));      \
     } else {                                                                   \
-        if (bound == 16) {                                                     \
-            dst = vreinterpretq_m128i_u16(                                     \
-                vsetq_lane_u16(r2 & 0xffff, vreinterpretq_u16_m128i(dst), 0)); \
-        } else {                                                               \
-            dst = vreinterpretq_m128i_u8(                                      \
-                vsetq_lane_u8(r2 & 0xff, vreinterpretq_u8_m128i(dst), 0));     \
-        }                                                                      \
+      uint8x16_t vec_r2 = vcombine_u8(vdup_n_u8(r2), vdup_n_u8(r2 >> 8));      \
+      uint8x16_t tmp = vtstq_u8(vec_r2, vld1q_u8(_sse2rvv_cmpestr_mask8b));    \
+      dst = vreinterpretq_m128i_u8(                                            \
+          vbslq_u8(tmp, vdupq_n_u8(-1), vreinterpretq_u8_m128i(dst)));         \
     }                                                                          \
-    return dst
+  } else {                                                                     \
+    if (bound == 16) {                                                         \
+      dst = vreinterpretq_m128i_u16(                                           \
+          vsetq_lane_u16(r2 & 0xffff, vreinterpretq_u16_m128i(dst), 0));       \
+    } else {                                                                   \
+      dst = vreinterpretq_m128i_u8(                                            \
+          vsetq_lane_u8(r2 & 0xff, vreinterpretq_u8_m128i(dst), 0));           \
+    }                                                                          \
+  }                                                                            \
+  return dst
 
 // Compare packed strings in a and b with lengths la and lb using the control
 // in imm8, and returns 1 if b did not contain a null character and the
@@ -3980,11 +3864,10 @@ FORCE_INLINE int _sse2rvv_ctzll(unsigned long long x)
 // Compare packed strings in a and b with lengths la and lb using the control
 // in imm8, and store the generated mask in dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_cmpestrm
-FORCE_INLINE __m128i
-_mm_cmpestrm(__m128i a, int la, __m128i b, int lb, const int imm8)
-{
-    SSE2RVV_COMP_AGG(a, b, la, lb, imm8, CMPESTRX);
-    SSE2RVV_CMPSTR_GENERATE_MASK(dst);
+FORCE_INLINE __m128i _mm_cmpestrm(__m128i a, int la, __m128i b, int lb,
+                                  const int imm8) {
+  SSE2RVV_COMP_AGG(a, b, la, lb, imm8, CMPESTRX);
+  SSE2RVV_CMPSTR_GENERATE_MASK(dst);
 }
 
 // Compare packed strings in a and b with lengths la and lb using the control in
@@ -4014,31 +3897,31 @@ _mm_cmpestrm(__m128i a, int la, __m128i b, int lb, const int imm8)
 //                               int lb,
 //                               const int imm8) {}
 
-#define SSE2RVV_CMPISTRX_LENGTH(str, len, imm8)                          \
-    do {                                                                 \
-        if (imm8 & 0x01) {                                               \
-            uint16x8_t equal_mask_##str =                                \
-                vceqq_u16(vreinterpretq_u16_m128i(str), vdupq_n_u16(0)); \
-            uint8x8_t res_##str = vshrn_n_u16(equal_mask_##str, 4);      \
-            uint64_t matches_##str =                                     \
-                vget_lane_u64(vreinterpret_u64_u8(res_##str), 0);        \
-            len = _sse2rvv_ctzll(matches_##str) >> 3;                    \
-        } else {                                                         \
-            uint16x8_t equal_mask_##str = vreinterpretq_u16_u8(          \
-                vceqq_u8(vreinterpretq_u8_m128i(str), vdupq_n_u8(0)));   \
-            uint8x8_t res_##str = vshrn_n_u16(equal_mask_##str, 4);      \
-            uint64_t matches_##str =                                     \
-                vget_lane_u64(vreinterpret_u64_u8(res_##str), 0);        \
-            len = _sse2rvv_ctzll(matches_##str) >> 2;                    \
-        }                                                                \
-    } while (0)
+#define SSE2RVV_CMPISTRX_LENGTH(str, len, imm8)                                \
+  do {                                                                         \
+    if (imm8 & 0x01) {                                                         \
+      uint16x8_t equal_mask_##str =                                            \
+          vceqq_u16(vreinterpretq_u16_m128i(str), vdupq_n_u16(0));             \
+      uint8x8_t res_##str = vshrn_n_u16(equal_mask_##str, 4);                  \
+      uint64_t matches_##str =                                                 \
+          vget_lane_u64(vreinterpret_u64_u8(res_##str), 0);                    \
+      len = _sse2rvv_ctzll(matches_##str) >> 3;                                \
+    } else {                                                                   \
+      uint16x8_t equal_mask_##str = vreinterpretq_u16_u8(                      \
+          vceqq_u8(vreinterpretq_u8_m128i(str), vdupq_n_u8(0)));               \
+      uint8x8_t res_##str = vshrn_n_u16(equal_mask_##str, 4);                  \
+      uint64_t matches_##str =                                                 \
+          vget_lane_u64(vreinterpret_u64_u8(res_##str), 0);                    \
+      len = _sse2rvv_ctzll(matches_##str) >> 2;                                \
+    }                                                                          \
+  } while (0)
 
-#define SSE2RVV_CMPISTRX_LEN_PAIR(a, b, la, lb) \
-    int la, lb;                                 \
-    do {                                        \
-        SSE2RVV_CMPISTRX_LENGTH(a, la, imm8);   \
-        SSE2RVV_CMPISTRX_LENGTH(b, lb, imm8);   \
-    } while (0)
+#define SSE2RVV_CMPISTRX_LEN_PAIR(a, b, la, lb)                                \
+  int la, lb;                                                                  \
+  do {                                                                         \
+    SSE2RVV_CMPISTRX_LENGTH(a, la, imm8);                                      \
+    SSE2RVV_CMPISTRX_LENGTH(b, lb, imm8);                                      \
+  } while (0)
 
 // Compare packed strings with implicit lengths in a and b using the control in
 // imm8, and returns 1 if b did not contain a null character and the resulting
@@ -4195,11 +4078,11 @@ static const uint8_t _sse2rvv_rsbox[256] = SSE2RVV_AES_RSBOX(SSE2RVV_AES_H0);
 /* x_time function and matrix multiply function */
 #if !defined(__aarch64__) && !defined(_M_ARM64)
 #define SSE2RVV_XT(x) (((x) << 1) ^ ((((x) >> 7) & 1) * 0x1b))
-#define SSE2RVV_MULTIPLY(x, y)                                \
-    (((y & 1) * x) ^ ((y >> 1 & 1) * SSE2RVV_XT(x)) ^         \
-     ((y >> 2 & 1) * SSE2RVV_XT(SSE2RVV_XT(x))) ^             \
-     ((y >> 3 & 1) * SSE2RVV_XT(SSE2RVV_XT(SSE2RVV_XT(x)))) ^ \
-     ((y >> 4 & 1) * SSE2RVV_XT(SSE2RVV_XT(SSE2RVV_XT(SSE2RVV_XT(x))))))
+#define SSE2RVV_MULTIPLY(x, y)                                                 \
+  (((y & 1) * x) ^ ((y >> 1 & 1) * SSE2RVV_XT(x)) ^                            \
+   ((y >> 2 & 1) * SSE2RVV_XT(SSE2RVV_XT(x))) ^                                \
+   ((y >> 3 & 1) * SSE2RVV_XT(SSE2RVV_XT(SSE2RVV_XT(x)))) ^                    \
+   ((y >> 4 & 1) * SSE2RVV_XT(SSE2RVV_XT(SSE2RVV_XT(SSE2RVV_XT(x))))))
 #endif
 
 // In the absence of crypto extensions, implement aesenc using regular NEON
@@ -4286,7 +4169,8 @@ static const uint8_t _sse2rvv_rsbox[256] = SSE2RVV_AES_RSBOX(SSE2RVV_AES_H0);
 // Perform a carry-less multiplication of two 64-bit integers, selected from a
 // and b according to imm8, and store the results in dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_clmulepi64_si128
-// FORCE_INLINE __m128i _mm_clmulepi64_si128(__m128i _a, __m128i _b, const int imm) {}
+// FORCE_INLINE __m128i _mm_clmulepi64_si128(__m128i _a, __m128i _b, const int
+// imm) {}
 
 // FORCE_INLINE unsigned int _sse2rvv_mm_get_denormals_zero_mode(void) {}
 
@@ -4304,42 +4188,41 @@ static const uint8_t _sse2rvv_rsbox[256] = SSE2RVV_AES_RSBOX(SSE2RVV_AES_H0);
 
 // Return the current 64-bit value of the processor's time-stamp counter.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=rdtsc
-FORCE_INLINE uint64_t _rdtsc(void)
-{
+FORCE_INLINE uint64_t _rdtsc(void) {
 #if defined(__aarch64__) || defined(_M_ARM64)
-    uint64_t val;
+  uint64_t val;
 
-    /* According to ARM DDI 0487F.c, from Armv8.0 to Armv8.5 inclusive, the
-     * system counter is at least 56 bits wide; from Armv8.6, the counter
-     * must be 64 bits wide.  So the system counter could be less than 64
-     * bits wide and it is attributed with the flag 'cap_user_time_short'
-     * is true.
-     */
+  /* According to ARM DDI 0487F.c, from Armv8.0 to Armv8.5 inclusive, the
+   * system counter is at least 56 bits wide; from Armv8.6, the counter
+   * must be 64 bits wide.  So the system counter could be less than 64
+   * bits wide and it is attributed with the flag 'cap_user_time_short'
+   * is true.
+   */
 #if defined(_MSC_VER)
-    val = _ReadStatusReg(ARM64_SYSREG(3, 3, 14, 0, 2));
+  val = _ReadStatusReg(ARM64_SYSREG(3, 3, 14, 0, 2));
 #else
-    __asm__ __volatile__("mrs %0, cntvct_el0" : "=r"(val));
+  __asm__ __volatile__("mrs %0, cntvct_el0" : "=r"(val));
 #endif
 
-    return val;
+  return val;
 #else
-    uint32_t pmccntr, pmuseren, pmcntenset;
-    // Read the user mode Performance Monitoring Unit (PMU)
-    // User Enable Register (PMUSERENR) access permissions.
-    __asm__ __volatile__("mrc p15, 0, %0, c9, c14, 0" : "=r"(pmuseren));
-    if (pmuseren & 1) {  // Allows reading PMUSERENR for user mode code.
-        __asm__ __volatile__("mrc p15, 0, %0, c9, c12, 1" : "=r"(pmcntenset));
-        if (pmcntenset & 0x80000000UL) {  // Is it counting?
-            __asm__ __volatile__("mrc p15, 0, %0, c9, c13, 0" : "=r"(pmccntr));
-            // The counter is set up to count every 64th cycle
-            return (uint64_t) (pmccntr) << 6;
-        }
+  uint32_t pmccntr, pmuseren, pmcntenset;
+  // Read the user mode Performance Monitoring Unit (PMU)
+  // User Enable Register (PMUSERENR) access permissions.
+  __asm__ __volatile__("mrc p15, 0, %0, c9, c14, 0" : "=r"(pmuseren));
+  if (pmuseren & 1) { // Allows reading PMUSERENR for user mode code.
+    __asm__ __volatile__("mrc p15, 0, %0, c9, c12, 1" : "=r"(pmcntenset));
+    if (pmcntenset & 0x80000000UL) { // Is it counting?
+      __asm__ __volatile__("mrc p15, 0, %0, c9, c13, 0" : "=r"(pmccntr));
+      // The counter is set up to count every 64th cycle
+      return (uint64_t)(pmccntr) << 6;
     }
+  }
 
-    // Fallback to syscall as we can't enable PMUSERENR in user mode.
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    return (uint64_t) (tv.tv_sec) * 1000000 + tv.tv_usec;
+  // Fallback to syscall as we can't enable PMUSERENR in user mode.
+  struct timeval tv;
+  gettimeofday(&tv, NULL);
+  return (uint64_t)(tv.tv_sec) * 1000000 + tv.tv_usec;
 #endif
 }
 

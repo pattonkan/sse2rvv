@@ -1,5 +1,4 @@
 # sse2rvv
-![Github Actions](https://github.com/DLTcollab/sse2rvv/workflows/Github%20Actions/badge.svg?branch=master)
 
 A C/C++ header file that converts Intel SSE intrinsics to RISCV-V Extension intrinsics.
 
@@ -12,6 +11,8 @@ extract profiles and to identify hot paths in the code.
 The header file `sse2rvv.h` contains several of the functions provided by Intel
 intrinsic headers such as `<xmmintrin.h>`, only implemented with RISCV-based counterparts
 to produce the exact semantics of the intrinsics.
+
+This project is based on [sse2neon](https://github.com/DLTcollab/sse2neon), and modify it to RISCV version.
 
 ## Mapping and Coverage
 
@@ -41,25 +42,6 @@ but SSE intrinsic `_mm_maddubs_epi16` has to be implemented with multiple RVV in
 Some conversions require several RVV intrinsics, which may produce inconsistent results
 compared to their SSE counterparts due to differences in the arithmetic rules of IEEE-754.
 
-Taking a possible conversion of `_mm_rsqrt_ps` as example:
-
-```c
-__m128 _mm_rsqrt_ps(__m128 in)
-{
-    float32x4_t out = vrsqrteq_f32(vreinterpretq_f32_m128(in));
-
-    out = vmulq_f32(
-        out, vrsqrtsq_f32(vmulq_f32(vreinterpretq_f32_m128(in), out), out));
-
-    return vreinterpretq_m128_f32(out);
-}
-```
-
-The `_mm_rsqrt_ps` conversion will produce NaN if a source value is `0.0` (first INF for the
-reciprocal square root of `0.0`, then INF * `0.0` using `vmulq_f32`). In contrast,
-the SSE counterpart produces INF if a source value is `0.0`.
-As a result, additional treatments should be applied to ensure consistency between the conversion and its SSE counterpart.
-
 ## Usage
 
 - Put the file `sse2rvv.h` in to your source code directory.
@@ -82,17 +64,6 @@ As a result, additional treatments should be applied to ensure consistency betwe
   -march=r64gcv_zba
   ```
 
-## Compile-time Configurations
-
-Though floating-point operations in NEON use the IEEE single-precision format, NEON does not fully comply to the IEEE standard when inputs or results are denormal or NaN values for minimizing power consumption as well as maximizing performance.
-Considering the balance between correctness and performance, `sse2rvv` recognizes the following compile-time configurations:
-* `SSE2RVV_PRECISE_MINMAX`: Enable precise implementation of `_mm_min_{ps,pd}` and `_mm_max_{ps,pd}`. If you need consistent results such as handling with NaN values, enable it.
-* `SSE2RVV_PRECISE_DIV` (deprecated): Enable precise implementation of `_mm_rcp_ps` and `_mm_div_ps` by additional Netwon-Raphson iteration for accuracy.
-* `SSE2RVV_PRECISE_SQRT` (deprecated): Enable precise implementation of `_mm_sqrt_ps` and `_mm_rsqrt_ps` by additional Netwon-Raphson iteration for accuracy.
-* `SSE2RVV_PRECISE_DP`: Enable precise implementation of `_mm_dp_pd`. When the conditional bit is not set, the corresponding multiplication would not be executed.
-
-The above are turned off by default, and you should define the corresponding macro(s) as `1` before including `sse2rvv.h` if you need the precise implementations.
-
 ## Run Built-in Test Suite
 
 `sse2rvv` provides a unified interface for developing test cases. These test
@@ -101,25 +72,6 @@ runtime. Use the following commands to perform test cases:
 ```shell
 $ make test
 ```
-
-For running test with enabling features, you can use assign the features with `FEATURE` command.
-If `none` is assigned, then the command will be the same as simply calling `make test`.
-The following command enable `crypto` and `crc` features in the tests.
-```
-$ make FEATURE=crypto+crc test
-```
-
-You can specify GNU toolchain for cross compilation as well.
-[QEMU](https://www.qemu.org/) should be installed in advance.
-```shell
-$ make CROSS_COMPILE=aarch64-linux-gnu- test # ARMv8-A
-```
-or
-```shell
-$ make CROSS_COMPILE=arm-linux-gnueabihf- test # ARMv7-A
-```
-
-Check the details via [Test Suite for SSE2RVV](tests/README.md).
 
 ## Reference
 * [sse2neon](https://github.com/DLTcollab/sse2neon)

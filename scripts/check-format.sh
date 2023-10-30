@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-. .ci/common.sh
-
 set -x
 
 for file in ${SOURCES};

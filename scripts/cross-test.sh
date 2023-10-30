@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-. .ci/common.sh
-
-check_platform
-
 # Clang/LLVM is natively a cross-compiler.
 # TODO: Do cross-compilation using Clang
 # https://clang.llvm.org/docs/CrossCompilation.html
