@@ -1,0 +1,45 @@
+name: Github Actions
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  cross_compile_tests:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v3.2.0
+      - name: setup riscv toolchain
+        run: |
+          mkdir /opt/riscv
+          export PATH=$PATH:/opt/riscv/bin
+          wget https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/2023.10.18/riscv64-elf-ubuntu-20.04-gcc-nightly-2023.10.18-nightly.tar.gz
+          sudo tar -xzf riscv64-elf-ubuntu-20.04-gcc-nightly-2023.10.18-nightly.tar.gz -C /opt/
+          
+      - name: run tests
+        run: |
+          export PATH=$PATH:/opt/riscv/bin
+          sh scripts/cross-test.sh qemu
+
+  check_test_cases:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v3.2.0
+      - name: build artifact
+        run: |
+          make test
+
+  coding_style:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v3.2.0
+      - name: style check
+        run: |
+          sudo apt-get install -q -y clang-format-12
+          sh scripts/check-format.sh
+        shell: bash

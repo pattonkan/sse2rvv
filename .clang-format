@@ -1,0 +1,12 @@
+ColumnLimit:     80
+BraceWrapping:
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterClass: true
+  AfterControlStatement: true
+  AfterEnum: true
+  AfterUnion: true
+  AfterExternBlock: true
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
