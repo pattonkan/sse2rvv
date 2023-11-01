@@ -82,7 +82,40 @@
 typedef vint64m1_t __m64;
 typedef vfloat32m1_t __m128;  /* 128-bit vector containing 4 floats */
 typedef vfloat64m1_t __m128d; /* 128-bit vector containing 2 doubles */
-typedef vint64m1_t __m128i;   /* 128-bit vector containing integers */
+typedef vint32m1_t __m128i;   /* 128-bit vector containing integers */
+
+#define vreinterpretq_m128_u8(x) __riscv_vreinterpret_v_u32m1_u8m1(__riscv_vreinterpret_v_f32m1_u32m1(x))
+#define vreinterpretq_m128_u16(x) __riscv_vreinterpret_v_u32m1_u16m1(__riscv_vreinterpret_v_f32m1_u32m1(x))
+#define vreinterpretq_m128_u32(x) __riscv_vreinterpret_v_f32m1_u32m1(x)
+#define vreinterpretq_m128_u64(x) __riscv_vreinterpret_v_f64m1_u64m1(__riscv_vreinterpret_v_f32m1_f64m1(x))
+#define vreinterpretq_m128_i8(x) __riscv_vreinterpret_v_i32m1_i8m1(__riscv_vreinterpret_v_f32m1_i32m1(x))
+#define vreinterpretq_m128_i16(x) __riscv_vreinterpret_v_i32m1_i16m1(__riscv_vreinterpret_v_f32m1_i32m1(x))
+#define vreinterpretq_m128_i32(x) __riscv_vreinterpret_v_f32m1_i32m1(x)
+#define vreinterpretq_m128_i64(x) __riscv_vreinterpret_v_f64m1_i64m1(__riscv_vreinterpret_v_f32m1_f64m1(x))
+#define vreinterpretq_m128_f32(x) (x)
+#define vreinterpretq_m128_f64(x) __riscv_vreinterpret_v_f32m1_f64m1(x)
+
+#define vreinterpretq_m128d_u8(x) __riscv_vreinterpret_v_u64m1_u8m1(__riscv_vreinterpret_v_f64m1_u64m1(x))
+#define vreinterpretq_m128d_u16(x) __riscv_vreinterpret_v_u64m1_u16m1(__riscv_vreinterpret_v_f64m1_u64m1(x))
+#define vreinterpretq_m128d_u32(x) __riscv_vreinterpret_v_u64m1_u32m1(__riscv_vreinterpret_v_f64m1_u64m1(x))
+#define vreinterpretq_m128d_u64(x) __riscv_vreinterpret_v_f64m1_u64m1(x)
+#define vreinterpretq_m128d_i8(x) __riscv_vreinterpret_v_i64m1_i8m1(__riscv_vreinterpret_v_f64m1_i64m1(x))
+#define vreinterpretq_m128d_i16(x) __riscv_vreinterpret_v_i64m1_i16m1(__riscv_vreinterpret_v_f64m1_i64m1(x))
+#define vreinterpretq_m128d_i32(x) __riscv_vreinterpret_v_i64m1_i32m1(__riscv_vreinterpret_v_f64m1_i64m1(x))
+#define vreinterpretq_m128d_i64(x) __riscv_vreinterpret_v_f64m1_i64m1(x)
+#define vreinterpretq_m128d_f32(x) __riscv_vreinterpret_v_f64m1_f32m1(x)
+#define vreinterpretq_m128d_f64(x) (x)
+
+#define vreinterpretq_m128i_u8(x) __riscv_vreinterpret_v_u32m1_u8m1(__riscv_vreinterpret_v_i32m1_u32m1(x))
+#define vreinterpretq_m128i_u16(x) __riscv_vreinterpret_v_u32m1_u16m1(__riscv_vreinterpret_v_i32m1_u32m1(x))
+#define vreinterpretq_m128i_u32(x) __riscv_vreinterpret_v_i32m1_u32m1(x)
+#define vreinterpretq_m128i_u64(x) __riscv_vreinterpret_v_u32m1_u64m1(__riscv_vreinterpret_v_i32m1_u64m1(x))
+#define vreinterpretq_m128i_i8(x) __riscv_vreinterpret_v_i32m1_i8m1(x)
+#define vreinterpretq_m128i_i16(x) __riscv_vreinterpret_v_i32m1_i16m1(x)
+#define vreinterpretq_m128i_i32(x) (x)
+#define vreinterpretq_m128i_i64(x) __riscv_vreinterpret_v_i32m1_i64m1(x)
+#define vreinterpretq_m128i_f32(x) __riscv_vreinterpret_v_i32m1_f32m1(x)
+#define vreinterpretq_m128i_f64(x) __riscv_vreinterpret_v_f32m1_f64m1(__riscv_vreinterpret_v_i32m1_f32m1(x))
 
 // __int64 is defined in the Intrinsics Guide which maps to different datatype
 // in different data model
@@ -761,7 +794,9 @@ typedef struct {
 // elements) from memory into dst. mem_addr does not need to be aligned on any
 // particular boundary.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_loadu_ps
-// FORCE_INLINE __m128 _mm_loadu_ps(const float *p) {}
+FORCE_INLINE __m128 _mm_loadu_ps(const float *p) {
+  return __riscv_vle32_v_f32m1(p, 4);
+}
 
 // Load unaligned 16-bit integer from memory into the first element of dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_loadu_si16
@@ -1795,7 +1830,9 @@ typedef struct {
 
 // Loads two double-precision from unaligned memory, floating-point values.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_loadu_pd
-// FORCE_INLINE __m128d _mm_loadu_pd(const double *p) {}
+FORCE_INLINE __m128d _mm_loadu_pd(const double *p) {
+  return __riscv_vle64_v_f64m1(p, 2);
+}
 
 // Load 128-bits of integer data from memory into dst. mem_addr does not need to
 // be aligned on any particular boundary.

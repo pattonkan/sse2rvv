@@ -386,23 +386,23 @@ result_t test_mm_shuffle_pi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter);
 
 // This function is not called from "run_single_test", but for other intrinsic
 // tests that might need to call "_mm_load_ps".
-// template <class T> __m128 load_m128(const T *p) {
-//   return _mm_loadu_ps((const float *)p);
-// }
+template <class T> __m128 load_m128(const T *p) {
+  return _mm_loadu_ps((const float *)p);
+}
 
 // This function is not called from "run_single_test", but for other intrinsic
 // tests that might need to call "_mm_load_ps".
-// template <class T> __m128i load_m128i(const T *p) {
-//   __m128 a = _mm_loadu_ps((const float *)p);
-//   __m128i ia = *(const __m128i *)&a;
-//   return ia;
-// }
+template <class T> __m128i load_m128i(const T *p) {
+  __m128 a = _mm_loadu_ps((const float *)p);
+  __m128i ia = *(const __m128i *)&a;
+  return ia;
+}
 
 // This function is not called from "run_single_test", but for other intrinsic
 // tests that might need to call "_mm_load_pd".
-// template <class T> __m128d load_m128d(const T *p) {
-//   return _mm_loadu_pd((const double *)p);
-// }
+template <class T> __m128d load_m128d(const T *p) {
+  return _mm_loadu_pd((const double *)p);
+}
 
 // This function is not called from "run_single_test", but for other intrinsic
 // tests that might need to call "_mm_store_ps".
