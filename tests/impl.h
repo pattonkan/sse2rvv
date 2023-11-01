@@ -503,25 +503,25 @@
   _(mm_testnzc_si128)                                                          \
   _(mm_testz_si128)                                                            \
   /* SSE4.2 */                                                                 \
-  _(mm_cmpestra)                                                               \
-  _(mm_cmpestrc)                                                               \
-  _(mm_cmpestri)                                                               \
-  _(mm_cmpestrm)                                                               \
-  _(mm_cmpestro)                                                               \
-  _(mm_cmpestrs)                                                               \
-  _(mm_cmpestrz)                                                               \
-  _(mm_cmpgt_epi64)                                                            \
-  _(mm_cmpistra)                                                               \
-  _(mm_cmpistrc)                                                               \
-  _(mm_cmpistri)                                                               \
-  _(mm_cmpistrm)                                                               \
-  _(mm_cmpistro)                                                               \
-  _(mm_cmpistrs)                                                               \
-  _(mm_cmpistrz)                                                               \
-  _(mm_crc32_u16)                                                              \
-  _(mm_crc32_u32)                                                              \
-  _(mm_crc32_u64)                                                              \
-  _(mm_crc32_u8)                                                               \
+  /*_(mm_cmpestra)*/                                                           \
+  /*_(mm_cmpestrc) */                                                          \
+  /*_(mm_cmpestri) */                                                          \
+  /*_(mm_cmpestrm) */                                                          \
+  /*_(mm_cmpestro) */                                                          \
+  /*_(mm_cmpestrs) */                                                          \
+  /*_(mm_cmpestrz) */                                                          \
+  /*_(mm_cmpgt_epi64) */                                                       \
+  /*_(mm_cmpistra) */                                                          \
+  /*_(mm_cmpistrc) */                                                          \
+  /*_(mm_cmpistri) */                                                          \
+  /*_(mm_cmpistrm) */                                                          \
+  /*_(mm_cmpistro) */                                                          \
+  /*_(mm_cmpistrs) */                                                          \
+  /*_(mm_cmpistrz) */                                                          \
+  /*_(mm_crc32_u16) */                                                         \
+  /*_(mm_crc32_u32) */                                                         \
+  /*_(mm_crc32_u64) */                                                         \
+  /*_(mm_crc32_u8) */                                                          \
   /* AES */                                                                    \
   _(mm_aesenc_si128)                                                           \
   _(mm_aesdec_si128)                                                           \

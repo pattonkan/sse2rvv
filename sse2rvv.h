@@ -83,7 +83,7 @@ typedef vint64m1_t __m64;
 typedef vfloat32m1_t __m128;  /* 128-bit vector containing 4 floats */
 typedef vfloat64m1_t __m128d; /* 128-bit vector containing 2 doubles */
 typedef vint64m1_t __m128i;   /* 128-bit vector containing integers */
-typedef vuint8m1x4_t uint8x16x4_t;
+typedef vuint8m4_t uint8x16x4_t;
 
 // __int64 is defined in the Intrinsics Guide which maps to different datatype
 // in different data model
@@ -3265,8 +3265,8 @@ typedef struct {
 #pragma pop_macro("FORCE_INLINE")
 #endif
 
-#if defined(__GNUC__) && !defined(__clang__)
-#pragma GCC pop_options
-#endif
+// #if defined(__GNUC__) && !defined(__clang__)
+// #pragma GCC pop_options
+// #endif
 
 #endif

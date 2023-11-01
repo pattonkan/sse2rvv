@@ -8,11 +8,12 @@ void *platform_aligned_alloc(size_t size) {
   void *address;
 #if defined(_WIN32)
   address = _aligned_malloc(size, 16);
-  if (!address) {
 #else
-  int ret = posix_memalign(&address, 16, size);
-  if (ret != 0) {
+  // FIXME
+  // int ret = posix_memalign(&address, 16, size);
+  address = malloc(size);
 #endif
+  if (!address) {
     fprintf(stderr, "Error at File %s line number %d\n", __FILE__, __LINE__);
     exit(EXIT_FAILURE);
   }
