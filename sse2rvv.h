@@ -83,7 +83,6 @@ typedef vint64m1_t __m64;
 typedef vfloat32m1_t __m128;  /* 128-bit vector containing 4 floats */
 typedef vfloat64m1_t __m128d; /* 128-bit vector containing 2 doubles */
 typedef vint64m1_t __m128i;   /* 128-bit vector containing integers */
-typedef vuint8m4_t uint8x16x4_t;
 
 // __int64 is defined in the Intrinsics Guide which maps to different datatype
 // in different data model
@@ -306,12 +305,6 @@ typedef struct {
 // FORCE_INLINE __m128i _mm_shuffle_epi_0122(__m128i a) {}
 
 // FORCE_INLINE __m128i _mm_shuffle_epi_3332(__m128i a) {}
-
-#if defined(__aarch64__) || defined(_M_ARM64)
-// #define _mm_shuffle_epi32_splat(a, imm)
-#else
-// #define _mm_shuffle_epi32_splat(a, imm)
-#endif
 
 // NEON does not support a general purpose permute intrinsic.
 // Shuffle single-precision (32-bit) floating-point elements in a using the

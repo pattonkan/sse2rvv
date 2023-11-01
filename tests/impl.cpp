@@ -284,9 +284,9 @@ const char *instructionString[] = {
 
 // Produce rounding which is the same as SSE instructions with _MM_ROUND_NEAREST
 // rounding mode
-static inline float bankersRounding(float val) {
+static inline float bankers_rounding(float val) {
   if (val < 0)
-    return -bankersRounding(-val);
+    return -bankers_rounding(-val);
 
   float ret;
   float roundDown = floorf(val); // Round down value
@@ -315,9 +315,9 @@ static inline float bankersRounding(float val) {
   return ret;
 }
 
-static inline double bankersRounding(double val) {
+static inline double bankers_rounding(double val) {
   if (val < 0)
-    return -bankersRounding(-val);
+    return -bankers_rounding(-val);
 
   double ret;
   double roundDown = floor(val); // Round down value
@@ -1416,7 +1416,7 @@ result_t test_mm_cvt_ps2pi(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   //     switch (iter & 0x3) {
   //     case 0:
   //       _MM_SET_ROUNDING_MODE(_MM_ROUND_NEAREST);
-  //       d[idx] = (int32_t)(bankersRounding(_a[idx]));
+  //       d[idx] = (int32_t)(bankers_rounding(_a[idx]));
   //       break;
   //     case 1:
   //       _MM_SET_ROUNDING_MODE(_MM_ROUND_DOWN);
@@ -1463,7 +1463,7 @@ result_t test_mm_cvt_ss2si(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   //   switch (iter & 0x3) {
   //   case 0:
   //     _MM_SET_ROUNDING_MODE(_MM_ROUND_NEAREST);
-  //     d0 = (int32_t)(bankersRounding(_a[0]));
+  //     d0 = (int32_t)(bankers_rounding(_a[0]));
   //     break;
   //   case 1:
   //     _MM_SET_ROUNDING_MODE(_MM_ROUND_DOWN);
@@ -1560,7 +1560,7 @@ result_t test_mm_cvtps_pi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   //       switch (iter & 0x3) {
   //       case 0:
   //         _MM_SET_ROUNDING_MODE(_MM_ROUND_NEAREST);
-  //         rnd[i] = (int16_t)bankersRounding(_a[i]);
+  //         rnd[i] = (int16_t)bankers_rounding(_a[i]);
   //         break;
   //       case 1:
   //         _MM_SET_ROUNDING_MODE(_MM_ROUND_DOWN);
@@ -1593,8 +1593,8 @@ result_t test_mm_cvtps_pi32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   //   switch (iter & 0x3) {
   //   case 0:
   //     _MM_SET_ROUNDING_MODE(_MM_ROUND_NEAREST);
-  //     d[0] = (int32_t)bankersRounding(_a[0]);
-  //     d[1] = (int32_t)bankersRounding(_a[1]);
+  //     d[0] = (int32_t)bankers_rounding(_a[0]);
+  //     d[1] = (int32_t)bankers_rounding(_a[1]);
   //     break;
   //   case 1:
   //     _MM_SET_ROUNDING_MODE(_MM_ROUND_DOWN);
@@ -1631,7 +1631,7 @@ result_t test_mm_cvtps_pi8(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   //       switch (iter & 0x3) {
   //       case 0:
   //         _MM_SET_ROUNDING_MODE(_MM_ROUND_NEAREST);
-  //         rnd[i] = (int8_t)bankersRounding(_a[i]);
+  //         rnd[i] = (int8_t)bankers_rounding(_a[i]);
   //         break;
   //       case 1:
   //         _MM_SET_ROUNDING_MODE(_MM_ROUND_DOWN);
@@ -1738,7 +1738,7 @@ result_t test_mm_cvtss_si32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   //   switch (iter & 0x3) {
   //   case 0:
   //     _MM_SET_ROUNDING_MODE(_MM_ROUND_NEAREST);
-  //     d0 = (int32_t)(bankersRounding(_a[0]));
+  //     d0 = (int32_t)(bankers_rounding(_a[0]));
   //     break;
   //   case 1:
   //     _MM_SET_ROUNDING_MODE(_MM_ROUND_DOWN);
@@ -1768,7 +1768,7 @@ result_t test_mm_cvtss_si64(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   //   switch (iter & 0x3) {
   //   case 0:
   //     _MM_SET_ROUNDING_MODE(_MM_ROUND_NEAREST);
-  //     d0 = (int64_t)(bankersRounding(_a[0]));
+  //     d0 = (int64_t)(bankers_rounding(_a[0]));
   //     break;
   //   case 1:
   //     _MM_SET_ROUNDING_MODE(_MM_ROUND_DOWN);
@@ -1918,6 +1918,7 @@ result_t test_mm_extract_pi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_malloc(const SSE2RVV_TEST_IMPL &impl, uint32_t iter);
+
 result_t test_mm_free(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   //   /* We verify _mm_malloc first, and there is no need to check _mm_free .
   //   */ return test_mm_malloc(impl, iter);
@@ -2141,7 +2142,8 @@ result_t test_mm_maskmove_si64(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_m_maskmovq(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  return test_mm_maskmove_si64(impl, iter);
+  // return test_mm_maskmove_si64(impl, iter);
+  return TEST_UNIMPL;
 }
 
 result_t test_mm_max_pi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
@@ -2449,43 +2451,53 @@ result_t test_mm_or_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_m_pavgb(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  return test_mm_avg_pu8(impl, iter);
+  // return test_mm_avg_pu8(impl, iter);
+  return TEST_UNIMPL;
 }
 
 result_t test_m_pavgw(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  return test_mm_avg_pu16(impl, iter);
+  // return test_mm_avg_pu16(impl, iter);
+  return TEST_UNIMPL;
 }
 
 result_t test_m_pextrw(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  return test_mm_extract_pi16(impl, iter);
+  // return test_mm_extract_pi16(impl, iter);
+  return TEST_UNIMPL;
 }
 
 result_t test_m_pinsrw(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  return test_mm_insert_pi16(impl, iter);
+  // return test_mm_insert_pi16(impl, iter);
+  return TEST_UNIMPL;
 }
 
 result_t test_m_pmaxsw(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  return test_mm_max_pi16(impl, iter);
+  // return test_mm_max_pi16(impl, iter);
+  return TEST_UNIMPL;
 }
 
 result_t test_m_pmaxub(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  return test_mm_max_pu8(impl, iter);
+  // return test_mm_max_pu8(impl, iter);
+  return TEST_UNIMPL;
 }
 
 result_t test_m_pminsw(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  return test_mm_min_pi16(impl, iter);
+  // return test_mm_min_pi16(impl, iter);
+  return TEST_UNIMPL;
 }
 
 result_t test_m_pminub(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  return test_mm_min_pu8(impl, iter);
+  // return test_mm_min_pu8(impl, iter);
+  return TEST_UNIMPL;
 }
 
 result_t test_m_pmovmskb(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  return test_mm_movemask_pi8(impl, iter);
+  // return test_mm_movemask_pi8(impl, iter);
+  return TEST_UNIMPL;
 }
 
 result_t test_m_pmulhuw(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  return test_mm_mulhi_pu16(impl, iter);
+  // return test_mm_mulhi_pu16(impl, iter);
+  return TEST_UNIMPL;
 }
 
 result_t test_mm_prefetch(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
@@ -4345,8 +4357,8 @@ result_t test_mm_cvtpd_epi32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   //   switch (iter & 0x3) {
   //   case 0:
   //     _MM_SET_ROUNDING_MODE(_MM_ROUND_NEAREST);
-  //     d[0] = (int32_t)(bankersRounding(_a[0]));
-  //     d[1] = (int32_t)(bankersRounding(_a[1]));
+  //     d[0] = (int32_t)(bankers_rounding(_a[0]));
+  //     d[1] = (int32_t)(bankers_rounding(_a[1]));
   //     break;
   //   case 1:
   //     _MM_SET_ROUNDING_MODE(_MM_ROUND_DOWN);
@@ -4379,8 +4391,8 @@ result_t test_mm_cvtpd_pi32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   //   switch (iter & 0x3) {
   //   case 0:
   //     _MM_SET_ROUNDING_MODE(_MM_ROUND_NEAREST);
-  //     d[0] = (int32_t)(bankersRounding(_a[0]));
-  //     d[1] = (int32_t)(bankersRounding(_a[1]));
+  //     d[0] = (int32_t)(bankers_rounding(_a[0]));
+  //     d[1] = (int32_t)(bankers_rounding(_a[1]));
   //     break;
   //   case 1:
   //     _MM_SET_ROUNDING_MODE(_MM_ROUND_DOWN);
@@ -4438,7 +4450,7 @@ result_t test_mm_cvtps_epi32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   //   case 0:
   //     _MM_SET_ROUNDING_MODE(_MM_ROUND_NEAREST);
   //     for (uint32_t i = 0; i < 4; i++) {
-  //       d[i] = (int32_t)(bankersRounding(_a[i]));
+  //       d[i] = (int32_t)(bankers_rounding(_a[i]));
   //     }
   //     break;
   //   case 1:
@@ -4497,7 +4509,7 @@ result_t test_mm_cvtsd_si32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   //   switch (iter & 0x3) {
   //   case 0:
   //     _MM_SET_ROUNDING_MODE(_MM_ROUND_NEAREST);
-  //     d = (int32_t)(bankersRounding(_a[0]));
+  //     d = (int32_t)(bankers_rounding(_a[0]));
   //     break;
   //   case 1:
   //     _MM_SET_ROUNDING_MODE(_MM_ROUND_DOWN);
@@ -4527,7 +4539,7 @@ result_t test_mm_cvtsd_si64(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   //   switch (iter & 0x3) {
   //   case 0:
   //     _MM_SET_ROUNDING_MODE(_MM_ROUND_NEAREST);
-  //     d = (int64_t)(bankersRounding(_a[0]));
+  //     d = (int64_t)(bankers_rounding(_a[0]));
   //     break;
   //   case 1:
   //     _MM_SET_ROUNDING_MODE(_MM_ROUND_DOWN);
@@ -8821,8 +8833,8 @@ result_t test_mm_round_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   //   __m128d a = load_m128d(_a);
   //   switch (iter & 0x7) {
   //   case 0:
-  //     d[0] = bankersRounding(_a[0]);
-  //     d[1] = bankersRounding(_a[1]);
+  //     d[0] = bankers_rounding(_a[0]);
+  //     d[1] = bankers_rounding(_a[1]);
   //
   //     ret = _mm_round_pd(a, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC);
   //     break;
@@ -8845,8 +8857,8 @@ result_t test_mm_round_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   //     ret = _mm_round_pd(a, _MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC);
   //     break;
   //   case 4:
-  //     d[0] = bankersRounding(_a[0]);
-  //     d[1] = bankersRounding(_a[1]);
+  //     d[0] = bankers_rounding(_a[0]);
+  //     d[1] = bankers_rounding(_a[1]);
   //
   //     _MM_SET_ROUNDING_MODE(_MM_ROUND_NEAREST);
   //     ret = _mm_round_pd(a, _MM_FROUND_CUR_DIRECTION);
@@ -8886,10 +8898,10 @@ result_t test_mm_round_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   //   __m128 a = load_m128(_a);
   //   switch (iter & 0x7) {
   //   case 0:
-  //     f[0] = bankersRounding(_a[0]);
-  //     f[1] = bankersRounding(_a[1]);
-  //     f[2] = bankersRounding(_a[2]);
-  //     f[3] = bankersRounding(_a[3]);
+  //     f[0] = bankers_rounding(_a[0]);
+  //     f[1] = bankers_rounding(_a[1]);
+  //     f[2] = bankers_rounding(_a[2]);
+  //     f[3] = bankers_rounding(_a[3]);
   //
   //     ret = _mm_round_ps(a, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC);
   //     break;
@@ -8918,10 +8930,10 @@ result_t test_mm_round_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   //     ret = _mm_round_ps(a, _MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC);
   //     break;
   //   case 4:
-  //     f[0] = bankersRounding(_a[0]);
-  //     f[1] = bankersRounding(_a[1]);
-  //     f[2] = bankersRounding(_a[2]);
-  //     f[3] = bankersRounding(_a[3]);
+  //     f[0] = bankers_rounding(_a[0]);
+  //     f[1] = bankers_rounding(_a[1]);
+  //     f[2] = bankers_rounding(_a[2]);
+  //     f[3] = bankers_rounding(_a[3]);
   //
   //     _MM_SET_ROUNDING_MODE(_MM_ROUND_NEAREST);
   //     ret = _mm_round_ps(a, _MM_FROUND_CUR_DIRECTION);
@@ -8970,7 +8982,7 @@ result_t test_mm_round_sd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   //   d[1] = _a[1];
   //   switch (iter & 0x7) {
   //   case 0:
-  //     d[0] = bankersRounding(_b[0]);
+  //     d[0] = bankers_rounding(_b[0]);
   //
   //     ret = _mm_round_sd(a, b, _MM_FROUND_TO_NEAREST_INT |
   //     _MM_FROUND_NO_EXC); break;
@@ -8990,7 +9002,7 @@ result_t test_mm_round_sd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   //     ret = _mm_round_sd(a, b, _MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC);
   //     break;
   //   case 4:
-  //     d[0] = bankersRounding(_b[0]);
+  //     d[0] = bankers_rounding(_b[0]);
   //
   //     _MM_SET_ROUNDING_MODE(_MM_ROUND_NEAREST);
   //     ret = _mm_round_sd(a, b, _MM_FROUND_CUR_DIRECTION);
@@ -9029,7 +9041,7 @@ result_t test_mm_round_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   //   __m128 b = load_m128(_b);
   //   switch (iter & 0x7) {
   //   case 0:
-  //     f[0] = bankersRounding(_b[0]);
+  //     f[0] = bankers_rounding(_b[0]);
   //
   //     ret = _mm_round_ss(a, b, _MM_FROUND_TO_NEAREST_INT |
   //     _MM_FROUND_NO_EXC); break;
@@ -9049,7 +9061,7 @@ result_t test_mm_round_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   //     ret = _mm_round_ss(a, b, _MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC);
   //     break;
   //   case 4:
-  //     f[0] = bankersRounding(_b[0]);
+  //     f[0] = bankers_rounding(_b[0]);
   //
   //     _MM_SET_ROUNDING_MODE(_MM_ROUND_NEAREST);
   //     ret = _mm_round_ss(a, b, _MM_FROUND_CUR_DIRECTION);
