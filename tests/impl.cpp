@@ -3177,25 +3177,24 @@ result_t test_mm_xor_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 
 /* SSE2 */
 result_t test_mm_add_epi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  //   const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
-  //   const int16_t *_b = (const int16_t *)impl.test_cases_int_pointer2;
-  //
-  //   int16_t d[8];
-  //   d[0] = _a[0] + _b[0];
-  //   d[1] = _a[1] + _b[1];
-  //   d[2] = _a[2] + _b[2];
-  //   d[3] = _a[3] + _b[3];
-  //   d[4] = _a[4] + _b[4];
-  //   d[5] = _a[5] + _b[5];
-  //   d[6] = _a[6] + _b[6];
-  //   d[7] = _a[7] + _b[7];
-  //
-  //   __m128i a = load_m128i(_a);
-  //   __m128i b = load_m128i(_b);
-  //   __m128i c = _mm_add_epi16(a, b);
-  //
-  //   return VALIDATE_INT16_M128(c, d);
-  return TEST_UNIMPL;
+    const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
+    const int16_t *_b = (const int16_t *)impl.test_cases_int_pointer2;
+  
+    int16_t d[8];
+    d[0] = _a[0] + _b[0];
+    d[1] = _a[1] + _b[1];
+    d[2] = _a[2] + _b[2];
+    d[3] = _a[3] + _b[3];
+    d[4] = _a[4] + _b[4];
+    d[5] = _a[5] + _b[5];
+    d[6] = _a[6] + _b[6];
+    d[7] = _a[7] + _b[7];
+  
+    __m128i a = load_m128i(_a);
+    __m128i b = load_m128i(_a);
+    __m128i c = _mm_add_epi16(a, b);
+  
+    return VALIDATE_INT16_M128(c, d);
 }
 
 result_t test_mm_add_epi32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
