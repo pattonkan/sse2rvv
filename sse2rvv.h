@@ -1328,7 +1328,11 @@ FORCE_INLINE __m128 _mm_loadu_ps(const float *p) {
 
 // Add packed 16-bit integers in a and b, and store the results in dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_add_epi16
-// FORCE_INLINE __m128i _mm_add_epi16(__m128i a, __m128i b) {}
+FORCE_INLINE __m128i _mm_add_epi16(__m128i a, __m128i b) {
+  vint16m1_t _a = vreinterpretq_m128i_i16(a);
+  vint16m1_t _b = vreinterpretq_m128i_i16(b);
+  return vreinterpretq_i16_m128i(__riscv_vadd_vv_i16m1(_a, _b, 8));
+}
 
 // Add packed 32-bit integers in a and b, and store the results in dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_add_epi32
