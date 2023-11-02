@@ -84,38 +84,103 @@ typedef vfloat32m1_t __m128;  /* 128-bit vector containing 4 floats */
 typedef vfloat64m1_t __m128d; /* 128-bit vector containing 2 doubles */
 typedef vint32m1_t __m128i;   /* 128-bit vector containing integers */
 
-#define vreinterpretq_m128_u8(x) __riscv_vreinterpret_v_u32m1_u8m1(__riscv_vreinterpret_v_f32m1_u32m1(x))
-#define vreinterpretq_m128_u16(x) __riscv_vreinterpret_v_u32m1_u16m1(__riscv_vreinterpret_v_f32m1_u32m1(x))
+#define vreinterpretq_m128_u8(x)                                               \
+  __riscv_vreinterpret_v_u32m1_u8m1(__riscv_vreinterpret_v_f32m1_u32m1(x))
+#define vreinterpretq_m128_u16(x)                                              \
+  __riscv_vreinterpret_v_u32m1_u16m1(__riscv_vreinterpret_v_f32m1_u32m1(x))
 #define vreinterpretq_m128_u32(x) __riscv_vreinterpret_v_f32m1_u32m1(x)
-#define vreinterpretq_m128_u64(x) __riscv_vreinterpret_v_f64m1_u64m1(__riscv_vreinterpret_v_f32m1_f64m1(x))
-#define vreinterpretq_m128_i8(x) __riscv_vreinterpret_v_i32m1_i8m1(__riscv_vreinterpret_v_f32m1_i32m1(x))
-#define vreinterpretq_m128_i16(x) __riscv_vreinterpret_v_i32m1_i16m1(__riscv_vreinterpret_v_f32m1_i32m1(x))
+#define vreinterpretq_m128_u64(x)                                              \
+  __riscv_vreinterpret_v_f64m1_u64m1(__riscv_vreinterpret_v_f32m1_f64m1(x))
+#define vreinterpretq_m128_i8(x)                                               \
+  __riscv_vreinterpret_v_i32m1_i8m1(__riscv_vreinterpret_v_f32m1_i32m1(x))
+#define vreinterpretq_m128_i16(x)                                              \
+  __riscv_vreinterpret_v_i32m1_i16m1(__riscv_vreinterpret_v_f32m1_i32m1(x))
 #define vreinterpretq_m128_i32(x) __riscv_vreinterpret_v_f32m1_i32m1(x)
-#define vreinterpretq_m128_i64(x) __riscv_vreinterpret_v_f64m1_i64m1(__riscv_vreinterpret_v_f32m1_f64m1(x))
+#define vreinterpretq_m128_i64(x)                                              \
+  __riscv_vreinterpret_v_f64m1_i64m1(__riscv_vreinterpret_v_f32m1_f64m1(x))
 #define vreinterpretq_m128_f32(x) (x)
 #define vreinterpretq_m128_f64(x) __riscv_vreinterpret_v_f32m1_f64m1(x)
 
-#define vreinterpretq_m128d_u8(x) __riscv_vreinterpret_v_u64m1_u8m1(__riscv_vreinterpret_v_f64m1_u64m1(x))
-#define vreinterpretq_m128d_u16(x) __riscv_vreinterpret_v_u64m1_u16m1(__riscv_vreinterpret_v_f64m1_u64m1(x))
-#define vreinterpretq_m128d_u32(x) __riscv_vreinterpret_v_u64m1_u32m1(__riscv_vreinterpret_v_f64m1_u64m1(x))
+#define vreinterpretq_u8_m128(x)                                               \
+  __riscv_vreinterpret_v_u32m1_f32m1(__riscv_vreinterpret_v_u8m1_u32m1(x))
+#define vreinterpretq_u16_m128(x)                                              \
+  __riscv_vreinterpret_v_u32m1_f32m1(__riscv_vreinterpret_v_u16m1_u32m1(x))
+#define vreinterpretq_u32_m128(x) __riscv_vreinterpret_v_u32m1_f32m1(x)
+#define vreinterpretq_u64_m128(x)                                              \
+  __riscv_vreinterpret_v_f64m1_f32m1(__riscv_vreinterpret_v_u64m1_f64m1(x))
+#define vreinterpretq_i8_m128(x)                                               \
+  __riscv_vreinterpret_v_i32m1_f32m1(__riscv_vreinterpret_v_i8m1_i32m1(x))
+#define vreinterpretq_i16_m128(x)                                              \
+  __riscv_vreinterpret_v_i32m1_f32m1(__riscv_vreinterpret_v_i16m1_i32m1(x))
+#define vreinterpretq_i32_m128(x) __riscv_vreinterpret_v_i32m1_f32m1(x)
+#define vreinterpretq_i64_m128(x)                                              \
+  __riscv_vreinterpret_v_f64m1_f32m1(__riscv_vreinterpret_v_i64m1_f64m1(x))
+#define vreinterpretq_f32_m128(x) (x)
+#define vreinterpretq_f64_m128(x) __riscv_vreinterpret_v_f64m1_f32m1(x)
+
+#define vreinterpretq_m128d_u8(x)                                              \
+  __riscv_vreinterpret_v_u64m1_u8m1(__riscv_vreinterpret_v_f64m1_u64m1(x))
+#define vreinterpretq_m128d_u16(x)                                             \
+  __riscv_vreinterpret_v_u64m1_u16m1(__riscv_vreinterpret_v_f64m1_u64m1(x))
+#define vreinterpretq_m128d_u32(x)                                             \
+  __riscv_vreinterpret_v_u64m1_u32m1(__riscv_vreinterpret_v_f64m1_u64m1(x))
 #define vreinterpretq_m128d_u64(x) __riscv_vreinterpret_v_f64m1_u64m1(x)
-#define vreinterpretq_m128d_i8(x) __riscv_vreinterpret_v_i64m1_i8m1(__riscv_vreinterpret_v_f64m1_i64m1(x))
-#define vreinterpretq_m128d_i16(x) __riscv_vreinterpret_v_i64m1_i16m1(__riscv_vreinterpret_v_f64m1_i64m1(x))
-#define vreinterpretq_m128d_i32(x) __riscv_vreinterpret_v_i64m1_i32m1(__riscv_vreinterpret_v_f64m1_i64m1(x))
+#define vreinterpretq_m128d_i8(x)                                              \
+  __riscv_vreinterpret_v_i64m1_i8m1(__riscv_vreinterpret_v_f64m1_i64m1(x))
+#define vreinterpretq_m128d_i16(x)                                             \
+  __riscv_vreinterpret_v_i64m1_i16m1(__riscv_vreinterpret_v_f64m1_i64m1(x))
+#define vreinterpretq_m128d_i32(x)                                             \
+  __riscv_vreinterpret_v_i64m1_i32m1(__riscv_vreinterpret_v_f64m1_i64m1(x))
 #define vreinterpretq_m128d_i64(x) __riscv_vreinterpret_v_f64m1_i64m1(x)
 #define vreinterpretq_m128d_f32(x) __riscv_vreinterpret_v_f64m1_f32m1(x)
 #define vreinterpretq_m128d_f64(x) (x)
 
-#define vreinterpretq_m128i_u8(x) __riscv_vreinterpret_v_u32m1_u8m1(__riscv_vreinterpret_v_i32m1_u32m1(x))
-#define vreinterpretq_m128i_u16(x) __riscv_vreinterpret_v_u32m1_u16m1(__riscv_vreinterpret_v_i32m1_u32m1(x))
+#define vreinterpretq_u8_m128d(x)                                              \
+  __riscv_vreinterpret_v_u64m1_f64m1(__riscv_vreinterpret_v_u8m1_u64m1(x))
+#define vreinterpretq_u16_m128d(x)                                             \
+  __riscv_vreinterpret_v_u64m1_f64m1(__riscv_vreinterpret_v_u16m1_u64m1(x))
+#define vreinterpretq_u32_m128d(x)                                             \
+  __riscv_vreinterpret_v_u64m1_f64m1(__riscv_vreinterpret_v_u32m1_u64m1(x))
+#define vreinterpretq_u64_m128d(x) __riscv_vreinterpret_v_u64m1_f64m1(x)
+#define vreinterpretq_i8_m128d(x)                                              \
+  __riscv_vreinterpret_v_i64m1_f64m1(__riscv_vreinterpret_v_i8m1_i64m1(x))
+#define vreinterpretq_i16_m128d(x)                                             \
+  __riscv_vreinterpret_v_i64m1_f64m1(__riscv_vreinterpret_v_i16m1_i64m1(x))
+#define vreinterpretq_i32_m128d(x)                                             \
+  __riscv_vreinterpret_v_i64m1_f64m1(__riscv_vreinterpret_v_i32m1_i64m1(x))
+#define vreinterpretq_i64_m128d(x) __riscv_vreinterpret_v_i64m1_f64m1(x)
+#define vreinterpretq_f32_m128d(x) __riscv_vreinterpret_v_f32m1_f64m1(x)
+#define vreinterpretq_f64_m128d(x) (x)
+
+#define vreinterpretq_m128i_u8(x)                                              \
+  __riscv_vreinterpret_v_u32m1_u8m1(__riscv_vreinterpret_v_i32m1_u32m1(x))
+#define vreinterpretq_m128i_u16(x)                                             \
+  __riscv_vreinterpret_v_u32m1_u16m1(__riscv_vreinterpret_v_i32m1_u32m1(x))
 #define vreinterpretq_m128i_u32(x) __riscv_vreinterpret_v_i32m1_u32m1(x)
-#define vreinterpretq_m128i_u64(x) __riscv_vreinterpret_v_u32m1_u64m1(__riscv_vreinterpret_v_i32m1_u64m1(x))
+#define vreinterpretq_m128i_u64(x)                                             \
+  __riscv_vreinterpret_v_u32m1_u64m1(__riscv_vreinterpret_v_i32m1_u64m1(x))
 #define vreinterpretq_m128i_i8(x) __riscv_vreinterpret_v_i32m1_i8m1(x)
 #define vreinterpretq_m128i_i16(x) __riscv_vreinterpret_v_i32m1_i16m1(x)
 #define vreinterpretq_m128i_i32(x) (x)
 #define vreinterpretq_m128i_i64(x) __riscv_vreinterpret_v_i32m1_i64m1(x)
 #define vreinterpretq_m128i_f32(x) __riscv_vreinterpret_v_i32m1_f32m1(x)
-#define vreinterpretq_m128i_f64(x) __riscv_vreinterpret_v_f32m1_f64m1(__riscv_vreinterpret_v_i32m1_f32m1(x))
+#define vreinterpretq_m128i_f64(x)                                             \
+  __riscv_vreinterpret_v_f32m1_f64m1(__riscv_vreinterpret_v_i32m1_f32m1(x))
+
+#define vreinterpretq_m128i_u8(x)                                              \
+  __riscv_vreinterpret_v_u32m1_i32m1(__riscv_vreinterpret_v_u8m1_u32m1(x))
+#define vreinterpretq_m128i_u16(x)                                             \
+  __riscv_vreinterpret_v_u32m1_i32m1(__riscv_vreinterpret_v_u16m1_u32m1(x))
+#define vreinterpretq_m128i_u32(x) __riscv_vreinterpret_v_u32m1_i32m1(x)
+#define vreinterpretq_m128i_u64(x)                                             \
+  __riscv_vreinterpret_v_u64m1_i32m1(__riscv_vreinterpret_v_u64m1_u32m1(x))
+#define vreinterpretq_m128i_i8(x) __riscv_vreinterpret_v_i8m1_i32m1(x)
+#define vreinterpretq_m128i_i16(x) __riscv_vreinterpret_v_i16m1_i32m1(x)
+#define vreinterpretq_m128i_i32(x) (x)
+#define vreinterpretq_m128i_i64(x) __riscv_vreinterpret_v_i64m1_i32m1(x)
+#define vreinterpretq_m128i_f32(x) __riscv_vreinterpret_v_f32m1_i32m1(x)
+#define vreinterpretq_m128i_f64(x)                                             \
+  __riscv_vreinterpret_v_f32m1_i32m1(__riscv_vreinterpret_v_f64m1_f32m1(x))
 
 // __int64 is defined in the Intrinsics Guide which maps to different datatype
 // in different data model
