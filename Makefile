@@ -56,6 +56,7 @@ LDFLAGS	+= -lm
 OBJS = \
     tests/binding.o \
     tests/common.o \
+    tests/debug_tools.o \
     tests/impl.o \
     tests/main.o
 deps := $(OBJS:%.o=%.o.d)
