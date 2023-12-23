@@ -6,6 +6,12 @@ ifndef CXX
 override CXX = g++
 endif
 
+ifndef ENABLE_TEST_ALL
+	DEFINED_FLAGS =
+else
+	DEFINED_FLAGS = -DENABLE_TEST_ALL
+endif
+
 ifndef CROSS_COMPILE
     processor := $(shell uname -m)
 else # CROSS_COMPILE was set
