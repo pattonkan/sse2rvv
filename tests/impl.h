@@ -2,6 +2,7 @@
 #define SSE2RVV_TEST_H
 
 #include "common.h"
+#include "debug_tools.h"
 
 #define INTRIN_LIST                                                            \
   /* MMX */                                                                    \
