@@ -149,7 +149,9 @@ typedef vint32m1_t __m128i;   /* 128-bit vector containing integers */
 #define vreinterpretq_i32_m128d(x)                                             \
   __riscv_vreinterpret_v_i64m1_f64m1(__riscv_vreinterpret_v_i32m1_i64m1(x))
 #define vreinterpretq_i64_m128d(x) __riscv_vreinterpret_v_i64m1_f64m1(x)
-#define vreinterpretq_f32_m128d(x) __riscv_vreinterpret_v_f32m1_f64m1(x)
+#define vreinterpretq_f32_m128d(x)                                             \
+  __riscv_vreinterpret_v_i64m1_f64m1(__riscv_vreinterpret_v_i32m1_i64m1(       \
+      __riscv_vreinterpret_v_f32m1_i32m1(x)))
 #define vreinterpretq_f64_m128d(x) (x)
 
 #define vreinterpretq_m128i_u8(x)                                              \
@@ -180,7 +182,7 @@ typedef vint32m1_t __m128i;   /* 128-bit vector containing integers */
 #define vreinterpretq_i64_m128i(x) __riscv_vreinterpret_v_i64m1_i32m1(x)
 #define vreinterpretq_f32_m128i(x) __riscv_vreinterpret_v_f32m1_i32m1(x)
 #define vreinterpretq_f64_m128i(x)                                             \
-  __riscv_vreinterpret_v_f32m1_i32m1(__riscv_vreinterpret_v_f64m1_f32m1(x))
+  __riscv_vreinterpret_v_i64m1_i32m1(__riscv_vreinterpret_v_f64m1_i64m1(x))
 
 #define vreinterpretq_m64_u8(x)                                                \
   __riscv_vreinterpret_v_u32m1_u8m1(__riscv_vreinterpret_v_f32m1_u32m1(x))
@@ -849,7 +851,9 @@ FORCE_INLINE __m128 _mm_add_ps(__m128 a, __m128 b) {
 // elements) from memory into dst. mem_addr must be aligned on a 16-byte
 // boundary or a general-protection exception may be generated.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_load_ps
-// FORCE_INLINE __m128 _mm_load_ps(const float *p) {}
+FORCE_INLINE __m128 _mm_load_ps(float const *mem_addr) {
+  return vreinterpretq_f32_m128(__riscv_vle32_v_f32m1(mem_addr, 4));
+}
 
 // Load a single-precision (32-bit) floating-point element from memory into all
 // elements of dst.
@@ -860,18 +864,23 @@ FORCE_INLINE __m128 _mm_add_ps(__m128 a, __m128 b) {
 //   dst[127:96] := MEM[mem_addr+31:mem_addr]
 //
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_load_ps1
-// #define _mm_load_ps1 _mm_load1_ps
+#define _mm_load_ps1 _mm_load1_ps
 
 // Load a single-precision (32-bit) floating-point element from memory into the
 // lower of dst, and zero the upper 3 elements. mem_addr does not need to be
 // aligned on any particular boundary.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_load_ss
-// FORCE_INLINE __m128 _mm_load_ss(const float *p) {}
+FORCE_INLINE __m128 _mm_load_ss(float const *mem_addr) {
+  float p[4] = {mem_addr[0], 0, 0, 0};
+  return vreinterpretq_f32_m128(__riscv_vle32_v_f32m1(p, 4));
+}
 
 // Load a single-precision (32-bit) floating-point element from memory into all
 // elements of dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_load1_ps
-// FORCE_INLINE __m128 _mm_load1_ps(const float *p) {}
+FORCE_INLINE __m128 _mm_load1_ps(float const *mem_addr) {
+  return vreinterpretq_f32_m128(__riscv_vfmv_v_f_f32m1(mem_addr[0], 4));
+}
 
 // Load 2 single-precision (32-bit) floating-point elements from memory into the
 // upper 2 elements of dst, and copy the lower 2 elements from a to dst.
@@ -1931,28 +1940,38 @@ FORCE_INLINE __m64 _mm_add_si64(__m64 a, __m64 b) {
 // elements) from memory into dst. mem_addr must be aligned on a 16-byte
 // boundary or a general-protection exception may be generated.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_load_pd
-// FORCE_INLINE __m128d _mm_load_pd(const double *p) {}
+FORCE_INLINE __m128d _mm_load_pd(double const *mem_addr) {
+  return vreinterpretq_f64_m128d(__riscv_vle64_v_f64m1(mem_addr, 2));
+}
 
 // Load a double-precision (64-bit) floating-point element from memory into both
 // elements of dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_load_pd1
-// #define _mm_load_pd1 _mm_load1_pd
+#define _mm_load_pd1 _mm_load1_pd
 
 // Load a double-precision (64-bit) floating-point element from memory into the
 // lower of dst, and zero the upper element. mem_addr does not need to be
 // aligned on any particular boundary.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_load_sd
-// FORCE_INLINE __m128d _mm_load_sd(const double *p) {}
+FORCE_INLINE __m128d _mm_load_sd(double const *mem_addr) {
+  double p[2] = {mem_addr[0], 0};
+  return vreinterpretq_f64_m128d(__riscv_vle64_v_f64m1(p, 2));
+}
 
 // Load 128-bits of integer data from memory into dst. mem_addr must be aligned
 // on a 16-byte boundary or a general-protection exception may be generated.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_load_si128
-// FORCE_INLINE __m128i _mm_load_si128(const __m128i *p) {}
+FORCE_INLINE __m128i _mm_load_si128(__m128i const *mem_addr) {
+  return vreinterpretq_f64_m128i(
+      __riscv_vle64_v_f64m1((double const *)mem_addr, 2));
+}
 
 // Load a double-precision (64-bit) floating-point element from memory into both
 // elements of dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_load1_pd
-// FORCE_INLINE __m128d _mm_load1_pd(const double *p) {}
+FORCE_INLINE __m128d _mm_load1_pd(double const *mem_addr) {
+  return vreinterpretq_f64_m128d(__riscv_vfmv_v_f_f64m1(mem_addr[0], 2));
+}
 
 // Load a double-precision (64-bit) floating-point element from memory into the
 // upper element of dst, and copy the lower element from a to dst. mem_addr does
@@ -1979,7 +1998,7 @@ FORCE_INLINE __m64 _mm_add_si64(__m64 a, __m64 b) {
 // Loads two double-precision from unaligned memory, floating-point values.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_loadu_pd
 FORCE_INLINE __m128d _mm_loadu_pd(const double *p) {
-  return __riscv_vle64_v_f64m1(p, 2);
+  return vreinterpretq_f64_m128d(__riscv_vle64_v_f64m1(p, 2));
 }
 
 // Load 128-bits of integer data from memory into dst. mem_addr does not need to
