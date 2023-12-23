@@ -182,6 +182,38 @@ typedef vint32m1_t __m128i;   /* 128-bit vector containing integers */
 #define vreinterpretq_f64_m128i(x)                                             \
   __riscv_vreinterpret_v_f32m1_i32m1(__riscv_vreinterpret_v_f64m1_f32m1(x))
 
+#define vreinterpretq_m64_u8(x)                                                \
+  __riscv_vreinterpret_v_u32m1_u8m1(__riscv_vreinterpret_v_f32m1_u32m1(x))
+#define vreinterpretq_m64_u16(x)                                               \
+  __riscv_vreinterpret_v_u32m1_u16m1(__riscv_vreinterpret_v_f32m1_u32m1(x))
+#define vreinterpretq_m64_u32(x) __riscv_vreinterpret_v_f32m1_u32m1(x)
+#define vreinterpretq_m64_u64(x)                                               \
+  __riscv_vreinterpret_v_f64m1_u64m1(__riscv_vreinterpret_v_f32m1_f64m1(x))
+#define vreinterpretq_m64_i8(x)                                                \
+  __riscv_vreinterpret_v_i32m1_i8m1(__riscv_vreinterpret_v_f32m1_i32m1(x))
+#define vreinterpretq_m64_i16(x)                                               \
+  __riscv_vreinterpret_v_i32m1_i16m1(__riscv_vreinterpret_v_f32m1_i32m1(x))
+#define vreinterpretq_m64_i32(x) __riscv_vreinterpret_v_f32m1_i32m1(x)
+#define vreinterpretq_m64_i64(x) (x)
+#define vreinterpretq_m64_f32(x) (x)
+#define vreinterpretq_m64_f64(x) __riscv_vreinterpret_v_f32m1_f64m1(x)
+
+#define vreinterpretq_u8_m64(x)                                                \
+  __riscv_vreinterpret_v_u32m1_f32m1(__riscv_vreinterpret_v_u8m1_u32m1(x))
+#define vreinterpretq_u16_m64(x)                                               \
+  __riscv_vreinterpret_v_u32m1_f32m1(__riscv_vreinterpret_v_u16m1_u32m1(x))
+#define vreinterpretq_u32_m64(x) __riscv_vreinterpret_v_u32m1_f32m1(x)
+#define vreinterpretq_u64_m64(x)                                               \
+  __riscv_vreinterpret_v_f64m1_f32m1(__riscv_vreinterpret_v_u64m1_f64m1(x))
+#define vreinterpretq_i8_m64(x)                                                \
+  __riscv_vreinterpret_v_i32m1_f32m1(__riscv_vreinterpret_v_i8m1_i32m1(x))
+#define vreinterpretq_i16_m64(x)                                               \
+  __riscv_vreinterpret_v_i32m1_f32m1(__riscv_vreinterpret_v_i16m1_i32m1(x))
+#define vreinterpretq_i32_m64(x) __riscv_vreinterpret_v_i32m1_f32m1(x)
+#define vreinterpretq_i64_m64(x) (x)
+#define vreinterpretq_f32_m64(x) (x)
+#define vreinterpretq_f64_m64(x) __riscv_vreinterpret_v_f64m1_f32m1(x)
+
 // __int64 is defined in the Intrinsics Guide which maps to different datatype
 // in different data model
 #if !(defined(_WIN32) || defined(_WIN64) || defined(__int64))
@@ -441,7 +473,9 @@ typedef struct {
 // Add packed single-precision (32-bit) floating-point elements in a and b, and
 // store the results in dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_add_ps
-// FORCE_INLINE __m128 _mm_add_ps(__m128 a, __m128 b) {}
+FORCE_INLINE __m128 _mm_add_ps(__m128 a, __m128 b) {
+  return __riscv_vfadd_vv_f32m1(a, b, 4);
+}
 
 // Add the lower single-precision (32-bit) floating-point element in a and b,
 // store the result in the lower element of dst, and copy the upper 3 packed
@@ -1336,20 +1370,36 @@ FORCE_INLINE __m128i _mm_add_epi16(__m128i a, __m128i b) {
 
 // Add packed 32-bit integers in a and b, and store the results in dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_add_epi32
-// FORCE_INLINE __m128i _mm_add_epi32(__m128i a, __m128i b) {}
+FORCE_INLINE __m128i _mm_add_epi32(__m128i a, __m128i b) {
+  vint32m1_t _a = vreinterpretq_m128i_i32(a);
+  vint32m1_t _b = vreinterpretq_m128i_i32(b);
+  return __riscv_vadd_vv_i32m1(_a, _b, 4);
+}
 
 // Add packed 64-bit integers in a and b, and store the results in dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_add_epi64
-// FORCE_INLINE __m128i _mm_add_epi64(__m128i a, __m128i b) {}
+FORCE_INLINE __m128i _mm_add_epi64(__m128i a, __m128i b) {
+  vint64m1_t _a = vreinterpretq_m128i_i64(a);
+  vint64m1_t _b = vreinterpretq_m128i_i64(b);
+  return vreinterpretq_i64_m128i(__riscv_vadd_vv_i64m1(_a, _b, 2));
+}
 
 // Add packed 8-bit integers in a and b, and store the results in dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_add_epi8
-// FORCE_INLINE __m128i _mm_add_epi8(__m128i a, __m128i b) {}
+FORCE_INLINE __m128i _mm_add_epi8(__m128i a, __m128i b) {
+  vint8m1_t _a = vreinterpretq_m128i_i8(a);
+  vint8m1_t _b = vreinterpretq_m128i_i8(b);
+  return vreinterpretq_i8_m128i(__riscv_vadd_vv_i8m1(_a, _b, 16));
+}
 
 // Add packed double-precision (64-bit) floating-point elements in a and b, and
 // store the results in dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_add_pd
-// FORCE_INLINE __m128d _mm_add_pd(__m128d a, __m128d b) {}
+FORCE_INLINE __m128d _mm_add_pd(__m128d a, __m128d b) {
+  vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
+  vfloat64m1_t _b = vreinterpretq_m128d_f64(b);
+  return vreinterpretq_f64_m128d(__riscv_vfadd_vv_f64m1(_a, _b, 2));
+}
 
 // Add the lower double-precision (64-bit) floating-point element in a and b,
 // store the result in the lower element of dst, and copy the upper element from
@@ -1359,7 +1409,11 @@ FORCE_INLINE __m128i _mm_add_epi16(__m128i a, __m128i b) {
 
 // Add 64-bit integers a and b, and store the result in dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_add_si64
-// FORCE_INLINE __m64 _mm_add_si64(__m64 a, __m64 b) {}
+FORCE_INLINE __m64 _mm_add_si64(__m64 a, __m64 b) {
+  vint64m1_t _a = vreinterpretq_m64_i64(a);
+  vint64m1_t _b = vreinterpretq_m64_i64(b);
+  return vreinterpretq_i64_m64(__riscv_vadd_vv_i64m1(_a, _b, 1));
+}
 
 // Add packed signed 16-bit integers in a and b using saturation, and store the
 // results in dst.
