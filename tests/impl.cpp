@@ -10597,111 +10597,111 @@ result_t test_mm_stream_load_si128(const SSE2RVV_TEST_IMPL &impl,
 }
 
 result_t test_mm_test_all_ones(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
-  //   __m128i a = load_m128i(_a);
-  //
-  //   int32_t d0 = ~_a[0] & (~(uint32_t)0);
-  //   int32_t d1 = ~_a[1] & (~(uint32_t)0);
-  //   int32_t d2 = ~_a[2] & (~(uint32_t)0);
-  //   int32_t d3 = ~_a[3] & (~(uint32_t)0);
-  //   int32_t result = ((d0 | d1 | d2 | d3) == 0) ? 1 : 0;
-  //
-  //   int32_t ret = _mm_test_all_ones(a);
-  //
-  //   return result == ret ? TEST_SUCCESS : TEST_FAIL;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
+  __m128i a = load_m128i(_a);
+
+  int32_t d0 = ~_a[0] & (~(uint32_t)0);
+  int32_t d1 = ~_a[1] & (~(uint32_t)0);
+  int32_t d2 = ~_a[2] & (~(uint32_t)0);
+  int32_t d3 = ~_a[3] & (~(uint32_t)0);
+  int32_t result = ((d0 | d1 | d2 | d3) == 0) ? 1 : 0;
+
+  int32_t ret = _mm_test_all_ones(a);
+
+  return result == ret ? TEST_SUCCESS : TEST_FAIL;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_test_all_zeros(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
-  //   const int32_t *_mask = (const int32_t *)impl.test_cases_int_pointer2;
-  //   __m128i a = load_m128i(_a);
-  //   __m128i mask = load_m128i(_mask);
-  //
-  //   int32_t d0 = _a[0] & _mask[0];
-  //   int32_t d1 = _a[1] & _mask[1];
-  //   int32_t d2 = _a[2] & _mask[2];
-  //   int32_t d3 = _a[3] & _mask[3];
-  //   int32_t result = ((d0 | d1 | d2 | d3) == 0) ? 1 : 0;
-  //
-  //   int32_t ret = _mm_test_all_zeros(a, mask);
-  //
-  //   return result == ret ? TEST_SUCCESS : TEST_FAIL;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
+  const int32_t *_mask = (const int32_t *)impl.test_cases_int_pointer2;
+  __m128i a = load_m128i(_a);
+  __m128i mask = load_m128i(_mask);
+
+  int32_t d0 = _a[0] & _mask[0];
+  int32_t d1 = _a[1] & _mask[1];
+  int32_t d2 = _a[2] & _mask[2];
+  int32_t d3 = _a[3] & _mask[3];
+  int32_t result = ((d0 | d1 | d2 | d3) == 0) ? 1 : 0;
+
+  int32_t ret = _mm_test_all_zeros(a, mask);
+
+  return result == ret ? TEST_SUCCESS : TEST_FAIL;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_test_mix_ones_zeros(const SSE2RVV_TEST_IMPL &impl,
-                                     // #ifdef ENABLE_TEST_ALL
                                      uint32_t iter) {
-  //   const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
-  //   const int32_t *_mask = (const int32_t *)impl.test_cases_int_pointer2;
-  //   __m128i a = load_m128i(_a);
-  //   __m128i mask = load_m128i(_mask);
-  //
-  //   int32_t d0 = !((_a[0]) & _mask[0]) & !((!_a[0]) & _mask[0]);
-  //   int32_t d1 = !((_a[1]) & _mask[1]) & !((!_a[1]) & _mask[1]);
-  //   int32_t d2 = !((_a[2]) & _mask[2]) & !((!_a[2]) & _mask[2]);
-  //   int32_t d3 = !((_a[3]) & _mask[3]) & !((!_a[3]) & _mask[3]);
-  //   int32_t result = ((d0 & d1 & d2 & d3) == 0) ? 1 : 0;
-  //
-  //   int32_t ret = _mm_test_mix_ones_zeros(a, mask);
-  //
-  //   return result == ret ? TEST_SUCCESS : TEST_FAIL;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
+  const int32_t *_mask = (const int32_t *)impl.test_cases_int_pointer2;
+  __m128i a = load_m128i(_a);
+  __m128i mask = load_m128i(_mask);
+
+  int32_t d[4];
+  d[0] = !((_a[0]) & _mask[0]) & !((~_a[0]) & _mask[0]);
+  d[1] = !((_a[1]) & _mask[1]) & !((~_a[1]) & _mask[1]);
+  d[2] = !((_a[2]) & _mask[2]) & !((~_a[2]) & _mask[2]);
+  d[3] = !((_a[3]) & _mask[3]) & !((~_a[3]) & _mask[3]);
+  int32_t result = (!d[0] & !d[1] & !d[2] & !d[3]) ? 1 : 0;
+  int32_t ret = _mm_test_mix_ones_zeros(a, mask);
+
+  return result == ret ? TEST_SUCCESS : TEST_FAIL;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_testc_si128(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int32_t *_a = impl.test_cases_int_pointer1;
-  //   const int32_t *_b = impl.test_cases_int_pointer2;
-  //   __m128i a = _mm_load_si128((const __m128i *)_a);
-  //   __m128i b = _mm_load_si128((const __m128i *)_b);
-  //   int testc = 1;
-  //   for (int i = 0; i < 2; i++) {
-  //     if ((~(((SIMDVec *)&a)->m128_u64[i]) & ((SIMDVec *)&b)->m128_u64[i])) {
-  //       testc = 0;
-  //       break;
-  //     }
-  //   }
-  //   return _mm_testc_si128(a, b) == testc ? TEST_SUCCESS : TEST_FAIL;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int32_t *_a = impl.test_cases_int_pointer1;
+  const int32_t *_b = impl.test_cases_int_pointer2;
+  __m128i a = load_m128i(_a);
+  __m128i b = load_m128i(_b);
+  int testc = 1;
+  for (int i = 0; i < 2; i++) {
+    if ((~(((SIMDVec *)&a)->m128_u64[i]) & ((SIMDVec *)&b)->m128_u64[i])) {
+      testc = 0;
+      break;
+    }
+  }
+  return _mm_testc_si128(a, b) == testc ? TEST_SUCCESS : TEST_FAIL;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_testnzc_si128(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   return test_mm_test_mix_ones_zeros(impl, iter);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  return test_mm_test_mix_ones_zeros(impl, iter);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_testz_si128(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int32_t *_a = impl.test_cases_int_pointer1;
-  //   const int32_t *_b = impl.test_cases_int_pointer2;
-  //   __m128i a = _mm_load_si128((const __m128i *)_a);
-  //   __m128i b = _mm_load_si128((const __m128i *)_b);
-  //   int testz = 1;
-  //   for (int i = 0; i < 2; i++) {
-  //     if ((((SIMDVec *)&a)->m128_u64[i] & ((SIMDVec *)&b)->m128_u64[i])) {
-  //       testz = 0;
-  //       break;
-  //     }
-  //   }
-  //   return _mm_testz_si128(a, b) == testz ? TEST_SUCCESS : TEST_FAIL;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int32_t *_a = impl.test_cases_int_pointer1;
+  const int32_t *_b = impl.test_cases_int_pointer2;
+  __m128i a = load_m128i(_a);
+  __m128i b = load_m128i(_b);
+  int testz = 1;
+  for (int i = 0; i < 2; i++) {
+    if ((((SIMDVec *)&a)->m128_u64[i] & ((SIMDVec *)&b)->m128_u64[i])) {
+      testz = 0;
+      break;
+    }
+  }
+  return _mm_testz_si128(a, b) == testz ? TEST_SUCCESS : TEST_FAIL;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 /* SSE4.2 */

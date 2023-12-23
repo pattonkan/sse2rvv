@@ -3264,12 +3264,27 @@ FORCE_INLINE __m64 _mm_sub_si64(__m64 a, __m64 b) {
 // Compute the bitwise NOT of a and then AND with a 128-bit vector containing
 // all 1's, and return 1 if the result is zero, otherwise return 0.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_test_all_ones
-// FORCE_INLINE int _mm_test_all_ones(__m128i a) {}
+FORCE_INLINE int _mm_test_all_ones(__m128i a) {
+  vint32m1_t _a = vreinterpretq_m128i_i32(a);
+  vint32m1_t _mask = __riscv_vmv_v_x_i32m1(UINT32_MAX, 4);
+  vint32m1_t a_not = __riscv_vnot_v_i32m1(_a, 4);
+  vint32m1_t _and = __riscv_vand_vv_i32m1(a_not, _mask, 4);
+  vint32m1_t redsum =
+      __riscv_vredsum_vs_i32m1_i32m1(__riscv_vmv_v_x_i32m1(0, 4), _and, 4);
+  return !(int)__riscv_vmv_x_s_i32m1_i32(redsum);
+}
 
 // Compute the bitwise AND of 128 bits (representing integer data) in a and
 // mask, and return 1 if the result is zero, otherwise return 0.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_test_all_zeros
-// FORCE_INLINE int _mm_test_all_zeros(__m128i a, __m128i mask) {}
+FORCE_INLINE int _mm_test_all_zeros(__m128i a, __m128i mask) {
+  vint32m1_t _a = vreinterpretq_m128i_i32(a);
+  vint32m1_t _mask = vreinterpretq_m128i_i32(mask);
+  vint32m1_t _and = __riscv_vand_vv_i32m1(_a, _mask, 4);
+  vint32m1_t redsum =
+      __riscv_vredsum_vs_i32m1_i32m1(__riscv_vmv_v_x_i32m1(0, 4), _and, 4);
+  return !(int)__riscv_vmv_x_s_i32m1_i32(redsum);
+}
 
 // Compute the bitwise AND of 128 bits (representing integer data) in a and
 // mask, and set ZF to 1 if the result is zero, otherwise set ZF to 0. Compute
@@ -3277,14 +3292,36 @@ FORCE_INLINE __m64 _mm_sub_si64(__m64 a, __m64 b) {
 // zero, otherwise set CF to 0. Return 1 if both the ZF and CF values are zero,
 // otherwise return 0.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=mm_test_mix_ones_zero
-// FORCE_INLINE int _mm_test_mix_ones_zeros(__m128i a, __m128i mask) {}
+FORCE_INLINE int _mm_test_mix_ones_zeros(__m128i mask, __m128i a) {
+  vint32m1_t _mask = vreinterpretq_m128i_i32(mask);
+  vint32m1_t _a = vreinterpretq_m128i_i32(a);
+  vint32m1_t zf_and = __riscv_vand_vv_i32m1(_a, _mask, 4);
+  vint32m1_t zf_redsum =
+      __riscv_vredsum_vs_i32m1_i32m1(__riscv_vmv_v_x_i32m1(0, 4), zf_and, 4);
+  int zf_neg = (int)__riscv_vmv_x_s_i32m1_i32(zf_redsum);
+
+  vint32m1_t a_not = __riscv_vnot_v_i32m1(_a, 4);
+  vint32m1_t cf_and = __riscv_vand_vv_i32m1(a_not, _mask, 4);
+  vint32m1_t cf_redsum =
+      __riscv_vredsum_vs_i32m1_i32m1(__riscv_vmv_v_x_i32m1(0, 4), cf_and, 4);
+  int cf_neg = (int)__riscv_vmv_x_s_i32m1_i32(cf_redsum);
+  return zf_neg & cf_neg;
+}
 
 // Compute the bitwise AND of 128 bits (representing integer data) in a and b,
 // and set ZF to 1 if the result is zero, otherwise set ZF to 0. Compute the
 // bitwise NOT of a and then AND with b, and set CF to 1 if the result is zero,
 // otherwise set CF to 0. Return the CF value.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_testc_si128
-// FORCE_INLINE int _mm_testc_si128(__m128i a, __m128i b) {}
+FORCE_INLINE int _mm_testc_si128(__m128i a, __m128i b) {
+  vint32m1_t _a = vreinterpretq_m128i_i32(a);
+  vint32m1_t _b = vreinterpretq_m128i_i32(b);
+  vint32m1_t a_not = __riscv_vnot_v_i32m1(_a, 4);
+  vint32m1_t cf_and = __riscv_vand_vv_i32m1(a_not, _b, 4);
+  vint32m1_t cf_redsum =
+      __riscv_vredsum_vs_i32m1_i32m1(__riscv_vmv_v_x_i32m1(0, 4), cf_and, 4);
+  return !(int)__riscv_vmv_x_s_i32m1_i32(cf_redsum);
+}
 
 // Compute the bitwise AND of 128 bits (representing integer data) in a and b,
 // and set ZF to 1 if the result is zero, otherwise set ZF to 0. Compute the
@@ -3292,14 +3329,21 @@ FORCE_INLINE __m64 _mm_sub_si64(__m64 a, __m64 b) {
 // otherwise set CF to 0. Return 1 if both the ZF and CF values are zero,
 // otherwise return 0.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_testnzc_si128
-// #define _mm_testnzc_si128(a, b) _mm_test_mix_ones_zeros(a, b)
+#define _mm_testnzc_si128(a, b) _mm_test_mix_ones_zeros(a, b)
 
 // Compute the bitwise AND of 128 bits (representing integer data) in a and b,
 // and set ZF to 1 if the result is zero, otherwise set ZF to 0. Compute the
 // bitwise NOT of a and then AND with b, and set CF to 1 if the result is zero,
 // otherwise set CF to 0. Return the ZF value.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_testz_si128
-// FORCE_INLINE int _mm_testz_si128(__m128i a, __m128i b) {}
+FORCE_INLINE int _mm_testz_si128(__m128i a, __m128i b) {
+  vint32m1_t _a = vreinterpretq_m128i_i32(a);
+  vint32m1_t _b = vreinterpretq_m128i_i32(b);
+  vint32m1_t zf_and = __riscv_vand_vv_i32m1(_a, _b, 4);
+  vint32m1_t zf_redsum =
+      __riscv_vredsum_vs_i32m1_i32m1(__riscv_vmv_v_x_i32m1(0, 4), zf_and, 4);
+  return !(int)__riscv_vmv_x_s_i32m1_i32(zf_redsum);
+}
 
 // Compare packed strings in a and b with lengths la and lb using the control
 // in imm8, and returns 1 if b did not contain a null character and the
