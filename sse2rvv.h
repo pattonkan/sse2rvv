@@ -79,7 +79,7 @@
  * a suffix, it contains floats. An integer vector type can contain any type
  * of integer, from chars to shorts to unsigned long longs.
  */
-typedef vint64m1_t __m64;
+typedef vint32m1_t __m64;     /* 64-bit vector containing integers */
 typedef vfloat32m1_t __m128;  /* 128-bit vector containing 4 floats */
 typedef vfloat64m1_t __m128d; /* 128-bit vector containing 2 doubles */
 typedef vint32m1_t __m128i;   /* 128-bit vector containing integers */
@@ -193,10 +193,11 @@ typedef vint32m1_t __m128i;   /* 128-bit vector containing integers */
   __riscv_vreinterpret_v_i32m1_i8m1(__riscv_vreinterpret_v_f32m1_i32m1(x))
 #define vreinterpretq_m64_i16(x)                                               \
   __riscv_vreinterpret_v_i32m1_i16m1(__riscv_vreinterpret_v_f32m1_i32m1(x))
-#define vreinterpretq_m64_i32(x) __riscv_vreinterpret_v_f32m1_i32m1(x)
-#define vreinterpretq_m64_i64(x) (x)
-#define vreinterpretq_m64_f32(x) (x)
-#define vreinterpretq_m64_f64(x) __riscv_vreinterpret_v_f32m1_f64m1(x)
+#define vreinterpretq_m64_i32(x) (x)
+#define vreinterpretq_m64_i64(x) __riscv_vreinterpret_v_i32m1_i64m1(x)
+#define vreinterpretq_m64_f32(x) __riscv_vreinterpret_v_i32m1_f32m1(x)
+#define vreinterpretq_m64_f64(x)                                               \
+  __riscv_vreinterpret_v_i64m1_f64m1(__riscv_vreinterpret_v_i32m1_i64m1(x))
 
 #define vreinterpretq_u8_m64(x)                                                \
   __riscv_vreinterpret_v_u32m1_f32m1(__riscv_vreinterpret_v_u8m1_u32m1(x))
@@ -210,8 +211,8 @@ typedef vint32m1_t __m128i;   /* 128-bit vector containing integers */
 #define vreinterpretq_i16_m64(x)                                               \
   __riscv_vreinterpret_v_i32m1_f32m1(__riscv_vreinterpret_v_i16m1_i32m1(x))
 #define vreinterpretq_i32_m64(x) __riscv_vreinterpret_v_i32m1_f32m1(x)
-#define vreinterpretq_i64_m64(x) (x)
-#define vreinterpretq_f32_m64(x) (x)
+#define vreinterpretq_i64_m64(x) __riscv_vreinterpret_v_i64m1_i32m1(x)
+#define vreinterpretq_f32_m64(x) __riscv_vreinterpret_v_f32m1_i32m1(x)
 #define vreinterpretq_f64_m64(x) __riscv_vreinterpret_v_f64m1_f32m1(x)
 
 // __int64 is defined in the Intrinsics Guide which maps to different datatype
@@ -1135,12 +1136,17 @@ FORCE_INLINE __m128 _mm_loadu_ps(const float *p) {
 // Set packed single-precision (32-bit) floating-point elements in dst with the
 // supplied values.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set_ps
-// FORCE_INLINE __m128 _mm_set_ps(float w, float z, float y, float x) {}
+FORCE_INLINE __m128 _mm_set_ps(float e3, float e2, float e1, float e0) {
+  float arr[4] = {e0, e1, e2, e3};
+  return vreinterpretq_f32_m128(__riscv_vle32_v_f32m1(arr, 4));
+}
 
 // Broadcast single-precision (32-bit) floating-point value a to all elements of
 // dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set_ps1
-// FORCE_INLINE __m128 _mm_set_ps1(float _w) {}
+FORCE_INLINE __m128 _mm_set_ps1(float a) {
+  return vreinterpretq_f32_m128(__riscv_vfmv_v_f_f32m1(a, 4));
+}
 
 // Macro: Set the rounding mode bits of the MXCSR control and status register to
 // the value in unsigned 32-bit integer a. The rounding mode may contain any of
@@ -1152,12 +1158,17 @@ FORCE_INLINE __m128 _mm_loadu_ps(const float *p) {
 // Copy single-precision (32-bit) floating-point element a to the lower element
 // of dst, and zero the upper 3 elements.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set_ss
-// FORCE_INLINE __m128 _mm_set_ss(float a) {}
+FORCE_INLINE __m128 _mm_set_ss(float a) {
+  float arr[4] = {a, 0, 0, 0};
+  return vreinterpretq_f32_m128(__riscv_vle32_v_f32m1(arr, 4));
+}
 
 // Broadcast single-precision (32-bit) floating-point value a to all elements of
 // dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set1_ps
-// FORCE_INLINE __m128 _mm_set1_ps(float _w) {}
+FORCE_INLINE __m128 _mm_set1_ps(float a) {
+  return vreinterpretq_f32_m128(__riscv_vfmv_v_f_f32m1(a, 4));
+}
 
 // Set the MXCSR control and status register with the value in unsigned 32-bit
 // integer a.
@@ -2132,85 +2143,104 @@ FORCE_INLINE __m128d _mm_loadu_pd(const double *p) {
 
 // Set packed 16-bit integers in dst with the supplied values.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set_epi16
-// FORCE_INLINE __m128i _mm_set_epi16(short i7,
-//                                    short i6,
-//                                    short i5,
-//                                    short i4,
-//                                    short i3,
-//                                    short i2,
-//                                    short i1,
-//                                    short i0) {}
+FORCE_INLINE __m128i _mm_set_epi16(short e7, short e6, short e5, short e4,
+                                   short e3, short e2, short e1, short e0) {
+  short arr[8] = {e0, e1, e2, e3, e4, e5, e6, e7};
+  return vreinterpretq_i16_m128i(__riscv_vle16_v_i16m1(arr, 8));
+}
 
 // Set packed 32-bit integers in dst with the supplied values.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set_epi32
-// FORCE_INLINE __m128i _mm_set_epi32(int i3, int i2, int i1, int i0) {}
+FORCE_INLINE __m128i _mm_set_epi32(int e3, int e2, int e1, int e0) {
+  int arr[4] = {e0, e1, e2, e3};
+  return vreinterpretq_i32_m128i(__riscv_vle32_v_i32m1(arr, 4));
+}
 
 // Set packed 64-bit integers in dst with the supplied values.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set_epi64
-// FORCE_INLINE __m128i _mm_set_epi64(__m64 i1, __m64 i2) {}
+FORCE_INLINE __m128i _mm_set_epi64(__m64 e1, __m64 e0) {
+  vint32m1_t _e1 = vreinterpretq_m64_i32(e1);
+  vint32m1_t _e0 = vreinterpretq_m64_i32(e0);
+  return vreinterpretq_i32_m128i(__riscv_vslideup_vx_i32m1(_e0, _e1, 2, 4));
+}
 
 // Set packed 64-bit integers in dst with the supplied values.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set_epi64x
-// FORCE_INLINE __m128i _mm_set_epi64x(int64_t i1, int64_t i2) {}
+FORCE_INLINE __m128i _mm_set_epi64x(__int64 e1, __int64 e0) {
+  __int64 arr[2] = {e0, e1};
+  return vreinterpretq_i64_m128i(__riscv_vle64_v_i64m1(arr, 2));
+}
 
 // Set packed 8-bit integers in dst with the supplied values.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set_epi8
-// FORCE_INLINE __m128i _mm_set_epi8(signed char b15,
-//                                   signed char b14,
-//                                   signed char b13,
-//                                   signed char b12,
-//                                   signed char b11,
-//                                   signed char b10,
-//                                   signed char b9,
-//                                   signed char b8,
-//                                   signed char b7,
-//                                   signed char b6,
-//                                   signed char b5,
-//                                   signed char b4,
-//                                   signed char b3,
-//                                   signed char b2,
-//                                   signed char b1,
-//                                   signed char b0) {}
+FORCE_INLINE __m128i _mm_set_epi8(char e15, char e14, char e13, char e12,
+                                  char e11, char e10, char e9, char e8, char e7,
+                                  char e6, char e5, char e4, char e3, char e2,
+                                  char e1, char e0) {
+  char arr[16] = {e0, e1, e2,  e3,  e4,  e5,  e6,  e7,
+                  e8, e9, e10, e11, e12, e13, e14, e15};
+  return vreinterpretq_i8_m128i(
+      __riscv_vle8_v_i8m1((const signed char *)arr, 16));
+}
 
 // Set packed double-precision (64-bit) floating-point elements in dst with the
 // supplied values.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set_pd
-// FORCE_INLINE __m128d _mm_set_pd(double e1, double e0) {}
+FORCE_INLINE __m128d _mm_set_pd(double e1, double e0) {
+  double arr[2] = {e0, e1};
+  return vreinterpretq_f64_m128d(__riscv_vle64_v_f64m1(arr, 2));
+}
 
 // Broadcast double-precision (64-bit) floating-point value a to all elements of
 // dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set_pd1
-// #define _mm_set_pd1 _mm_set1_pd
+#define _mm_set_pd1 _mm_set1_pd
 
 // Copy double-precision (64-bit) floating-point element a to the lower element
 // of dst, and zero the upper element.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set_sd
-// FORCE_INLINE __m128d _mm_set_sd(double a) {}
+FORCE_INLINE __m128d _mm_set_sd(double a) {
+  double arr[2] = {a, 0};
+  return vreinterpretq_f64_m128d(__riscv_vle64_v_f64m1(arr, 2));
+}
 
 // Broadcast 16-bit integer a to all elements of dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set1_epi16
-// FORCE_INLINE __m128i _mm_set1_epi16(short w) {}
+FORCE_INLINE __m128i _mm_set1_epi16(short a) {
+  return vreinterpretq_i16_m128i(__riscv_vmv_v_x_i16m1(a, 8));
+}
 
 // Broadcast 32-bit integer a to all elements of dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set1_epi32
-// FORCE_INLINE __m128i _mm_set1_epi32(int _i) {}
+FORCE_INLINE __m128i _mm_set1_epi32(int a) {
+  return vreinterpretq_i32_m128i(__riscv_vmv_v_x_i32m1(a, 4));
+}
 
 // Broadcast 64-bit integer a to all elements of dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set1_epi64
-// FORCE_INLINE __m128i _mm_set1_epi64(__m64 _i) {}
+FORCE_INLINE __m128i _mm_set1_epi64(__m64 a) {
+  vint32m1_t _a = vreinterpretq_m64_i32(a);
+  return vreinterpretq_i32_m128i(__riscv_vslideup_vx_i32m1(_a, _a, 2, 4));
+}
 
 // Broadcast 64-bit integer a to all elements of dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set1_epi64x
-// FORCE_INLINE __m128i _mm_set1_epi64x(int64_t _i) {}
+FORCE_INLINE __m128i _mm_set1_epi64x(__int64 a) {
+  return vreinterpretq_i64_m128i(__riscv_vmv_v_x_i64m1(a, 2));
+}
 
 // Broadcast 8-bit integer a to all elements of dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set1_epi8
-// FORCE_INLINE __m128i _mm_set1_epi8(signed char w) {}
+FORCE_INLINE __m128i _mm_set1_epi8(char a) {
+  return vreinterpretq_i8_m128i(__riscv_vmv_v_x_i8m1(a, 16));
+}
 
 // Broadcast double-precision (64-bit) floating-point value a to all elements of
 // dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_set1_pd
-// FORCE_INLINE __m128d _mm_set1_pd(double d) {}
+FORCE_INLINE __m128d _mm_set1_pd(double a) {
+  return vreinterpretq_f64_m128d(__riscv_vfmv_v_f_f64m1(a, 2));
+}
 
 // Set packed 16-bit integers in dst with the supplied values in reverse order.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_setr_epi16

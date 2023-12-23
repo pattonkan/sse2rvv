@@ -61,7 +61,7 @@ deps := $(OBJS:%.o=%.o.d)
 
 .SUFFIXES: .o .cpp
 .cpp.o:
-	$(CXX) -o $@ $(CXXFLAGS) -c -MMD -MF $@.d $<
+	$(CXX) -o $@ $(CXXFLAGS) $(DEFINED_FLAGS) -c -MMD -MF $@.d $<
 
 EXEC = tests/main
 

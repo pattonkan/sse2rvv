@@ -34,7 +34,7 @@ jobs:
       - name: build artifact
         run: |
           export ENABLE_TEST_ALL=true
-          make test
+          make ENABLE_TEST_ALL=${ENABLE_TEST_ALL} test
 
   coding_style:
     runs-on: ubuntu-22.04
