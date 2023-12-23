@@ -213,7 +213,8 @@ typedef vint32m1_t __m128i;   /* 128-bit vector containing integers */
 #define vreinterpretq_i32_m64(x) __riscv_vreinterpret_v_i32m1_f32m1(x)
 #define vreinterpretq_i64_m64(x) __riscv_vreinterpret_v_i64m1_i32m1(x)
 #define vreinterpretq_f32_m64(x) __riscv_vreinterpret_v_f32m1_i32m1(x)
-#define vreinterpretq_f64_m64(x) __riscv_vreinterpret_v_f64m1_f32m1(x)
+#define vreinterpretq_f64_m64(x)                                               \
+  __riscv_vreinterpret_v_i64m1_i32m1(__riscv_vreinterpret_v_f64m1_i64m1(x))
 
 // __int64 is defined in the Intrinsics Guide which maps to different datatype
 // in different data model
@@ -1313,14 +1314,24 @@ FORCE_INLINE __m128 _mm_setr_ps(float e3, float e2, float e1, float e0) {
 // packed single-precision (32-bit) floating-point elements in a, and store the
 // results in dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sub_ps
-// FORCE_INLINE __m128 _mm_sub_ps(__m128 a, __m128 b) {}
+FORCE_INLINE __m128 _mm_sub_ps(__m128 a, __m128 b) {
+  vfloat32m1_t _a = vreinterpretq_m128_f32(a);
+  vfloat32m1_t _b = vreinterpretq_m128_f32(b);
+  return vreinterpretq_f32_m128(__riscv_vfsub_vv_f32m1(_a, _b, 4));
+}
 
 // Subtract the lower single-precision (32-bit) floating-point element in b from
 // the lower single-precision (32-bit) floating-point element in a, store the
 // result in the lower element of dst, and copy the upper 3 packed elements from
 // a to the upper elements of dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sub_ss
-// FORCE_INLINE __m128 _mm_sub_ss(__m128 a, __m128 b) {}
+FORCE_INLINE __m128 _mm_sub_ss(__m128 a, __m128 b) {
+  vfloat32m1_t _a = vreinterpretq_m128_f32(a);
+  vfloat32m1_t _b = vreinterpretq_m128_f32(b);
+  vfloat32m1_t sub = __riscv_vfsub_vv_f32m1(_a, _b, 4);
+  vbool32_t mask = __riscv_vreinterpret_v_u8m1_b32(__riscv_vmv_v_x_u8m1(1, 8));
+  return vreinterpretq_f32_m128(__riscv_vmerge_vvm_f32m1(_a, sub, mask, 4));
+}
 
 // Macro: Transpose the 4x4 matrix formed by the 4 rows of single-precision
 // (32-bit) floating-point elements in row0, row1, row2, and row3, and store the
@@ -2527,39 +2538,69 @@ FORCE_INLINE __m128d _mm_setr_pd(double e1, double e0) {
 // Subtract packed 16-bit integers in b from packed 16-bit integers in a, and
 // store the results in dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sub_epi16
-// FORCE_INLINE __m128i _mm_sub_epi16(__m128i a, __m128i b) {}
+FORCE_INLINE __m128i _mm_sub_epi16(__m128i a, __m128i b) {
+  vint16m1_t _a = vreinterpretq_m128i_i16(a);
+  vint16m1_t _b = vreinterpretq_m128i_i16(b);
+  return vreinterpretq_i16_m128i(__riscv_vsub_vv_i16m1(_a, _b, 8));
+}
 
 // Subtract packed 32-bit integers in b from packed 32-bit integers in a, and
 // store the results in dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sub_epi32
-// FORCE_INLINE __m128i _mm_sub_epi32(__m128i a, __m128i b) {}
+FORCE_INLINE __m128i _mm_sub_epi32(__m128i a, __m128i b) {
+  vint32m1_t _a = vreinterpretq_m128i_i32(a);
+  vint32m1_t _b = vreinterpretq_m128i_i32(b);
+  return vreinterpretq_i32_m128i(__riscv_vsub_vv_i32m1(_a, _b, 4));
+}
 
 // Subtract packed 64-bit integers in b from packed 64-bit integers in a, and
 // store the results in dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sub_epi64
-// FORCE_INLINE __m128i _mm_sub_epi64(__m128i a, __m128i b) {}
+FORCE_INLINE __m128i _mm_sub_epi64(__m128i a, __m128i b) {
+  vint64m1_t _a = vreinterpretq_m128i_i64(a);
+  vint64m1_t _b = vreinterpretq_m128i_i64(b);
+  return vreinterpretq_i64_m128i(__riscv_vsub_vv_i64m1(_a, _b, 2));
+}
 
 // Subtract packed 8-bit integers in b from packed 8-bit integers in a, and
 // store the results in dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sub_epi8
-// FORCE_INLINE __m128i _mm_sub_epi8(__m128i a, __m128i b) {}
+FORCE_INLINE __m128i _mm_sub_epi8(__m128i a, __m128i b) {
+  vint8m1_t _a = vreinterpretq_m128i_i8(a);
+  vint8m1_t _b = vreinterpretq_m128i_i8(b);
+  return vreinterpretq_i8_m128i(__riscv_vsub_vv_i8m1(_a, _b, 16));
+}
 
 // Subtract packed double-precision (64-bit) floating-point elements in b from
 // packed double-precision (64-bit) floating-point elements in a, and store the
 // results in dst.
 //  https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=mm_sub_pd
-// FORCE_INLINE __m128d _mm_sub_pd(__m128d a, __m128d b) {}
+FORCE_INLINE __m128d _mm_sub_pd(__m128d a, __m128d b) {
+  vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
+  vfloat64m1_t _b = vreinterpretq_m128d_f64(b);
+  return vreinterpretq_f64_m128d(__riscv_vfsub_vv_f64m1(_a, _b, 2));
+}
 
 // Subtract the lower double-precision (64-bit) floating-point element in b from
 // the lower double-precision (64-bit) floating-point element in a, store the
 // result in the lower element of dst, and copy the upper element from a to the
 // upper element of dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sub_sd
-// FORCE_INLINE __m128d _mm_sub_sd(__m128d a, __m128d b) {}
+FORCE_INLINE __m128d _mm_sub_sd(__m128d a, __m128d b) {
+  vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
+  vfloat64m1_t _b = vreinterpretq_m128d_f64(b);
+  vfloat64m1_t sub = __riscv_vfsub_vv_f64m1(_a, _b, 2);
+  vbool64_t mask = __riscv_vreinterpret_v_u8m1_b64(__riscv_vmv_v_x_u8m1(1, 8));
+  return vreinterpretq_f64_m128d(__riscv_vmerge_vvm_f64m1(_a, sub, mask, 2));
+}
 
 // Subtract 64-bit integer b from 64-bit integer a, and store the result in dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sub_si64
-// FORCE_INLINE __m64 _mm_sub_si64(__m64 a, __m64 b) {}
+FORCE_INLINE __m64 _mm_sub_si64(__m64 a, __m64 b) {
+  vfloat64m1_t _a = vreinterpretq_m64_f64(a);
+  vfloat64m1_t _b = vreinterpretq_m64_f64(b);
+  return vreinterpretq_f64_m64(__riscv_vfsub_vv_f64m1(_a, _b, 1));
+}
 
 // Subtract packed signed 16-bit integers in b from packed 16-bit integers in a
 // using saturation, and store the results in dst.
