@@ -1184,7 +1184,10 @@ FORCE_INLINE __m128 _mm_set1_ps(float a) {
 // Set packed single-precision (32-bit) floating-point elements in dst with the
 // supplied values in reverse order.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_setr_ps
-// FORCE_INLINE __m128 _mm_setr_ps(float w, float z, float y, float x) {}
+FORCE_INLINE __m128 _mm_setr_ps(float e3, float e2, float e1, float e0) {
+  float arr[4] = {e3, e2, e1, e0};
+  return vreinterpretq_f32_m128(__riscv_vle32_v_f32m1(arr, 4));
+}
 
 // Return vector of type __m128 with all elements set to zero.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_setzero_ps
@@ -2244,46 +2247,46 @@ FORCE_INLINE __m128d _mm_set1_pd(double a) {
 
 // Set packed 16-bit integers in dst with the supplied values in reverse order.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_setr_epi16
-// FORCE_INLINE __m128i _mm_setr_epi16(short w0,
-//                                     short w1,
-//                                     short w2,
-//                                     short w3,
-//                                     short w4,
-//                                     short w5,
-//                                     short w6,
-//                                     short w7) {}
+FORCE_INLINE __m128i _mm_setr_epi16(short e7, short e6, short e5, short e4,
+                                    short e3, short e2, short e1, short e0) {
+  short arr[8] = {e7, e6, e5, e4, e3, e2, e1, e0};
+  return vreinterpretq_i16_m128i(__riscv_vle16_v_i16m1(arr, 8));
+}
 
 // Set packed 32-bit integers in dst with the supplied values in reverse order.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_setr_epi32
-// FORCE_INLINE __m128i _mm_setr_epi32(int i3, int i2, int i1, int i0) {}
+FORCE_INLINE __m128i _mm_setr_epi32(int e3, int e2, int e1, int e0) {
+  int arr[4] = {e3, e2, e1, e0};
+  return vreinterpretq_i32_m128i(__riscv_vle32_v_i32m1(arr, 4));
+}
 
 // Set packed 64-bit integers in dst with the supplied values in reverse order.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_setr_epi64
-// FORCE_INLINE __m128i _mm_setr_epi64(__m64 e1, __m64 e0) {}
+FORCE_INLINE __m128i _mm_setr_epi64(__m64 e1, __m64 e0) {
+  vint32m1_t _e1 = vreinterpretq_m64_i32(e1);
+  vint32m1_t _e0 = vreinterpretq_m64_i32(e0);
+  return vreinterpretq_i32_m128i(__riscv_vslideup_vx_i32m1(_e1, _e0, 2, 4));
+}
 
 // Set packed 8-bit integers in dst with the supplied values in reverse order.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_setr_epi8
-// FORCE_INLINE __m128i _mm_setr_epi8(signed char b0,
-//                                    signed char b1,
-//                                    signed char b2,
-//                                    signed char b3,
-//                                    signed char b4,
-//                                    signed char b5,
-//                                    signed char b6,
-//                                    signed char b7,
-//                                    signed char b8,
-//                                    signed char b9,
-//                                    signed char b10,
-//                                    signed char b11,
-//                                    signed char b12,
-//                                    signed char b13,
-//                                    signed char b14,
-//                                    signed char b15) {}
+FORCE_INLINE __m128i _mm_setr_epi8(char e0, char e1, char e2, char e3, char e4,
+                                   char e5, char e6, char e7, char e8, char e9,
+                                   char e10, char e11, char e12, char e13,
+                                   char e14, char e15) {
+  char arr[16] = {e15, e14, e13, e12, e11, e10, e9, e8,
+                  e7,  e6,  e5,  e4,  e3,  e2,  e1, e0};
+  return vreinterpretq_i8_m128i(
+      __riscv_vle8_v_i8m1((const signed char *)arr, 16));
+}
 
 // Set packed double-precision (64-bit) floating-point elements in dst with the
 // supplied values in reverse order.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_setr_pd
-// FORCE_INLINE __m128d _mm_setr_pd(double e1, double e0) {}
+FORCE_INLINE __m128d _mm_setr_pd(double e1, double e0) {
+  double arr[2] = {e1, e0};
+  return vreinterpretq_f64_m128d(__riscv_vle64_v_f64m1(arr, 2));
+}
 
 // Return vector of type __m128d with all elements set to zero.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_setzero_pd
