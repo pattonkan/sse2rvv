@@ -9015,159 +9015,159 @@ result_t test_mm_shuffle_pi8(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_sign_epi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
-  //   const int16_t *_b = (const int16_t *)impl.test_cases_int_pointer2;
-  //
-  //   int16_t d[8];
-  //   for (int i = 0; i < 8; i++) {
-  //     if (_b[i] < 0) {
-  //       d[i] = -_a[i];
-  //     } else if (_b[i] == 0) {
-  //       d[i] = 0;
-  //     } else {
-  //       d[i] = _a[i];
-  //     }
-  //   }
-  //
-  //   __m128i a = load_m128i(_a);
-  //   __m128i b = load_m128i(_b);
-  //   __m128i c = _mm_sign_epi16(a, b);
-  //
-  //   return VALIDATE_INT16_M128(c, d);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
+  const int16_t *_b = (const int16_t *)impl.test_cases_int_pointer2;
+
+  int16_t d[8];
+  for (int i = 0; i < 8; i++) {
+    if (_b[i] < 0) {
+      d[i] = -_a[i];
+    } else if (_b[i] == 0) {
+      d[i] = 0;
+    } else {
+      d[i] = _a[i];
+    }
+  }
+
+  __m128i a = load_m128i(_a);
+  __m128i b = load_m128i(_b);
+  __m128i c = _mm_sign_epi16(a, b);
+
+  return VALIDATE_INT16_M128(c, d);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_sign_epi32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
-  //   const int32_t *_b = (const int32_t *)impl.test_cases_int_pointer2;
-  //
-  //   int32_t d[4];
-  //   for (int i = 0; i < 4; i++) {
-  //     if (_b[i] < 0) {
-  //       d[i] = -_a[i];
-  //     } else if (_b[i] == 0) {
-  //       d[i] = 0;
-  //     } else {
-  //       d[i] = _a[i];
-  //     }
-  //   }
-  //
-  //   __m128i a = load_m128i(_a);
-  //   __m128i b = load_m128i(_b);
-  //   __m128i c = _mm_sign_epi32(a, b);
-  //
-  //   return VALIDATE_INT32_M128(c, d);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
+  const int32_t *_b = (const int32_t *)impl.test_cases_int_pointer2;
+
+  int32_t d[4];
+  for (int i = 0; i < 4; i++) {
+    if (_b[i] < 0) {
+      d[i] = -_a[i];
+    } else if (_b[i] == 0) {
+      d[i] = 0;
+    } else {
+      d[i] = _a[i];
+    }
+  }
+
+  __m128i a = load_m128i(_a);
+  __m128i b = load_m128i(_b);
+  __m128i c = _mm_sign_epi32(a, b);
+
+  return VALIDATE_INT32_M128(c, d);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_sign_epi8(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int8_t *_a = (const int8_t *)impl.test_cases_int_pointer1;
-  //   const int8_t *_b = (const int8_t *)impl.test_cases_int_pointer2;
-  //
-  //   int8_t d[16];
-  //   for (int i = 0; i < 16; i++) {
-  //     if (_b[i] < 0) {
-  //       d[i] = -_a[i];
-  //     } else if (_b[i] == 0) {
-  //       d[i] = 0;
-  //     } else {
-  //       d[i] = _a[i];
-  //     }
-  //   }
-  //
-  //   __m128i a = load_m128i(_a);
-  //   __m128i b = load_m128i(_b);
-  //   __m128i c = _mm_sign_epi8(a, b);
-  //
-  //   return VALIDATE_INT8_M128(c, d);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int8_t *_a = (const int8_t *)impl.test_cases_int_pointer1;
+  const int8_t *_b = (const int8_t *)impl.test_cases_int_pointer2;
+
+  int8_t d[16];
+  for (int i = 0; i < 16; i++) {
+    if (_b[i] < 0) {
+      d[i] = -_a[i];
+    } else if (_b[i] == 0) {
+      d[i] = 0;
+    } else {
+      d[i] = _a[i];
+    }
+  }
+
+  __m128i a = load_m128i(_a);
+  __m128i b = load_m128i(_b);
+  __m128i c = _mm_sign_epi8(a, b);
+
+  return VALIDATE_INT8_M128(c, d);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_sign_pi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
-  //   const int16_t *_b = (const int16_t *)impl.test_cases_int_pointer2;
-  //
-  //   int16_t d[4];
-  //   for (int i = 0; i < 4; i++) {
-  //     if (_b[i] < 0) {
-  //       d[i] = -_a[i];
-  //     } else if (_b[i] == 0) {
-  //       d[i] = 0;
-  //     } else {
-  //       d[i] = _a[i];
-  //     }
-  //   }
-  //
-  //   __m64 a = load_m64(_a);
-  //   __m64 b = load_m64(_b);
-  //   __m64 c = _mm_sign_pi16(a, b);
-  //
-  //   return VALIDATE_INT16_M64(c, d);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
+  const int16_t *_b = (const int16_t *)impl.test_cases_int_pointer2;
+
+  int16_t d[4];
+  for (int i = 0; i < 4; i++) {
+    if (_b[i] < 0) {
+      d[i] = -_a[i];
+    } else if (_b[i] == 0) {
+      d[i] = 0;
+    } else {
+      d[i] = _a[i];
+    }
+  }
+
+  __m64 a = load_m64(_a);
+  __m64 b = load_m64(_b);
+  __m64 c = _mm_sign_pi16(a, b);
+
+  return VALIDATE_INT16_M64(c, d);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_sign_pi32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
-  //   const int32_t *_b = (const int32_t *)impl.test_cases_int_pointer2;
-  //
-  //   int32_t d[2];
-  //   for (int i = 0; i < 2; i++) {
-  //     if (_b[i] < 0) {
-  //       d[i] = -_a[i];
-  //     } else if (_b[i] == 0) {
-  //       d[i] = 0;
-  //     } else {
-  //       d[i] = _a[i];
-  //     }
-  //   }
-  //
-  //   __m64 a = load_m64(_a);
-  //   __m64 b = load_m64(_b);
-  //   __m64 c = _mm_sign_pi32(a, b);
-  //
-  //   return VALIDATE_INT32_M64(c, d);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
+  const int32_t *_b = (const int32_t *)impl.test_cases_int_pointer2;
+
+  int32_t d[2];
+  for (int i = 0; i < 2; i++) {
+    if (_b[i] < 0) {
+      d[i] = -_a[i];
+    } else if (_b[i] == 0) {
+      d[i] = 0;
+    } else {
+      d[i] = _a[i];
+    }
+  }
+
+  __m64 a = load_m64(_a);
+  __m64 b = load_m64(_b);
+  __m64 c = _mm_sign_pi32(a, b);
+
+  return VALIDATE_INT32_M64(c, d);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_sign_pi8(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int8_t *_a = (const int8_t *)impl.test_cases_int_pointer1;
-  //   const int8_t *_b = (const int8_t *)impl.test_cases_int_pointer2;
-  //
-  //   int8_t d[8];
-  //   for (int i = 0; i < 8; i++) {
-  //     if (_b[i] < 0) {
-  //       d[i] = -_a[i];
-  //     } else if (_b[i] == 0) {
-  //       d[i] = 0;
-  //     } else {
-  //       d[i] = _a[i];
-  //     }
-  //   }
-  //
-  //   __m64 a = load_m64(_a);
-  //   __m64 b = load_m64(_b);
-  //   __m64 c = _mm_sign_pi8(a, b);
-  //
-  //   return VALIDATE_INT8_M64(c, d);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int8_t *_a = (const int8_t *)impl.test_cases_int_pointer1;
+  const int8_t *_b = (const int8_t *)impl.test_cases_int_pointer2;
+
+  int8_t d[8];
+  for (int i = 0; i < 8; i++) {
+    if (_b[i] < 0) {
+      d[i] = -_a[i];
+    } else if (_b[i] == 0) {
+      d[i] = 0;
+    } else {
+      d[i] = _a[i];
+    }
+  }
+
+  __m64 a = load_m64(_a);
+  __m64 b = load_m64(_b);
+  __m64 c = _mm_sign_pi8(a, b);
+
+  return VALIDATE_INT8_M64(c, d);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 /* SSE4.1 */
