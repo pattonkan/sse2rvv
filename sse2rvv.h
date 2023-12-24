@@ -191,10 +191,8 @@ typedef vint32m1_t __m128i;   /* 128-bit vector containing integers */
 #define vreinterpretq_m64_u32(x) __riscv_vreinterpret_v_f32m1_u32m1(x)
 #define vreinterpretq_m64_u64(x)                                               \
   __riscv_vreinterpret_v_f64m1_u64m1(__riscv_vreinterpret_v_f32m1_f64m1(x))
-#define vreinterpretq_m64_i8(x)                                                \
-  __riscv_vreinterpret_v_i32m1_i8m1(__riscv_vreinterpret_v_f32m1_i32m1(x))
-#define vreinterpretq_m64_i16(x)                                               \
-  __riscv_vreinterpret_v_i32m1_i16m1(__riscv_vreinterpret_v_f32m1_i32m1(x))
+#define vreinterpretq_m64_i8(x) __riscv_vreinterpret_v_i32m1_i8m1(x)
+#define vreinterpretq_m64_i16(x) __riscv_vreinterpret_v_i32m1_i16m1(x)
 #define vreinterpretq_m64_i32(x) (x)
 #define vreinterpretq_m64_i64(x) __riscv_vreinterpret_v_i32m1_i64m1(x)
 #define vreinterpretq_m64_f32(x) __riscv_vreinterpret_v_i32m1_f32m1(x)
@@ -208,11 +206,9 @@ typedef vint32m1_t __m128i;   /* 128-bit vector containing integers */
 #define vreinterpretq_u32_m64(x) __riscv_vreinterpret_v_u32m1_f32m1(x)
 #define vreinterpretq_u64_m64(x)                                               \
   __riscv_vreinterpret_v_f64m1_f32m1(__riscv_vreinterpret_v_u64m1_f64m1(x))
-#define vreinterpretq_i8_m64(x)                                                \
-  __riscv_vreinterpret_v_i32m1_f32m1(__riscv_vreinterpret_v_i8m1_i32m1(x))
-#define vreinterpretq_i16_m64(x)                                               \
-  __riscv_vreinterpret_v_i32m1_f32m1(__riscv_vreinterpret_v_i16m1_i32m1(x))
-#define vreinterpretq_i32_m64(x) __riscv_vreinterpret_v_i32m1_f32m1(x)
+#define vreinterpretq_i8_m64(x) __riscv_vreinterpret_v_i8m1_i32m1(x)
+#define vreinterpretq_i16_m64(x) __riscv_vreinterpret_v_i16m1_i32m1(x)
+#define vreinterpretq_i32_m64(x) (x)
 #define vreinterpretq_i64_m64(x) __riscv_vreinterpret_v_i64m1_i32m1(x)
 #define vreinterpretq_f32_m64(x) __riscv_vreinterpret_v_f32m1_i32m1(x)
 #define vreinterpretq_f64_m64(x)                                               \
@@ -1346,19 +1342,7 @@ FORCE_INLINE __m128 _mm_sub_ss(__m128 a, __m128 b) {
 // (32-bit) floating-point elements in row0, row1, row2, and row3, and store the
 // transposed matrix in these vectors (row0 now contains column 0, etc.).
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=MM_TRANSPOSE4_PS
-#define _MM_TRANSPOSE4_PS(row0, row1, row2, row3)                              \
-  do {                                                                         \
-    float32x4x2_t ROW01 = vtrnq_f32(row0, row1);                               \
-    float32x4x2_t ROW23 = vtrnq_f32(row2, row3);                               \
-    row0 =                                                                     \
-        vcombine_f32(vget_low_f32(ROW01.val[0]), vget_low_f32(ROW23.val[0]));  \
-    row1 =                                                                     \
-        vcombine_f32(vget_low_f32(ROW01.val[1]), vget_low_f32(ROW23.val[1]));  \
-    row2 = vcombine_f32(vget_high_f32(ROW01.val[0]),                           \
-                        vget_high_f32(ROW23.val[0]));                          \
-    row3 = vcombine_f32(vget_high_f32(ROW01.val[1]),                           \
-                        vget_high_f32(ROW23.val[1]));                          \
-  } while (0)
+// #define _MM_TRANSPOSE4_PS(row0, row1, row2, row3)
 
 // according to the documentation, these intrinsics behave the same as the
 // non-'u' versions.  We'll just alias them here.
@@ -2921,39 +2905,98 @@ FORCE_INLINE __m64 _mm_sub_si64(__m64 a, __m64 b) {
 // Element in dst are zeroed out when the corresponding element
 // in b is zero.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sign_epi16
-// FORCE_INLINE __m128i _mm_sign_epi16(__m128i _a, __m128i _b) {}
+FORCE_INLINE __m128i _mm_sign_epi16(__m128i a, __m128i b) {
+  vint16m1_t _a = vreinterpretq_m128i_i16(a);
+  vint16m1_t _b = vreinterpretq_m128i_i16(b);
+
+  vbool16_t lt_mask = __riscv_vmslt_vx_i16m1_b16(_b, 0, 8);
+  vbool16_t zero_mask = __riscv_vmslt_vx_i16m1_b16(_b, 0, 8);
+  vint16m1_t a_neg = __riscv_vneg_v_i16m1(_a, 8);
+  vint16m1_t res_lt = __riscv_vmerge_vvm_i16m1(_a, a_neg, lt_mask, 8);
+  return vreinterpretq_i16_m128i(
+      __riscv_vmerge_vxm_i16m1(res_lt, 0, zero_mask, 8));
+}
 
 // Negate packed 32-bit integers in a when the corresponding signed
 // 32-bit integer in b is negative, and store the results in dst.
 // Element in dst are zeroed out when the corresponding element
 // in b is zero.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sign_epi32
-// FORCE_INLINE __m128i _mm_sign_epi32(__m128i _a, __m128i _b) {}
+FORCE_INLINE __m128i _mm_sign_epi32(__m128i a, __m128i b) {
+  vint32m1_t _a = vreinterpretq_m128i_i32(a);
+  vint32m1_t _b = vreinterpretq_m128i_i32(b);
+
+  vbool32_t lt_mask = __riscv_vmslt_vx_i32m1_b32(_b, 0, 4);
+  vbool32_t zero_mask = __riscv_vmslt_vx_i32m1_b32(_b, 0, 4);
+  vint32m1_t a_neg = __riscv_vneg_v_i32m1(_a, 4);
+  vint32m1_t res_lt = __riscv_vmerge_vvm_i32m1(_a, a_neg, lt_mask, 4);
+  return vreinterpretq_i32_m128i(
+      __riscv_vmerge_vxm_i32m1(res_lt, 0, zero_mask, 4));
+}
 
 // Negate packed 8-bit integers in a when the corresponding signed
 // 8-bit integer in b is negative, and store the results in dst.
 // Element in dst are zeroed out when the corresponding element
 // in b is zero.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sign_epi8
-// FORCE_INLINE __m128i _mm_sign_epi8(__m128i _a, __m128i _b) {}
+FORCE_INLINE __m128i _mm_sign_epi8(__m128i a, __m128i b) {
+  vint8m1_t _a = vreinterpretq_m128i_i8(a);
+  vint8m1_t _b = vreinterpretq_m128i_i8(b);
+
+  vbool8_t lt_mask = __riscv_vmslt_vx_i8m1_b8(_b, 0, 16);
+  vbool8_t zero_mask = __riscv_vmslt_vx_i8m1_b8(_b, 0, 16);
+  vint8m1_t a_neg = __riscv_vneg_v_i8m1(_a, 16);
+  vint8m1_t res_lt = __riscv_vmerge_vvm_i8m1(_a, a_neg, lt_mask, 16);
+  return vreinterpretq_i8_m128i(
+      __riscv_vmerge_vxm_i8m1(res_lt, 0, zero_mask, 16));
+}
 
 // Negate packed 16-bit integers in a when the corresponding signed 16-bit
 // integer in b is negative, and store the results in dst. Element in dst are
 // zeroed out when the corresponding element in b is zero.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sign_pi16
-// FORCE_INLINE __m64 _mm_sign_pi16(__m64 _a, __m64 _b) {}
+FORCE_INLINE __m64 _mm_sign_pi16(__m64 a, __m64 b) {
+  vint16m1_t _a = vreinterpretq_m64_i16(a);
+  vint16m1_t _b = vreinterpretq_m64_i16(b);
+
+  vbool16_t lt_mask = __riscv_vmslt_vx_i16m1_b16(_b, 0, 4);
+  vbool16_t zero_mask = __riscv_vmslt_vx_i16m1_b16(_b, 0, 4);
+  vint16m1_t a_neg = __riscv_vneg_v_i16m1(_a, 4);
+  vint16m1_t res_lt = __riscv_vmerge_vvm_i16m1(_a, a_neg, lt_mask, 4);
+  return vreinterpretq_i16_m64(
+      __riscv_vmerge_vxm_i16m1(res_lt, 0, zero_mask, 4));
+}
 
 // Negate packed 32-bit integers in a when the corresponding signed 32-bit
 // integer in b is negative, and store the results in dst. Element in dst are
 // zeroed out when the corresponding element in b is zero.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sign_pi32
-// FORCE_INLINE __m64 _mm_sign_pi32(__m64 _a, __m64 _b) {}
+FORCE_INLINE __m64 _mm_sign_pi32(__m64 a, __m64 b) {
+  vint32m1_t _a = vreinterpretq_m64_i32(a);
+  vint32m1_t _b = vreinterpretq_m64_i32(b);
+
+  vbool32_t lt_mask = __riscv_vmslt_vx_i32m1_b32(_b, 0, 2);
+  vbool32_t zero_mask = __riscv_vmslt_vx_i32m1_b32(_b, 0, 2);
+  vint32m1_t a_neg = __riscv_vneg_v_i32m1(_a, 2);
+  vint32m1_t res_lt = __riscv_vmerge_vvm_i32m1(_a, a_neg, lt_mask, 2);
+  return vreinterpretq_i32_m64(
+      __riscv_vmerge_vxm_i32m1(res_lt, 0, zero_mask, 2));
+}
 
 // Negate packed 8-bit integers in a when the corresponding signed 8-bit integer
 // in b is negative, and store the results in dst. Element in dst are zeroed out
 // when the corresponding element in b is zero.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_sign_pi8
-// FORCE_INLINE __m64 _mm_sign_pi8(__m64 _a, __m64 _b) {}
+FORCE_INLINE __m64 _mm_sign_pi8(__m64 a, __m64 b) {
+  vint8m1_t _a = vreinterpretq_m64_i8(a);
+  vint8m1_t _b = vreinterpretq_m64_i8(b);
+
+  vbool8_t lt_mask = __riscv_vmslt_vx_i8m1_b8(_b, 0, 8);
+  vbool8_t zero_mask = __riscv_vmslt_vx_i8m1_b8(_b, 0, 8);
+  vint8m1_t a_neg = __riscv_vneg_v_i8m1(_a, 8);
+  vint8m1_t res_lt = __riscv_vmerge_vvm_i8m1(_a, a_neg, lt_mask, 8);
+  return vreinterpretq_i8_m64(__riscv_vmerge_vxm_i8m1(res_lt, 0, zero_mask, 8));
+}
 
 /* SSE4.1 */
 
