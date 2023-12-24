@@ -810,31 +810,31 @@ result_t test_mm_and_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 // r2 := ~a2 & b2
 // r3 := ~a3 & b3
 result_t test_mm_andnot_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = impl.test_cases_float_pointer1;
-  //   const float *_b = impl.test_cases_float_pointer2;
-  //
-  //   __m128 a = load_m128(_a);
-  //   __m128 b = load_m128(_b);
-  //   __m128 c = _mm_andnot_ps(a, b);
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  const float *_b = impl.test_cases_float_pointer2;
+
+  __m128 a = load_m128(_a);
+  __m128 b = load_m128(_b);
+  __m128 c = _mm_andnot_ps(a, b);
   // now for the assertion...
-  //   const uint32_t *ia = (const uint32_t *)&a;
-  //   const uint32_t *ib = (const uint32_t *)&b;
-  //   uint32_t r[4];
-  //   r[0] = ~ia[0] & ib[0];
-  //   r[1] = ~ia[1] & ib[1];
-  //   r[2] = ~ia[2] & ib[2];
-  //   r[3] = ~ia[3] & ib[3];
-  //   __m128i ret = do_mm_set_epi32(r[3], r[2], r[1], r[0]);
-  //   result_t res = TEST_FAIL;
-  //   res = VALIDATE_INT32_M128(*(const __m128i *)&c, r);
-  //   if (res) {
-  //     res = VALIDATE_INT32_M128(ret, r);
-  //   }
-  //   return res;
-  // #else
+  const uint32_t *ia = (const uint32_t *)&a;
+  const uint32_t *ib = (const uint32_t *)&b;
+  uint32_t r[4];
+  r[0] = ~ia[0] & ib[0];
+  r[1] = ~ia[1] & ib[1];
+  r[2] = ~ia[2] & ib[2];
+  r[3] = ~ia[3] & ib[3];
+  __m128i ret = do_mm_set_epi32(r[3], r[2], r[1], r[0]);
+  result_t res = TEST_FAIL;
+  res = VALIDATE_INT32_M128(*(const __m128i *)&c, r);
+  if (res) {
+    res = VALIDATE_INT32_M128(ret, r);
+  }
+  return res;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_avg_pu16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
@@ -4016,53 +4016,53 @@ result_t test_mm_and_si128(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_andnot_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const double *_a = (const double *)impl.test_cases_float_pointer1;
-  //   const double *_b = (const double *)impl.test_cases_float_pointer2;
-  //
-  //   __m128d a = load_m128d(_a);
-  //   __m128d b = load_m128d(_b);
-  //   __m128d c = _mm_andnot_pd(a, b);
-  //
+#ifdef ENABLE_TEST_ALL
+  const double *_a = (const double *)impl.test_cases_float_pointer1;
+  const double *_b = (const double *)impl.test_cases_float_pointer2;
+
+  __m128d a = load_m128d(_a);
+  __m128d b = load_m128d(_b);
+  __m128d c = _mm_andnot_pd(a, b);
+
   // Take AND operation a complement of 'a' and 'b'. Bitwise operations are
   // not allowed on float/double datatype, so 'a' and 'b' are calculated in
   // uint64_t datatype.
-  //   const uint64_t *ia = (const uint64_t *)&a;
-  //   const uint64_t *ib = (const uint64_t *)&b;
-  //   uint64_t r0 = ~ia[0] & ib[0];
-  //   uint64_t r1 = ~ia[1] & ib[1];
-  //   return validate_uint64(*(const __m128i *)&c, r0, r1);
-  // #else
+  const uint64_t *ia = (const uint64_t *)&a;
+  const uint64_t *ib = (const uint64_t *)&b;
+  uint64_t r0 = ~ia[0] & ib[0];
+  uint64_t r1 = ~ia[1] & ib[1];
+  return validate_uint64(*(const __m128i *)&c, r0, r1);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_andnot_si128(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int32_t *_a = impl.test_cases_int_pointer1;
-  //   const int32_t *_b = impl.test_cases_int_pointer2;
-  //   __m128i a = load_m128i(_a);
-  //   __m128i b = load_m128i(_b);
-  //   __m128 fc = _mm_andnot_ps(*(const __m128 *)&a, *(const __m128 *)&b);
-  //   __m128i c = *(const __m128i *)&fc;
+#ifdef ENABLE_TEST_ALL
+  const int32_t *_a = impl.test_cases_int_pointer1;
+  const int32_t *_b = impl.test_cases_int_pointer2;
+  __m128i a = load_m128i(_a);
+  __m128i b = load_m128i(_b);
+  __m128 fc = _mm_andnot_ps(*(const __m128 *)&a, *(const __m128 *)&b);
+  __m128i c = *(const __m128i *)&fc;
   // now for the assertion...
-  //   const uint32_t *ia = (const uint32_t *)&a;
-  //   const uint32_t *ib = (const uint32_t *)&b;
-  //   uint32_t r[4];
-  //   r[0] = ~ia[0] & ib[0];
-  //   r[1] = ~ia[1] & ib[1];
-  //   r[2] = ~ia[2] & ib[2];
-  //   r[3] = ~ia[3] & ib[3];
-  //   __m128i ret = do_mm_set_epi32(r[3], r[2], r[1], r[0]);
-  //   result_t res = TEST_SUCCESS;
-  //   res = VALIDATE_INT32_M128(c, r);
-  //   if (res) {
-  //     res = VALIDATE_INT32_M128(ret, r);
-  //   }
-  //   return res;
-  // #else
+  const uint32_t *ia = (const uint32_t *)&a;
+  const uint32_t *ib = (const uint32_t *)&b;
+  uint32_t r[4];
+  r[0] = ~ia[0] & ib[0];
+  r[1] = ~ia[1] & ib[1];
+  r[2] = ~ia[2] & ib[2];
+  r[3] = ~ia[3] & ib[3];
+  __m128i ret = do_mm_set_epi32(r[3], r[2], r[1], r[0]);
+  result_t res = TEST_SUCCESS;
+  res = VALIDATE_INT32_M128(c, r);
+  if (res) {
+    res = VALIDATE_INT32_M128(ret, r);
+  }
+  return res;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_avg_epu16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {

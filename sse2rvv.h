@@ -476,7 +476,7 @@ typedef struct {
 FORCE_INLINE __m128 _mm_add_ps(__m128 a, __m128 b) {
   vfloat32m1_t _a = vreinterpretq_m128_f32(a);
   vfloat32m1_t _b = vreinterpretq_m128_f32(b);
-  return vreinterpretq_f32_m128(__riscv_vfadd_vv_f32m1(a, b, 4));
+  return vreinterpretq_f32_m128(__riscv_vfadd_vv_f32m1(_a, _b, 4));
 }
 
 // Add the lower single-precision (32-bit) floating-point element in a and b,
@@ -497,7 +497,12 @@ FORCE_INLINE __m128 _mm_and_ps(__m128 a, __m128 b) {
 // Compute the bitwise NOT of packed single-precision (32-bit) floating-point
 // elements in a and then AND with b, and store the results in dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_andnot_ps
-// FORCE_INLINE __m128 _mm_andnot_ps(__m128 a, __m128 b) {}
+FORCE_INLINE __m128 _mm_andnot_ps(__m128 a, __m128 b) {
+  vint32m1_t _a = vreinterpretq_m128_i32(a);
+  vint32m1_t _b = vreinterpretq_m128_i32(b);
+  return vreinterpretq_i32_m128(
+      __riscv_vand_vv_i32m1(__riscv_vnot_v_i32m1(_a, 4), _b, 4));
+}
 
 // Average packed unsigned 16-bit integers in a and b, and store the results in
 // dst.
@@ -1480,12 +1485,22 @@ FORCE_INLINE __m128i _mm_and_si128(__m128i a, __m128i b) {
 // Compute the bitwise NOT of packed double-precision (64-bit) floating-point
 // elements in a and then AND with b, and store the results in dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_andnot_pd
-// FORCE_INLINE __m128d _mm_andnot_pd(__m128d a, __m128d b) {}
+FORCE_INLINE __m128d _mm_andnot_pd(__m128d a, __m128d b) {
+  vint64m1_t _a = vreinterpretq_m128d_i64(a);
+  vint64m1_t _b = vreinterpretq_m128d_i64(b);
+  return vreinterpretq_i64_m128d(
+      __riscv_vand_vv_i64m1(__riscv_vnot_v_i64m1(_a, 2), _b, 2));
+}
 
 // Compute the bitwise NOT of 128 bits (representing integer data) in a and then
 // AND with b, and store the result in dst.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_andnot_si128
-// FORCE_INLINE __m128i _mm_andnot_si128(__m128i a, __m128i b) {}
+FORCE_INLINE __m128i _mm_andnot_si128(__m128i a, __m128i b) {
+  vint32m1_t _a = vreinterpretq_m128i_i32(a);
+  vint32m1_t _b = vreinterpretq_m128i_i32(b);
+  return vreinterpretq_i32_m128i(
+      __riscv_vand_vv_i32m1(__riscv_vnot_v_i32m1(_a, 4), _b, 4));
+}
 
 // Average packed unsigned 16-bit integers in a and b, and store the results in
 // dst.
