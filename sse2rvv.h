@@ -237,17 +237,47 @@ typedef union ALIGN_STRUCT(16) SIMDVec {
 
 /* SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2 */
 
-// FORCE_INLINE __m128i _mm_abs_epi16 (__m128i a) {}
+FORCE_INLINE __m128i _mm_abs_epi16(__m128i a) {
+  vint16m1_t _a = vreinterpretq_m128i_i16(a);
+  vint16m1_t mask = __riscv_vsra_vx_i16m1(_a, 15, 8);
+  vint16m1_t a_xor = __riscv_vxor_vv_i16m1(_a, mask, 8);
+  return vreinterpretq_i16_m128i(__riscv_vsub_vv_i16m1(a_xor, mask, 8));
+}
 
-// FORCE_INLINE __m128i _mm_abs_epi32 (__m128i a) {}
+FORCE_INLINE __m128i _mm_abs_epi32(__m128i a) {
+  vint32m1_t _a = vreinterpretq_m128i_i32(a);
+  vint32m1_t mask = __riscv_vsra_vx_i32m1(_a, 31, 4);
+  vint32m1_t a_xor = __riscv_vxor_vv_i32m1(_a, mask, 4);
+  return vreinterpretq_i32_m128i(__riscv_vsub_vv_i32m1(a_xor, mask, 4));
+}
 
-// FORCE_INLINE __m128i _mm_abs_epi8 (__m128i a) {}
+FORCE_INLINE __m128i _mm_abs_epi8(__m128i a) {
+  vint8m1_t _a = vreinterpretq_m128i_i8(a);
+  vint8m1_t mask = __riscv_vsra_vx_i8m1(_a, 7, 16);
+  vint8m1_t a_xor = __riscv_vxor_vv_i8m1(_a, mask, 16);
+  return vreinterpretq_i8_m128i(__riscv_vsub_vv_i8m1(a_xor, mask, 16));
+}
 
-// FORCE_INLINE __m64 _mm_abs_pi16 (__m64 a) {}
+FORCE_INLINE __m64 _mm_abs_pi16(__m64 a) {
+  vint16m1_t _a = vreinterpretq_m128i_i16(a);
+  vint16m1_t mask = __riscv_vsra_vx_i16m1(_a, 15, 4);
+  vint16m1_t a_xor = __riscv_vxor_vv_i16m1(_a, mask, 4);
+  return vreinterpretq_i16_m128i(__riscv_vsub_vv_i16m1(a_xor, mask, 4));
+}
 
-// FORCE_INLINE __m64 _mm_abs_pi32 (__m64 a) {}
+FORCE_INLINE __m64 _mm_abs_pi32(__m64 a) {
+  vint32m1_t _a = vreinterpretq_m128i_i32(a);
+  vint32m1_t mask = __riscv_vsra_vx_i32m1(_a, 31, 2);
+  vint32m1_t a_xor = __riscv_vxor_vv_i32m1(_a, mask, 2);
+  return vreinterpretq_i32_m128i(__riscv_vsub_vv_i32m1(a_xor, mask, 2));
+}
 
-// FORCE_INLINE __m64 _mm_abs_pi8 (__m64 a) {}
+FORCE_INLINE __m64 _mm_abs_pi8(__m64 a) {
+  vint8m1_t _a = vreinterpretq_m128i_i8(a);
+  vint8m1_t mask = __riscv_vsra_vx_i8m1(_a, 7, 8);
+  vint8m1_t a_xor = __riscv_vxor_vv_i8m1(_a, mask, 8);
+  return vreinterpretq_i8_m128i(__riscv_vsub_vv_i8m1(a_xor, mask, 8));
+}
 
 FORCE_INLINE __m128i _mm_add_epi16(__m128i a, __m128i b) {
   vint16m1_t _a = vreinterpretq_m128i_i16(a);
@@ -1559,7 +1589,8 @@ FORCE_INLINE int _mm_testz_si128(__m128i a, __m128i b) {
 // FORCE_INLINE int _mm_ucomineq_sd (__m128d a, __m128d b) {}
 
 // FORCE_INLINE int _mm_ucomineq_ss (__m128 a, __m128 b) {}
-// FORCE_INLINE  {}
+
+// FORCE_INLINE _mm_undefined_pd (void) {}
 
 // FORCE_INLINE __m128 _mm_undefined_ps (void) {}
 

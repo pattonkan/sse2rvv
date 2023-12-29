@@ -8358,116 +8358,116 @@ result_t test_mm_moveldup_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 
 /* SSSE3 */
 result_t test_mm_abs_epi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
-  //   __m128i a = load_m128i(_a);
-  //   __m128i c = _mm_abs_epi16(a);
-  //
-  //   uint32_t d[8];
-  //   d[0] = (_a[0] < 0) ? -_a[0] : _a[0];
-  //   d[1] = (_a[1] < 0) ? -_a[1] : _a[1];
-  //   d[2] = (_a[2] < 0) ? -_a[2] : _a[2];
-  //   d[3] = (_a[3] < 0) ? -_a[3] : _a[3];
-  //   d[4] = (_a[4] < 0) ? -_a[4] : _a[4];
-  //   d[5] = (_a[5] < 0) ? -_a[5] : _a[5];
-  //   d[6] = (_a[6] < 0) ? -_a[6] : _a[6];
-  //   d[7] = (_a[7] < 0) ? -_a[7] : _a[7];
-  //
-  //   return VALIDATE_UINT16_M128(c, d);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
+  __m128i a = load_m128i(_a);
+  __m128i c = _mm_abs_epi16(a);
+
+  uint32_t d[8];
+  d[0] = (_a[0] < 0) ? -_a[0] : _a[0];
+  d[1] = (_a[1] < 0) ? -_a[1] : _a[1];
+  d[2] = (_a[2] < 0) ? -_a[2] : _a[2];
+  d[3] = (_a[3] < 0) ? -_a[3] : _a[3];
+  d[4] = (_a[4] < 0) ? -_a[4] : _a[4];
+  d[5] = (_a[5] < 0) ? -_a[5] : _a[5];
+  d[6] = (_a[6] < 0) ? -_a[6] : _a[6];
+  d[7] = (_a[7] < 0) ? -_a[7] : _a[7];
+
+  return VALIDATE_UINT16_M128(c, d);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_abs_epi32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
-  //   __m128i a = load_m128i(_a);
-  //   __m128i c = _mm_abs_epi32(a);
-  //
-  //   uint32_t d[4];
-  //   d[0] = (_a[0] < 0) ? -_a[0] : _a[0];
-  //   d[1] = (_a[1] < 0) ? -_a[1] : _a[1];
-  //   d[2] = (_a[2] < 0) ? -_a[2] : _a[2];
-  //   d[3] = (_a[3] < 0) ? -_a[3] : _a[3];
-  //
-  //   return VALIDATE_UINT32_M128(c, d);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
+  __m128i a = load_m128i(_a);
+  __m128i c = _mm_abs_epi32(a);
+
+  uint32_t d[4];
+  d[0] = (_a[0] < 0) ? -_a[0] : _a[0];
+  d[1] = (_a[1] < 0) ? -_a[1] : _a[1];
+  d[2] = (_a[2] < 0) ? -_a[2] : _a[2];
+  d[3] = (_a[3] < 0) ? -_a[3] : _a[3];
+
+  return VALIDATE_UINT32_M128(c, d);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_abs_epi8(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int8_t *_a = (const int8_t *)impl.test_cases_int_pointer1;
-  //   __m128i a = load_m128i(_a);
-  //   __m128i c = _mm_abs_epi8(a);
-  //
-  //   uint32_t d[16];
-  //   for (int i = 0; i < 16; i++) {
-  //     d[i] = (_a[i] < 0) ? -_a[i] : _a[i];
-  //   }
-  //
-  //   return VALIDATE_UINT8_M128(c, d);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int8_t *_a = (const int8_t *)impl.test_cases_int_pointer1;
+  __m128i a = load_m128i(_a);
+  __m128i c = _mm_abs_epi8(a);
+
+  uint32_t d[16];
+  for (int i = 0; i < 16; i++) {
+    d[i] = (_a[i] < 0) ? -_a[i] : _a[i];
+  }
+
+  return VALIDATE_UINT8_M128(c, d);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_abs_pi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
-  //   __m64 a = load_m64(_a);
-  //   __m64 c = _mm_abs_pi16(a);
-  //
-  //   uint32_t d[4];
-  //   d[0] = (_a[0] < 0) ? -_a[0] : _a[0];
-  //   d[1] = (_a[1] < 0) ? -_a[1] : _a[1];
-  //   d[2] = (_a[2] < 0) ? -_a[2] : _a[2];
-  //   d[3] = (_a[3] < 0) ? -_a[3] : _a[3];
-  //
-  //   return VALIDATE_UINT16_M64(c, d);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
+  __m64 a = load_m64(_a);
+  __m64 c = _mm_abs_pi16(a);
+
+  uint32_t d[4];
+  d[0] = (_a[0] < 0) ? -_a[0] : _a[0];
+  d[1] = (_a[1] < 0) ? -_a[1] : _a[1];
+  d[2] = (_a[2] < 0) ? -_a[2] : _a[2];
+  d[3] = (_a[3] < 0) ? -_a[3] : _a[3];
+
+  return VALIDATE_UINT16_M64(c, d);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_abs_pi32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
-  //   __m64 a = load_m64(_a);
-  //   __m64 c = _mm_abs_pi32(a);
-  //
-  //   uint32_t d[2];
-  //   d[0] = (_a[0] < 0) ? -_a[0] : _a[0];
-  //   d[1] = (_a[1] < 0) ? -_a[1] : _a[1];
-  //
-  //   return VALIDATE_UINT32_M64(c, d);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
+  __m64 a = load_m64(_a);
+  __m64 c = _mm_abs_pi32(a);
+
+  uint32_t d[2];
+  d[0] = (_a[0] < 0) ? -_a[0] : _a[0];
+  d[1] = (_a[1] < 0) ? -_a[1] : _a[1];
+
+  return VALIDATE_UINT32_M64(c, d);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_abs_pi8(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int8_t *_a = (const int8_t *)impl.test_cases_int_pointer1;
-  //   __m64 a = load_m64(_a);
-  //   __m64 c = _mm_abs_pi8(a);
-  //
-  //   uint32_t d[8];
-  //   d[0] = (_a[0] < 0) ? -_a[0] : _a[0];
-  //   d[1] = (_a[1] < 0) ? -_a[1] : _a[1];
-  //   d[2] = (_a[2] < 0) ? -_a[2] : _a[2];
-  //   d[3] = (_a[3] < 0) ? -_a[3] : _a[3];
-  //   d[4] = (_a[4] < 0) ? -_a[4] : _a[4];
-  //   d[5] = (_a[5] < 0) ? -_a[5] : _a[5];
-  //   d[6] = (_a[6] < 0) ? -_a[6] : _a[6];
-  //   d[7] = (_a[7] < 0) ? -_a[7] : _a[7];
-  //
-  //   return VALIDATE_UINT8_M64(c, d);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int8_t *_a = (const int8_t *)impl.test_cases_int_pointer1;
+  __m64 a = load_m64(_a);
+  __m64 c = _mm_abs_pi8(a);
+
+  uint32_t d[8];
+  d[0] = (_a[0] < 0) ? -_a[0] : _a[0];
+  d[1] = (_a[1] < 0) ? -_a[1] : _a[1];
+  d[2] = (_a[2] < 0) ? -_a[2] : _a[2];
+  d[3] = (_a[3] < 0) ? -_a[3] : _a[3];
+  d[4] = (_a[4] < 0) ? -_a[4] : _a[4];
+  d[5] = (_a[5] < 0) ? -_a[5] : _a[5];
+  d[6] = (_a[6] < 0) ? -_a[6] : _a[6];
+  d[7] = (_a[7] < 0) ? -_a[7] : _a[7];
+
+  return VALIDATE_UINT8_M64(c, d);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_alignr_epi8(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
