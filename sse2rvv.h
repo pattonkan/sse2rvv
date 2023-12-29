@@ -440,11 +440,29 @@ FORCE_INLINE __m128 _mm_blend_ps(__m128 a, __m128 b, const int imm8) {
   return vreinterpretq_f32_m128(__riscv_vmerge_vvm_f32m1(_a, _b, _imm8, 4));
 }
 
-// FORCE_INLINE __m128i _mm_blendv_epi8(__m128i a, __m128i b, __m128i mask) {}
+FORCE_INLINE __m128i _mm_blendv_epi8(__m128i a, __m128i b, __m128i mask) {
+  vint8m1_t _a = vreinterpretq_m128i_i8(a);
+  vint8m1_t _b = vreinterpretq_m128i_i8(b);
+  vint8m1_t _mask = vreinterpretq_m128i_i8(mask);
+  vbool8_t mask_b8 = __riscv_vmsne_vx_i8m1_b8(_mask, 0, 16);
+  return vreinterpretq_i8_m128i(__riscv_vmerge_vvm_i8m1(_a, _b, mask_b8, 16));
+}
 
-// FORCE_INLINE __m128d _mm_blendv_pd(__m128d a, __m128d b, __m128d mask) {}
+FORCE_INLINE __m128d _mm_blendv_pd(__m128d a, __m128d b, __m128d mask) {
+  vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
+  vfloat64m1_t _b = vreinterpretq_m128d_f64(b);
+  vint64m1_t _mask = vreinterpretq_m128d_i64(mask);
+  vbool64_t mask_b64 = __riscv_vmsne_vx_i64m1_b64(_mask, 0, 2);
+  return vreinterpretq_f64_m128d(__riscv_vmerge_vvm_f64m1(_a, _b, mask_b64, 2));
+}
 
-// FORCE_INLINE __m128 _mm_blendv_ps(__m128 a, __m128 b, __m128 mask) {}
+FORCE_INLINE __m128 _mm_blendv_ps(__m128 a, __m128 b, __m128 mask) {
+  vfloat32m1_t _a = vreinterpretq_m128_f32(a);
+  vfloat32m1_t _b = vreinterpretq_m128_f32(b);
+  vint32m1_t _mask = vreinterpretq_m128_i32(mask);
+  vbool32_t mask_b32 = __riscv_vmsne_vx_i32m1_b32(_mask, 0, 4);
+  return vreinterpretq_f32_m128(__riscv_vmerge_vvm_f32m1(_a, _b, mask_b32, 4));
+}
 
 // FORCE_INLINE __m128i _mm_bslli_si128 (__m128i a, int imm8) {}
 
