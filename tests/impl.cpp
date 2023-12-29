@@ -9261,99 +9261,99 @@ result_t test_mm_blend_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_blendv_epi8(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int8_t *_a = (const int8_t *)impl.test_cases_int_pointer1;
-  //   const int8_t *_b = (const int8_t *)impl.test_cases_int_pointer2;
-  //   const int8_t _mask[16] = {(const int8_t)impl.test_cases_ints[iter],
-  //                             (const int8_t)impl.test_cases_ints[iter + 1],
-  //                             (const int8_t)impl.test_cases_ints[iter + 2],
-  //                             (const int8_t)impl.test_cases_ints[iter + 3],
-  //                             (const int8_t)impl.test_cases_ints[iter + 4],
-  //                             (const int8_t)impl.test_cases_ints[iter + 5],
-  //                             (const int8_t)impl.test_cases_ints[iter + 6],
-  //                             (const int8_t)impl.test_cases_ints[iter + 7]};
-  //
-  //   int8_t _c[16];
-  //   for (int i = 0; i < 16; i++) {
-  //     if (_mask[i] >> 7) {
-  //       _c[i] = _b[i];
-  //     } else {
-  //       _c[i] = _a[i];
-  //     }
-  //   }
-  //
-  //   __m128i a = load_m128i(_a);
-  //   __m128i b = load_m128i(_b);
-  //   __m128i mask = load_m128i(_mask);
-  //   __m128i c = _mm_blendv_epi8(a, b, mask);
-  //
-  //   return VALIDATE_INT8_M128(c, _c);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int8_t *_a = (const int8_t *)impl.test_cases_int_pointer1;
+  const int8_t *_b = (const int8_t *)impl.test_cases_int_pointer2;
+  const int8_t _mask[16] = {(const int8_t)impl.test_cases_ints[iter],
+                            (const int8_t)impl.test_cases_ints[iter + 1],
+                            (const int8_t)impl.test_cases_ints[iter + 2],
+                            (const int8_t)impl.test_cases_ints[iter + 3],
+                            (const int8_t)impl.test_cases_ints[iter + 4],
+                            (const int8_t)impl.test_cases_ints[iter + 5],
+                            (const int8_t)impl.test_cases_ints[iter + 6],
+                            (const int8_t)impl.test_cases_ints[iter + 7]};
+
+  int8_t _c[16];
+  for (int i = 0; i < 16; i++) {
+    if (_mask[i] >> 7) {
+      _c[i] = _b[i];
+    } else {
+      _c[i] = _a[i];
+    }
+  }
+
+  __m128i a = load_m128i(_a);
+  __m128i b = load_m128i(_b);
+  __m128i mask = load_m128i(_mask);
+  __m128i c = _mm_blendv_epi8(a, b, mask);
+
+  return VALIDATE_INT8_M128(c, _c);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_blendv_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const double *_a = (const double *)impl.test_cases_float_pointer1;
-  //   const double *_b = (const double *)impl.test_cases_float_pointer2;
-  //   const double _mask[] = {(double)impl.test_cases_floats[iter],
-  //                           (double)impl.test_cases_floats[iter + 1]};
-  //
-  //   double _c[2];
-  //   for (int i = 0; i < 2; i++) {
-  //     // signed shift right would return a result which is either all 1's
-  //     from
-  //     // negative numbers or all 0's from positive numbers
-  //     if ((*(const int64_t *)(_mask + i)) >> 63) {
-  //       _c[i] = _b[i];
-  //     } else {
-  //       _c[i] = _a[i];
-  //     }
-  //   }
-  //
-  //   __m128d a = load_m128d(_a);
-  //   __m128d b = load_m128d(_b);
-  //   __m128d mask = load_m128d(_mask);
-  //
-  //   __m128d c = _mm_blendv_pd(a, b, mask);
-  //
-  //   return validate_double(c, _c[0], _c[1]);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const double *_a = (const double *)impl.test_cases_float_pointer1;
+  const double *_b = (const double *)impl.test_cases_float_pointer2;
+  const double _mask[] = {(double)impl.test_cases_floats[iter],
+                          (double)impl.test_cases_floats[iter + 1]};
+
+  double _c[2];
+  for (int i = 0; i < 2; i++) {
+    // signed shift right would return a result which is either all 1's
+    // from
+    // negative numbers or all 0's from positive numbers
+    if ((*(const int64_t *)(_mask + i)) >> 63) {
+      _c[i] = _b[i];
+    } else {
+      _c[i] = _a[i];
+    }
+  }
+
+  __m128d a = load_m128d(_a);
+  __m128d b = load_m128d(_b);
+  __m128d mask = load_m128d(_mask);
+
+  __m128d c = _mm_blendv_pd(a, b, mask);
+
+  return validate_double(c, _c[0], _c[1]);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_blendv_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = impl.test_cases_float_pointer1;
-  //   const float *_b = impl.test_cases_float_pointer2;
-  //   const float _mask[] = {
-  //       impl.test_cases_floats[iter], impl.test_cases_floats[iter + 1],
-  //       impl.test_cases_floats[iter + 2], impl.test_cases_floats[iter + 3]};
-  //
-  //   float _c[4];
-  //   for (int i = 0; i < 4; i++) {
-  //     // signed shift right would return a result which is either all 1's
-  //     from
-  //     // negative numbers or all 0's from positive numbers
-  //     if ((*(const int32_t *)(_mask + i)) >> 31) {
-  //       _c[i] = _b[i];
-  //     } else {
-  //       _c[i] = _a[i];
-  //     }
-  //   }
-  //
-  //   __m128 a = load_m128(_a);
-  //   __m128 b = load_m128(_b);
-  //   __m128 mask = load_m128(_mask);
-  //
-  //   __m128 c = _mm_blendv_ps(a, b, mask);
-  //
-  //   return validate_float(c, _c[0], _c[1], _c[2], _c[3]);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  const float *_b = impl.test_cases_float_pointer2;
+  const float _mask[] = {
+      impl.test_cases_floats[iter], impl.test_cases_floats[iter + 1],
+      impl.test_cases_floats[iter + 2], impl.test_cases_floats[iter + 3]};
+
+  float _c[4];
+  for (int i = 0; i < 4; i++) {
+    // signed shift right would return a result which is either all 1's
+    // from
+    // negative numbers or all 0's from positive numbers
+    if ((*(const int32_t *)(_mask + i)) >> 31) {
+      _c[i] = _b[i];
+    } else {
+      _c[i] = _a[i];
+    }
+  }
+
+  __m128 a = load_m128(_a);
+  __m128 b = load_m128(_b);
+  __m128 mask = load_m128(_mask);
+
+  __m128 c = _mm_blendv_ps(a, b, mask);
+
+  return validate_float(c, _c[0], _c[1], _c[2], _c[3]);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_ceil_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
