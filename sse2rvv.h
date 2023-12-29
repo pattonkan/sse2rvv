@@ -143,7 +143,9 @@ typedef union ALIGN_STRUCT(16) SIMDVec {
 #define vreinterpretq_m128d_i32(x)                                             \
   __riscv_vreinterpret_v_i64m1_i32m1(__riscv_vreinterpret_v_f64m1_i64m1(x))
 #define vreinterpretq_m128d_i64(x) __riscv_vreinterpret_v_f64m1_i64m1(x)
-#define vreinterpretq_m128d_f32(x) __riscv_vreinterpret_v_f64m1_f32m1(x)
+#define vreinterpretq_m128d_f32(x)                                             \
+  __riscv_vreinterpret_v_i32m1_f32m1(__riscv_vreinterpret_v_i64m1_i32m1(       \
+      __riscv_vreinterpret_v_f64m1_i64m1(x)))
 #define vreinterpretq_m128d_f64(x) (x)
 
 #define vreinterpretq_u8_m128d(x)                                              \
@@ -414,18 +416,35 @@ FORCE_INLINE __m128i _mm_andnot_si128(__m128i a, __m128i b) {
 
 // FORCE_INLINE __m64 _mm_avg_pu8 (__m64 a, __m64 b) {}
 
-// FORCE_INLINE __m128i _mm_blend_epi16 (__m128i a, __m128i b, const int imm8)
-// {}
+FORCE_INLINE __m128i _mm_blend_epi16(__m128i a, __m128i b, const int imm8) {
+  vint16m1_t _a = vreinterpretq_m128i_i16(a);
+  vint16m1_t _b = vreinterpretq_m128i_i16(b);
+  vbool16_t _imm8 =
+      __riscv_vreinterpret_v_i8m1_b16(__riscv_vmv_s_x_i8m1(imm8, 8));
+  return vreinterpretq_i16_m128i(__riscv_vmerge_vvm_i16m1(_a, _b, _imm8, 8));
+}
 
-// FORCE_INLINE __m128d _mm_blend_pd (__m128d a, __m128d b, const int imm8) {}
+FORCE_INLINE __m128d _mm_blend_pd(__m128d a, __m128d b, const int imm8) {
+  vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
+  vfloat64m1_t _b = vreinterpretq_m128d_f64(b);
+  vbool64_t _imm8 =
+      __riscv_vreinterpret_v_i8m1_b64(__riscv_vmv_s_x_i8m1(imm8, 2));
+  return vreinterpretq_f64_m128d(__riscv_vmerge_vvm_f64m1(_a, _b, _imm8, 2));
+}
 
-// FORCE_INLINE __m128 _mm_blend_ps (__m128 a, __m128 b, const int imm8) {}
+FORCE_INLINE __m128 _mm_blend_ps(__m128 a, __m128 b, const int imm8) {
+  vfloat32m1_t _a = vreinterpretq_m128_f32(a);
+  vfloat32m1_t _b = vreinterpretq_m128_f32(b);
+  vbool32_t _imm8 =
+      __riscv_vreinterpret_v_i8m1_b32(__riscv_vmv_s_x_i8m1(imm8, 4));
+  return vreinterpretq_f32_m128(__riscv_vmerge_vvm_f32m1(_a, _b, _imm8, 4));
+}
 
-// FORCE_INLINE __m128i _mm_blendv_epi8 (__m128i a, __m128i b, __m128i mask) {}
+// FORCE_INLINE __m128i _mm_blendv_epi8(__m128i a, __m128i b, __m128i mask) {}
 
-// FORCE_INLINE __m128d _mm_blendv_pd (__m128d a, __m128d b, __m128d mask) {}
+// FORCE_INLINE __m128d _mm_blendv_pd(__m128d a, __m128d b, __m128d mask) {}
 
-// FORCE_INLINE __m128 _mm_blendv_ps (__m128 a, __m128 b, __m128 mask) {}
+// FORCE_INLINE __m128 _mm_blendv_ps(__m128 a, __m128 b, __m128 mask) {}
 
 // FORCE_INLINE __m128i _mm_bslli_si128 (__m128i a, int imm8) {}
 
