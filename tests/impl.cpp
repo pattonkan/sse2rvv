@@ -8188,42 +8188,42 @@ result_t test_mm_xor_si128(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 
 /* SSE3 */
 result_t test_mm_addsub_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const double *_a = (const double *)impl.test_cases_float_pointer1;
-  //   const double *_b = (const double *)impl.test_cases_float_pointer2;
-  //
-  //   double d0 = _a[0] - _b[0];
-  //   double d1 = _a[1] + _b[1];
-  //
-  //   __m128d a = load_m128d(_a);
-  //   __m128d b = load_m128d(_b);
-  //   __m128d c = _mm_addsub_pd(a, b);
-  //
-  //   return validate_double(c, d0, d1);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const double *_a = (const double *)impl.test_cases_float_pointer1;
+  const double *_b = (const double *)impl.test_cases_float_pointer2;
+
+  double d0 = _a[0] - _b[0];
+  double d1 = _a[1] + _b[1];
+
+  __m128d a = load_m128d(_a);
+  __m128d b = load_m128d(_b);
+  __m128d c = _mm_addsub_pd(a, b);
+
+  return validate_double(c, d0, d1);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_addsub_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   _MM_SET_ROUNDING_MODE(_MM_ROUND_NEAREST);
-  //   const float *_a = impl.test_cases_float_pointer1;
-  //   const float *_b = impl.test_cases_float_pointer2;
-  //
-  //   float f0 = _a[0] - _b[0];
-  //   float f1 = _a[1] + _b[1];
-  //   float f2 = _a[2] - _b[2];
-  //   float f3 = _a[3] + _b[3];
-  //
-  //   __m128 a = load_m128(_a);
-  //   __m128 b = load_m128(_b);
-  //   __m128 c = _mm_addsub_ps(a, b);
-  //
-  //   return validate_float(c, f0, f1, f2, f3);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  // _MM_SET_ROUNDING_MODE(_MM_ROUND_NEAREST);
+  const float *_a = impl.test_cases_float_pointer1;
+  const float *_b = impl.test_cases_float_pointer2;
+
+  float f0 = _a[0] - _b[0];
+  float f1 = _a[1] + _b[1];
+  float f2 = _a[2] - _b[2];
+  float f3 = _a[3] + _b[3];
+
+  __m128 a = load_m128(_a);
+  __m128 b = load_m128(_b);
+  __m128 c = _mm_addsub_ps(a, b);
+
+  return validate_float(c, f0, f1, f2, f3);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_hadd_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
