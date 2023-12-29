@@ -9172,92 +9172,92 @@ result_t test_mm_sign_pi8(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 
 /* SSE4.1 */
 result_t test_mm_blend_epi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
-  //   const int16_t *_b = (const int16_t *)impl.test_cases_int_pointer2;
-  //   int16_t _c[8];
-  //   __m128i a, b, c;
-  //
-  // #define TEST_IMPL(IDX)
-  //   for (int j = 0; j < 8; j++) {
-  //     if ((IDX >> j) & 0x1) {
-  //       _c[j] = _b[j];
-  //     } else {
-  //       _c[j] = _a[j];
-  //     }
-  //   }
-  //   a = load_m128i(_a);
-  //   b = load_m128i(_b);
-  //   c = _mm_blend_epi16(a, b, IDX);
-  // CHECK_RESULT(VALIDATE_INT16_M128(c, _c));
-  //
-  //   IMM_256_ITER
-  // #undef TEST_IMPL
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
+  const int16_t *_b = (const int16_t *)impl.test_cases_int_pointer2;
+  int16_t _c[8];
+  __m128i a, b, c;
+
+#define TEST_IMPL(IDX)                                                         \
+  for (int j = 0; j < 8; j++) {                                                \
+    if ((IDX >> j) & 0x1) {                                                    \
+      _c[j] = _b[j];                                                           \
+    } else {                                                                   \
+      _c[j] = _a[j];                                                           \
+    }                                                                          \
+  }                                                                            \
+  a = load_m128i(_a);                                                          \
+  b = load_m128i(_b);                                                          \
+  c = _mm_blend_epi16(a, b, IDX);                                              \
+  CHECK_RESULT(VALIDATE_INT16_M128(c, _c));
+
+  IMM_256_ITER
+#undef TEST_IMPL
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_blend_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const double *_a = (const double *)impl.test_cases_float_pointer1;
-  //   const double *_b = (const double *)impl.test_cases_float_pointer2;
-  //   __m128d a, b, c;
-  //
-  // #define TEST_IMPL(IDX)
-  //   double _c##IDX[2];
-  //   for (int j = 0; j < 2; j++) {
-  //     if ((IDX >> j) & 0x1) {
-  //       _c##IDX[j] = _b[j];
-  //     } else {
-  //       _c##IDX[j] = _a[j];
-  //     }
-  //   }
-  //
-  //   a = load_m128d(_a);
-  //   b = load_m128d(_b);
-  //   c = _mm_blend_pd(a, b, IDX);
-  //  CHECK_RESULT(validate_double(c, _c##IDX[0], _c##IDX[1]))
-  //
-  //   IMM_4_ITER
-  // #undef TEST_IMPL
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const double *_a = (const double *)impl.test_cases_float_pointer1;
+  const double *_b = (const double *)impl.test_cases_float_pointer2;
+  __m128d a, b, c;
+
+#define TEST_IMPL(IDX)                                                         \
+  double _c##IDX[2];                                                           \
+  for (int j = 0; j < 2; j++) {                                                \
+    if ((IDX >> j) & 0x1) {                                                    \
+      _c##IDX[j] = _b[j];                                                      \
+    } else {                                                                   \
+      _c##IDX[j] = _a[j];                                                      \
+    }                                                                          \
+  }                                                                            \
+                                                                               \
+  a = load_m128d(_a);                                                          \
+  b = load_m128d(_b);                                                          \
+  c = _mm_blend_pd(a, b, IDX);                                                 \
+  CHECK_RESULT(validate_double(c, _c##IDX[0], _c##IDX[1]))
+
+  IMM_4_ITER
+#undef TEST_IMPL
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_blend_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = impl.test_cases_float_pointer1;
-  //   const float *_b = impl.test_cases_float_pointer2;
-  //   __m128 a = load_m128(_a);
-  //   __m128 b = load_m128(_b);
-  //   __m128 c;
-  //
-  // gcc and clang can't compile call to _mm_blend_ps with 3rd argument as
-  // integer type due 4 bit size limitation.
-  // #define TEST_IMPL(IDX)
-  //   float _c##IDX[4];
-  //   for (int i = 0; i < 4; i++) {
-  //     if (IDX & (1 << i)) {
-  //       _c##IDX[i] = _b[i];
-  //     } else {
-  //       _c##IDX[i] = _a[i];
-  //     }
-  //   }
-  //
-  //   c = _mm_blend_ps(a, b, IDX);
-  //   CHECK_RESULT(
-  //       validate_float(c, _c##IDX[0], _c##IDX[1], _c##IDX[2], _c##IDX[3]))
-  //
-  //   IMM_4_ITER
-  // #undef TEST_IMPL
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  const float *_b = impl.test_cases_float_pointer2;
+  __m128 a = load_m128(_a);
+  __m128 b = load_m128(_b);
+  __m128 c;
+
+// gcc and clang can't compile call to _mm_blend_ps with 3rd argument as
+// integer type due 4 bit size limitation.
+#define TEST_IMPL(IDX)                                                         \
+  float _c##IDX[4];                                                            \
+  for (int i = 0; i < 4; i++) {                                                \
+    if (IDX & (1 << i)) {                                                      \
+      _c##IDX[i] = _b[i];                                                      \
+    } else {                                                                   \
+      _c##IDX[i] = _a[i];                                                      \
+    }                                                                          \
+  }                                                                            \
+                                                                               \
+  c = _mm_blend_ps(a, b, IDX);                                                 \
+  CHECK_RESULT(                                                                \
+      validate_float(c, _c##IDX[0], _c##IDX[1], _c##IDX[2], _c##IDX[3]))
+
+  IMM_4_ITER
+#undef TEST_IMPL
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_blendv_epi8(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
