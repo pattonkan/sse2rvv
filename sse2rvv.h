@@ -1243,11 +1243,7 @@ FORCE_INLINE __m128 _mm_setr_ps(float e3, float e2, float e1, float e0) {
 
 // FORCE_INLINE __m128 _mm_shuffle_ps(__m128 a, __m128 b, __constrange(0,255)
 // int imm)
-#ifdef _sse2rvv_shuffle
 // #define _mm_shuffle_ps(a, b, imm)
-#else // generic
-// #define _mm_shuffle_ps(a, b, imm)
-#endif
 
 // Compute the square root of packed single-precision (32-bit) floating-point
 // elements in a, and store the results in dst.
@@ -1267,7 +1263,10 @@ FORCE_INLINE __m128 _mm_setr_ps(float e3, float e2, float e1, float e0) {
 // elements) from a into memory. mem_addr must be aligned on a 16-byte boundary
 // or a general-protection exception may be generated.
 // https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#text=_mm_store_ps
-// FORCE_INLINE void _mm_store_ps(float *p, __m128 a) {}
+FORCE_INLINE void _mm_store_ps(float *p, __m128 a) {
+  vfloat32m1_t _a = vreinterpretq_m128_f32(a);
+  __riscv_vse32_v_f32m1(p, _a, 4);
+}
 
 // Store the lower single-precision (32-bit) floating-point element from a into
 // 4 contiguous elements in memory. mem_addr must be aligned on a 16-byte
