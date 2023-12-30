@@ -4134,90 +4134,90 @@ result_t test_mm_bsrli_si128(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_castpd_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = impl.test_cases_float_pointer1;
-  //   const __m128d a = load_m128d(_a);
-  //   const __m128 _c = load_m128(_a);
-  //
-  //   __m128 r = _mm_castpd_ps(a);
-  //
-  //   return validate_128bits(r, _c);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  const __m128d a = load_m128d(_a);
+  const __m128 _c = load_m128(_a);
+
+  __m128 r = _mm_castpd_ps(a);
+
+  return validate_128bits(r, _c);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_castpd_si128(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = impl.test_cases_float_pointer1;
-  //   const __m128d a = load_m128d(_a);
-  //   const __m128i *_c = (const __m128i *)_a;
-  //
-  //   __m128i r = _mm_castpd_si128(a);
-  //
-  //   return validate_128bits(r, *_c);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  const __m128d a = load_m128d(_a);
+  const __m128i *_c = (const __m128i *)_a;
+
+  __m128i r = _mm_castpd_si128(a);
+
+  return validate_128bits(r, *_c);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_castps_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = impl.test_cases_float_pointer1;
-  //   const __m128 a = load_m128(_a);
-  //   const __m128d *_c = (const __m128d *)_a;
-  //
-  //   __m128d r = _mm_castps_pd(a);
-  //
-  //   return validate_128bits(r, *_c);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  const __m128 a = load_m128(_a);
+  const __m128d *_c = (const __m128d *)_a;
+
+  __m128d r = _mm_castps_pd(a);
+
+  return validate_128bits(r, *_c);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_castps_si128(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = impl.test_cases_float_pointer1;
-  //
-  //   const __m128i *_c = (const __m128i *)_a;
-  //
-  //   const __m128 a = load_m128(_a);
-  //   __m128i r = _mm_castps_si128(a);
-  //
-  //   return validate_128bits(r, *_c);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+
+  const __m128i *_c = (const __m128i *)_a;
+
+  const __m128 a = load_m128(_a);
+  __m128i r = _mm_castps_si128(a);
+
+  return validate_128bits(r, *_c);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_castsi128_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int32_t *_a = impl.test_cases_int_pointer1;
-  //
-  //   const __m128d *_c = (const __m128d *)_a;
-  //
-  //   const __m128i a = load_m128i(_a);
-  //   __m128d r = _mm_castsi128_pd(a);
-  //
-  //   return validate_128bits(r, *_c);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int32_t *_a = impl.test_cases_int_pointer1;
+
+  const __m128d *_c = (const __m128d *)_a;
+
+  const __m128i a = load_m128i(_a);
+  __m128d r = _mm_castsi128_pd(a);
+
+  return validate_128bits(r, *_c);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_castsi128_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int32_t *_a = impl.test_cases_int_pointer1;
-  //
-  //   const __m128 *_c = (const __m128 *)_a;
-  //
-  //   const __m128i a = load_m128i(_a);
-  //   __m128 r = _mm_castsi128_ps(a);
-  //
-  //   return validate_128bits(r, *_c);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int32_t *_a = impl.test_cases_int_pointer1;
+
+  const __m128 *_c = (const __m128 *)_a;
+
+  const __m128i a = load_m128i(_a);
+  __m128 r = _mm_castsi128_ps(a);
+
+  return validate_128bits(r, *_c);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_clflush(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
