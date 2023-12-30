@@ -841,17 +841,16 @@ result_t test_mm_avg_pu16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 #ifdef ENABLE_TEST_ALL
   const uint16_t *_a = (const uint16_t *)impl.test_cases_int_pointer1;
   const uint16_t *_b = (const uint16_t *)impl.test_cases_int_pointer2;
-  uint16_t d[4];
-  d[0] = (_a[0] + _b[0] + 1) >> 1;
-  d[1] = (_a[1] + _b[1] + 1) >> 1;
-  d[2] = (_a[2] + _b[2] + 1) >> 1;
-  d[3] = (_a[3] + _b[3] + 1) >> 1;
+  uint16_t _c[4];
+  _c[0] = (_a[0] + _b[0] + 1) >> 1;
+  _c[1] = (_a[1] + _b[1] + 1) >> 1;
+  _c[2] = (_a[2] + _b[2] + 1) >> 1;
+  _c[3] = (_a[3] + _b[3] + 1) >> 1;
 
   __m64 a = load_m64(_a);
   __m64 b = load_m64(_b);
   __m64 c = _mm_avg_pu16(a, b);
-
-  return VALIDATE_UINT16_M64(c, d);
+  return VALIDATE_UINT16_M64(c, _c);
 #else
   return TEST_UNIMPL;
 #endif // ENABLE_TEST_ALL
@@ -3675,7 +3674,7 @@ result_t test_mm_add_epi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   d[7] = _a[7] + _b[7];
 
   __m128i a = load_m128i(_a);
-  __m128i b = load_m128i(_a);
+  __m128i b = load_m128i(_b);
   __m128i c = _mm_add_epi16(a, b);
 
   return VALIDATE_INT16_M128(c, d);
@@ -10622,15 +10621,14 @@ result_t test_mm_test_all_zeros(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   __m128i a = load_m128i(_a);
   __m128i mask = load_m128i(_mask);
 
-  int32_t d0 = _a[0] & _mask[0];
-  int32_t d1 = _a[1] & _mask[1];
-  int32_t d2 = _a[2] & _mask[2];
-  int32_t d3 = _a[3] & _mask[3];
-  int32_t result = ((d0 | d1 | d2 | d3) == 0) ? 1 : 0;
-
+  int32_t _c[4];
+  _c[0] = _a[0] & _mask[0];
+  _c[1] = _a[1] & _mask[1];
+  _c[2] = _a[2] & _mask[2];
+  _c[3] = _a[3] & _mask[3];
+  int32_t c = ((_c[0] | _c[1] | _c[2] | _c[3]) == 0) ? 1 : 0;
   int32_t ret = _mm_test_all_zeros(a, mask);
-
-  return result == ret ? TEST_SUCCESS : TEST_FAIL;
+  return c == ret ? TEST_SUCCESS : TEST_FAIL;
 #else
   return TEST_UNIMPL;
 #endif // ENABLE_TEST_ALL
@@ -10679,7 +10677,20 @@ result_t test_mm_testc_si128(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 
 result_t test_mm_testnzc_si128(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 #ifdef ENABLE_TEST_ALL
-  return test_mm_test_mix_ones_zeros(impl, iter);
+  const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
+  const int32_t *_b = (const int32_t *)impl.test_cases_int_pointer2;
+  __m128i a = load_m128i(_a);
+  __m128i b = load_m128i(_b);
+
+  int32_t d[4];
+  d[0] = !((_a[0]) & _b[0]) & !((~_a[0]) & _b[0]);
+  d[1] = !((_a[1]) & _b[1]) & !((~_a[1]) & _b[1]);
+  d[2] = !((_a[2]) & _b[2]) & !((~_a[2]) & _b[2]);
+  d[3] = !((_a[3]) & _b[3]) & !((~_a[3]) & _b[3]);
+  int32_t result = (!d[0] & !d[1] & !d[2] & !d[3]) ? 1 : 0;
+  int32_t ret = _mm_testnzc_si128(a, b);
+
+  return result == ret ? TEST_SUCCESS : TEST_FAIL;
 #else
   return TEST_UNIMPL;
 #endif // ENABLE_TEST_ALL
