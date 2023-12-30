@@ -406,28 +406,28 @@ template <class T> __m128d load_m128d(const T *p) {
 
 // This function is not called from "run_single_test", but for other intrinsic
 // tests that might need to call "_mm_store_ps".
-// result_t do_mm_store_ps(float *p, float x, float y, float z, float w) {
-//   __m128 a = _mm_set_ps(x, y, z, w);
-//   _mm_store_ps(p, a);
-//   ASSERT_RETURN(p[0] == w);
-//   ASSERT_RETURN(p[1] == z);
-//   ASSERT_RETURN(p[2] == y);
-//   ASSERT_RETURN(p[3] == x);
-//   return TEST_SUCCESS;
-// }
+result_t do_mm_store_ps(float *p, float x, float y, float z, float w) {
+  __m128 a = _mm_set_ps(x, y, z, w);
+  _mm_store_ps(p, a);
+  ASSERT_RETURN(p[0] == w);
+  ASSERT_RETURN(p[1] == z);
+  ASSERT_RETURN(p[2] == y);
+  ASSERT_RETURN(p[3] == x);
+  return TEST_SUCCESS;
+}
 
 // This function is not called from "run_single_test", but for other intrinsic
 // tests that might need to call "_mm_store_ps".
-// result_t do_mm_store_ps(int32_t *p, int32_t x, int32_t y, int32_t z,
-//                         int32_t w) {
-//   __m128i a = _mm_set_epi32(x, y, z, w);
-//   _mm_store_ps((float *)p, *(const __m128 *)&a);
-//   ASSERT_RETURN(p[0] == w);
-//   ASSERT_RETURN(p[1] == z);
-//   ASSERT_RETURN(p[2] == y);
-//   ASSERT_RETURN(p[3] == x);
-//   return TEST_SUCCESS;
-// }
+result_t do_mm_store_ps(int32_t *p, int32_t x, int32_t y, int32_t z,
+                        int32_t w) {
+  __m128i a = _mm_set_epi32(x, y, z, w);
+  _mm_store_ps((float *)p, *(const __m128 *)&a);
+  ASSERT_RETURN(p[0] == w);
+  ASSERT_RETURN(p[1] == z);
+  ASSERT_RETURN(p[2] == y);
+  ASSERT_RETURN(p[3] == x);
+  return TEST_SUCCESS;
+}
 
 float cmp_noNaN(float a, float b) {
   return (!isnan(a) && !isnan(b)) ? ALL_BIT_1_32 : 0.0f;
@@ -3285,72 +3285,72 @@ result_t test_mm_sqrt_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_store_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   int32_t *p = impl.test_cases_int_pointer1;
-  //   int32_t x = impl.test_cases_ints[iter];
-  //   int32_t y = impl.test_cases_ints[iter + 1];
-  //   int32_t z = impl.test_cases_ints[iter + 2];
-  //   int32_t w = impl.test_cases_ints[iter + 3];
-  //   __m128i a = _mm_set_epi32(x, y, z, w);
-  //   _mm_store_ps((float *)p, *(const __m128 *)&a);
-  //   ASSERT_RETURN(p[0] == w);
-  //   ASSERT_RETURN(p[1] == z);
-  //   ASSERT_RETURN(p[2] == y);
-  //   ASSERT_RETURN(p[3] == x);
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  int32_t *p = impl.test_cases_int_pointer1;
+  int32_t x = impl.test_cases_ints[iter];
+  int32_t y = impl.test_cases_ints[iter + 1];
+  int32_t z = impl.test_cases_ints[iter + 2];
+  int32_t w = impl.test_cases_ints[iter + 3];
+  __m128i a = _mm_set_epi32(x, y, z, w);
+  _mm_store_ps((float *)p, *(const __m128 *)&a);
+  ASSERT_RETURN(p[0] == w);
+  ASSERT_RETURN(p[1] == z);
+  ASSERT_RETURN(p[2] == y);
+  ASSERT_RETURN(p[3] == x);
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_store_ps1(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   float *p = impl.test_cases_float_pointer1;
-  //   float d[4];
-  //
-  //   __m128 a = load_m128(p);
-  //   _mm_store_ps1(d, a);
-  //
-  //   ASSERT_RETURN(d[0] == *p);
-  //   ASSERT_RETURN(d[1] == *p);
-  //   ASSERT_RETURN(d[2] == *p);
-  //   ASSERT_RETURN(d[3] == *p);
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  float *p = impl.test_cases_float_pointer1;
+  float d[4];
+
+  __m128 a = load_m128(p);
+  _mm_store_ps1(d, a);
+
+  ASSERT_RETURN(d[0] == *p);
+  ASSERT_RETURN(d[1] == *p);
+  ASSERT_RETURN(d[2] == *p);
+  ASSERT_RETURN(d[3] == *p);
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_store_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   float x = impl.test_cases_floats[iter];
-  //   float p[4];
-  //
-  //   __m128 a = _mm_set_ss(x);
-  //   _mm_store_ss(p, a);
-  //   ASSERT_RETURN(p[0] == x);
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  float x = impl.test_cases_floats[iter];
+  float p[4];
+
+  __m128 a = _mm_set_ss(x);
+  _mm_store_ss(p, a);
+  ASSERT_RETURN(p[0] == x);
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_store1_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   float *p = impl.test_cases_float_pointer1;
-  //   float d[4];
-  //
-  //   __m128 a = load_m128(p);
-  //   _mm_store1_ps(d, a);
-  //
-  //   ASSERT_RETURN(d[0] == *p);
-  //   ASSERT_RETURN(d[1] == *p);
-  //   ASSERT_RETURN(d[2] == *p);
-  //   ASSERT_RETURN(d[3] == *p);
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  float *p = impl.test_cases_float_pointer1;
+  float d[4];
+
+  __m128 a = load_m128(p);
+  _mm_store1_ps(d, a);
+
+  ASSERT_RETURN(d[0] == *p);
+  ASSERT_RETURN(d[1] == *p);
+  ASSERT_RETURN(d[2] == *p);
+  ASSERT_RETURN(d[3] == *p);
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_storeh_pi(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
@@ -7328,72 +7328,72 @@ result_t test_mm_srli_si128(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_store_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   double *p = (double *)impl.test_cases_float_pointer1;
-  //   double x = impl.test_cases_floats[iter + 4];
-  //   double y = impl.test_cases_floats[iter + 6];
-  //
-  //   __m128d a = _mm_set_pd(x, y);
-  //   _mm_store_pd(p, a);
-  //   ASSERT_RETURN(p[0] == y);
-  //   ASSERT_RETURN(p[1] == x);
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  double *p = (double *)impl.test_cases_float_pointer1;
+  double x = impl.test_cases_floats[iter + 4];
+  double y = impl.test_cases_floats[iter + 6];
+
+  __m128d a = _mm_set_pd(x, y);
+  _mm_store_pd(p, a);
+  ASSERT_RETURN(p[0] == y);
+  ASSERT_RETURN(p[1] == x);
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_store_pd1(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   double *p = (double *)impl.test_cases_float_pointer1;
-  //   double _a[2] = {(double)impl.test_cases_floats[iter],
-  //                   (double)impl.test_cases_floats[iter + 1]};
-  //
-  //   __m128d a = load_m128d(_a);
-  //   _mm_store_pd1(p, a);
-  //   ASSERT_RETURN(p[0] == impl.test_cases_floats[iter]);
-  //   ASSERT_RETURN(p[1] == impl.test_cases_floats[iter]);
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  double *p = (double *)impl.test_cases_float_pointer1;
+  double _a[2] = {(double)impl.test_cases_floats[iter],
+                  (double)impl.test_cases_floats[iter + 1]};
+
+  __m128d a = load_m128d(_a);
+  _mm_store_pd1(p, a);
+  ASSERT_RETURN(p[0] == impl.test_cases_floats[iter]);
+  ASSERT_RETURN(p[1] == impl.test_cases_floats[iter]);
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_store_sd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   double *p = (double *)impl.test_cases_float_pointer1;
-  //   double _a[2] = {(double)impl.test_cases_floats[iter],
-  //                   (double)impl.test_cases_floats[iter + 1]};
-  //
-  //   __m128d a = load_m128d(_a);
-  //   _mm_store_sd(p, a);
-  //   ASSERT_RETURN(p[0] == impl.test_cases_floats[iter]);
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  double *p = (double *)impl.test_cases_float_pointer1;
+  double _a[2] = {(double)impl.test_cases_floats[iter],
+                  (double)impl.test_cases_floats[iter + 1]};
+
+  __m128d a = load_m128d(_a);
+  _mm_store_sd(p, a);
+  ASSERT_RETURN(p[0] == impl.test_cases_floats[iter]);
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_store_si128(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
-  //   alignas(16) int32_t p[4];
-  //
-  //   __m128i a = load_m128i(_a);
-  //   _mm_store_si128((__m128i *)p, a);
-  //
-  //   return VALIDATE_INT32_M128(a, p);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
+  alignas(16) int32_t p[4];
+
+  __m128i a = load_m128i(_a);
+  _mm_store_si128((__m128i *)p, a);
+
+  return VALIDATE_INT32_M128(a, p);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_store1_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   return test_mm_store_pd1(impl, iter);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  return test_mm_store_pd1(impl, iter);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_storeh_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
@@ -11099,34 +11099,28 @@ result_t test_last(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t SSE2RVV_TEST_IMPL::load_test_float_pointers(uint32_t i) {
-  // result_t ret = do_mm_store_ps(
-  //     test_cases_float_pointer1, test_cases_floats[i], test_cases_floats[i +
-  //     1], test_cases_floats[i + 2], test_cases_floats[i + 3]);
-  // if (ret == TEST_SUCCESS) {
-  //   ret = do_mm_store_ps(test_cases_float_pointer2, test_cases_floats[i + 4],
-  //                        test_cases_floats[i + 5], test_cases_floats[i + 6],
-  //                        test_cases_floats[i + 7]);
-  // }
-  // return ret;
-  // #else
-  return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+  result_t ret = do_mm_store_ps(
+      test_cases_float_pointer1, test_cases_floats[i], test_cases_floats[i + 1],
+      test_cases_floats[i + 2], test_cases_floats[i + 3]);
+  if (ret == TEST_SUCCESS) {
+    ret = do_mm_store_ps(test_cases_float_pointer2, test_cases_floats[i + 4],
+                         test_cases_floats[i + 5], test_cases_floats[i + 6],
+                         test_cases_floats[i + 7]);
+  }
+  return ret;
 }
 
 result_t SSE2RVV_TEST_IMPL::load_test_int_pointers(uint32_t i) {
-  // result_t ret = do_mm_store_ps(test_cases_int_pointer1, test_cases_ints[i],
-  //                               test_cases_ints[i + 1], test_cases_ints[i +
-  //                               2], test_cases_ints[i + 3]);
-  // if (ret == TEST_SUCCESS) {
-  //   ret = do_mm_store_ps(test_cases_int_pointer2, test_cases_ints[i + 4],
-  //                        test_cases_ints[i + 5], test_cases_ints[i + 6],
-  //                        test_cases_ints[i + 7]);
-  // }
+  result_t ret = do_mm_store_ps(test_cases_int_pointer1, test_cases_ints[i],
+                                test_cases_ints[i + 1], test_cases_ints[i + 2],
+                                test_cases_ints[i + 3]);
+  if (ret == TEST_SUCCESS) {
+    ret = do_mm_store_ps(test_cases_int_pointer2, test_cases_ints[i + 4],
+                         test_cases_ints[i + 5], test_cases_ints[i + 6],
+                         test_cases_ints[i + 7]);
+  }
 
-  // return ret;
-  // #else
-  return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+  return ret;
 }
 
 result_t SSE2RVV_TEST_IMPL::run_single_test(INSTRUCTION_TEST test, uint32_t i) {

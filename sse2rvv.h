@@ -1485,23 +1485,49 @@ FORCE_INLINE __m64 _mm_sign_pi8(__m64 a, __m64 b) {
 
 // FORCE_INLINE __m128i _mm_srli_si128 (__m128i a, int imm8) {}
 
-// FORCE_INLINE void _mm_store_pd (double* mem_addr, __m128d a) {}
+FORCE_INLINE void _mm_store_pd(double *mem_addr, __m128d a) {
+  vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
+  __riscv_vse64_v_f64m1(mem_addr, _a, 2);
+}
 
-// FORCE_INLINE void _mm_store_pd1 (double* mem_addr, __m128d a) {}
+FORCE_INLINE void _mm_store_pd1(double *mem_addr, __m128d a) {
+  vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
+  vfloat64m1_t a_arranged = __riscv_vrgather_vx_f64m1(_a, 0, 2);
+  __riscv_vse64_v_f64m1(mem_addr, a_arranged, 2);
+}
 
-// FORCE_INLINE void _mm_store_ps (float* mem_addr, __m128 a) {}
+FORCE_INLINE void _mm_store_ps(float *mem_addr, __m128 a) {
+  vfloat32m1_t _a = vreinterpretq_m128_f32(a);
+  __riscv_vse32_v_f32m1(mem_addr, _a, 4);
+}
 
-// FORCE_INLINE void _mm_store_ps1 (float* mem_addr, __m128 a) {}
+FORCE_INLINE void _mm_store_ps1(float *mem_addr, __m128 a) {
+  vfloat32m1_t _a = vreinterpretq_m128_f32(a);
+  vfloat32m1_t a_arranged = __riscv_vrgather_vx_f32m1(_a, 0, 4);
+  __riscv_vse32_v_f32m1(mem_addr, a_arranged, 4);
+}
 
-// FORCE_INLINE void _mm_store_sd (double* mem_addr, __m128d a) {}
+FORCE_INLINE void _mm_store_sd(double *mem_addr, __m128d a) {
+  vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
+  __riscv_vse64_v_f64m1(mem_addr, _a, 1);
+}
 
-// FORCE_INLINE void _mm_store_si128 (__m128i* mem_addr, __m128i a) {}
+FORCE_INLINE void _mm_store_si128(__m128i *mem_addr, __m128i a) {
+  *mem_addr = a;
+}
 
-// FORCE_INLINE void _mm_store_ss (float* mem_addr, __m128 a) {}
+FORCE_INLINE void _mm_store_ss(float *mem_addr, __m128 a) {
+  vfloat32m1_t _a = vreinterpretq_m128_f32(a);
+  __riscv_vse32_v_f32m1(mem_addr, _a, 1);
+}
 
-// FORCE_INLINE void _mm_store1_pd (double* mem_addr, __m128d a) {}
+FORCE_INLINE void _mm_store1_pd(double *mem_addr, __m128d a) {
+  return _mm_store_pd1(mem_addr, a);
+}
 
-// FORCE_INLINE void _mm_store1_ps (float* mem_addr, __m128 a) {}
+FORCE_INLINE void _mm_store1_ps(float *mem_addr, __m128 a) {
+  return _mm_store_ps1(mem_addr, a);
+}
 
 // FORCE_INLINE void _mm_storeh_pd (double* mem_addr, __m128d a) {}
 
