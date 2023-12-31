@@ -321,7 +321,7 @@ FORCE_INLINE __m128d _mm_add_sd(__m128d a, __m128d b) {
   vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
   vfloat64m1_t _b = vreinterpretq_m128d_f64(b);
   vfloat64m1_t add = __riscv_vfadd_vv_f64m1(_a, _b, 2);
-  return vreinterpretq_f64_m128d(__riscv_vslideup_vx_f64m1(_a, add, 0, 2));
+  return vreinterpretq_f64_m128d(__riscv_vslideup_vx_f64m1(_a, add, 0, 1));
 }
 
 FORCE_INLINE __m64 _mm_add_si64(__m64 a, __m64 b) {
@@ -376,7 +376,7 @@ FORCE_INLINE __m128 _mm_addsub_ps(__m128 a, __m128 b) {
   vfloat32m1_t sub = __riscv_vfsub_vv_f32m1(_a, _b, 4);
   vbool32_t mask =
       __riscv_vreinterpret_v_i32m1_b32(__riscv_vmv_s_x_i32m1(0xa, 4));
-  return vreinterpretq_f32_m128(__riscv_vmerge_vvm_f32m1(add, sub, mask, 1));
+  return vreinterpretq_f32_m128(__riscv_vmerge_vvm_f32m1(sub, add, mask, 4));
 }
 
 // FORCE_INLINE __m128i _mm_alignr_epi8 (__m128i a, __m128i b, int imm8) {}
@@ -426,14 +426,14 @@ FORCE_INLINE __m128i _mm_avg_epu16(__m128i a, __m128i b) {
   vuint16m1_t _a = vreinterpretq_m128i_u16(a);
   vuint16m1_t _b = vreinterpretq_m128i_u16(b);
   return vreinterpretq_u16_m128i(
-      __riscv_vaaddu_vv_u16m1(_a, _b, __RISCV_VXRM_RDN, 8));
+      __riscv_vaaddu_vv_u16m1(_a, _b, __RISCV_VXRM_RNU, 8));
 }
 
 FORCE_INLINE __m128i _mm_avg_epu8(__m128i a, __m128i b) {
   vuint8m1_t _a = vreinterpretq_m128i_u8(a);
   vuint8m1_t _b = vreinterpretq_m128i_u8(b);
   return vreinterpretq_u8_m128i(
-      __riscv_vaaddu_vv_u8m1(_a, _b, __RISCV_VXRM_RDN, 16));
+      __riscv_vaaddu_vv_u8m1(_a, _b, __RISCV_VXRM_RNU, 16));
 }
 
 FORCE_INLINE __m64 _mm_avg_pu16(__m64 a, __m64 b) {
@@ -443,14 +443,14 @@ FORCE_INLINE __m64 _mm_avg_pu16(__m64 a, __m64 b) {
   vint16m1_t __b = __riscv_vreinterpret_v_i32m1_i16m1(b);
   vuint16m1_t _b = __riscv_vreinterpret_v_i16m1_u16m1(__b);
   return vreinterpretq_u16_m64(
-      __riscv_vaaddu_vv_u16m1(_a, _b, __RISCV_VXRM_RDN, 4));
+      __riscv_vaaddu_vv_u16m1(_a, _b, __RISCV_VXRM_RNU, 4));
 }
 
 FORCE_INLINE __m64 _mm_avg_pu8(__m64 a, __m64 b) {
   vuint8m1_t _a = vreinterpretq_m64_u8(a);
   vuint8m1_t _b = vreinterpretq_m64_u8(b);
   return vreinterpretq_u8_m64(
-      __riscv_vaaddu_vv_u8m1(_a, _b, __RISCV_VXRM_RDN, 8));
+      __riscv_vaaddu_vv_u8m1(_a, _b, __RISCV_VXRM_RNU, 8));
 }
 
 FORCE_INLINE __m128i _mm_blend_epi16(__m128i a, __m128i b, const int imm8) {
@@ -481,7 +481,8 @@ FORCE_INLINE __m128i _mm_blendv_epi8(__m128i a, __m128i b, __m128i mask) {
   vint8m1_t _a = vreinterpretq_m128i_i8(a);
   vint8m1_t _b = vreinterpretq_m128i_i8(b);
   vint8m1_t _mask = vreinterpretq_m128i_i8(mask);
-  vbool8_t mask_b8 = __riscv_vmsne_vx_i8m1_b8(_mask, 0, 16);
+  vint8m1_t mask_sra = __riscv_vsra_vx_i8m1(_mask, 7, 16);
+  vbool8_t mask_b8 = __riscv_vmsne_vx_i8m1_b8(mask_sra, 0, 16);
   return vreinterpretq_i8_m128i(__riscv_vmerge_vvm_i8m1(_a, _b, mask_b8, 16));
 }
 
@@ -489,7 +490,8 @@ FORCE_INLINE __m128d _mm_blendv_pd(__m128d a, __m128d b, __m128d mask) {
   vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
   vfloat64m1_t _b = vreinterpretq_m128d_f64(b);
   vint64m1_t _mask = vreinterpretq_m128d_i64(mask);
-  vbool64_t mask_b64 = __riscv_vmsne_vx_i64m1_b64(_mask, 0, 2);
+  vint64m1_t mask_sra = __riscv_vsra_vx_i64m1(_mask, 63, 2);
+  vbool64_t mask_b64 = __riscv_vmsne_vx_i64m1_b64(mask_sra, 0, 2);
   return vreinterpretq_f64_m128d(__riscv_vmerge_vvm_f64m1(_a, _b, mask_b64, 2));
 }
 
@@ -497,7 +499,8 @@ FORCE_INLINE __m128 _mm_blendv_ps(__m128 a, __m128 b, __m128 mask) {
   vfloat32m1_t _a = vreinterpretq_m128_f32(a);
   vfloat32m1_t _b = vreinterpretq_m128_f32(b);
   vint32m1_t _mask = vreinterpretq_m128_i32(mask);
-  vbool32_t mask_b32 = __riscv_vmsne_vx_i32m1_b32(_mask, 0, 4);
+  vint32m1_t mask_sra = __riscv_vsra_vx_i32m1(_mask, 31, 4);
+  vbool32_t mask_b32 = __riscv_vmsne_vx_i32m1_b32(mask_sra, 0, 4);
   return vreinterpretq_f32_m128(__riscv_vmerge_vvm_f32m1(_a, _b, mask_b32, 4));
 }
 
@@ -956,7 +959,8 @@ FORCE_INLINE __m128d _mm_load_pd(double const *mem_addr) {
 }
 
 FORCE_INLINE __m128d _mm_load_pd1(double const *mem_addr) {
-  return vreinterpretq_f64_m128d(__riscv_vle64_v_f64m1(mem_addr, 2));
+  double p[2] = {mem_addr[0], mem_addr[0]};
+  return vreinterpretq_f64_m128d(__riscv_vle64_v_f64m1(p, 2));
 }
 
 FORCE_INLINE __m128 _mm_load_ps(float const *mem_addr) {
@@ -964,7 +968,8 @@ FORCE_INLINE __m128 _mm_load_ps(float const *mem_addr) {
 }
 
 FORCE_INLINE __m128 _mm_load_ps1(float const *mem_addr) {
-  return vreinterpretq_f32_m128(__riscv_vle32_v_f32m1(mem_addr, 4));
+  float p[4] = {mem_addr[0], mem_addr[0], mem_addr[0], mem_addr[0]};
+  return vreinterpretq_f32_m128(__riscv_vle32_v_f32m1(p, 4));
 }
 
 FORCE_INLINE __m128d _mm_load_sd(double const *mem_addr) {
@@ -1375,7 +1380,7 @@ FORCE_INLINE __m128i _mm_sign_epi16(__m128i a, __m128i b) {
   vint16m1_t _b = vreinterpretq_m128i_i16(b);
 
   vbool16_t lt_mask = __riscv_vmslt_vx_i16m1_b16(_b, 0, 8);
-  vbool16_t zero_mask = __riscv_vmslt_vx_i16m1_b16(_b, 0, 8);
+  vbool16_t zero_mask = __riscv_vmseq_vx_i16m1_b16(_b, 0, 8);
   vint16m1_t a_neg = __riscv_vneg_v_i16m1(_a, 8);
   vint16m1_t res_lt = __riscv_vmerge_vvm_i16m1(_a, a_neg, lt_mask, 8);
   return vreinterpretq_i16_m128i(
@@ -1387,7 +1392,7 @@ FORCE_INLINE __m128i _mm_sign_epi32(__m128i a, __m128i b) {
   vint32m1_t _b = vreinterpretq_m128i_i32(b);
 
   vbool32_t lt_mask = __riscv_vmslt_vx_i32m1_b32(_b, 0, 4);
-  vbool32_t zero_mask = __riscv_vmslt_vx_i32m1_b32(_b, 0, 4);
+  vbool32_t zero_mask = __riscv_vmseq_vx_i32m1_b32(_b, 0, 4);
   vint32m1_t a_neg = __riscv_vneg_v_i32m1(_a, 4);
   vint32m1_t res_lt = __riscv_vmerge_vvm_i32m1(_a, a_neg, lt_mask, 4);
   return vreinterpretq_i32_m128i(
@@ -1399,7 +1404,7 @@ FORCE_INLINE __m128i _mm_sign_epi8(__m128i a, __m128i b) {
   vint8m1_t _b = vreinterpretq_m128i_i8(b);
 
   vbool8_t lt_mask = __riscv_vmslt_vx_i8m1_b8(_b, 0, 16);
-  vbool8_t zero_mask = __riscv_vmslt_vx_i8m1_b8(_b, 0, 16);
+  vbool8_t zero_mask = __riscv_vmseq_vx_i8m1_b8(_b, 0, 16);
   vint8m1_t a_neg = __riscv_vneg_v_i8m1(_a, 16);
   vint8m1_t res_lt = __riscv_vmerge_vvm_i8m1(_a, a_neg, lt_mask, 16);
   return vreinterpretq_i8_m128i(
@@ -1411,7 +1416,7 @@ FORCE_INLINE __m64 _mm_sign_pi16(__m64 a, __m64 b) {
   vint16m1_t _b = vreinterpretq_m64_i16(b);
 
   vbool16_t lt_mask = __riscv_vmslt_vx_i16m1_b16(_b, 0, 4);
-  vbool16_t zero_mask = __riscv_vmslt_vx_i16m1_b16(_b, 0, 4);
+  vbool16_t zero_mask = __riscv_vmseq_vx_i16m1_b16(_b, 0, 4);
   vint16m1_t a_neg = __riscv_vneg_v_i16m1(_a, 4);
   vint16m1_t res_lt = __riscv_vmerge_vvm_i16m1(_a, a_neg, lt_mask, 4);
   return vreinterpretq_i16_m64(
@@ -1423,7 +1428,7 @@ FORCE_INLINE __m64 _mm_sign_pi32(__m64 a, __m64 b) {
   vint32m1_t _b = vreinterpretq_m64_i32(b);
 
   vbool32_t lt_mask = __riscv_vmslt_vx_i32m1_b32(_b, 0, 2);
-  vbool32_t zero_mask = __riscv_vmslt_vx_i32m1_b32(_b, 0, 2);
+  vbool32_t zero_mask = __riscv_vmseq_vx_i32m1_b32(_b, 0, 2);
   vint32m1_t a_neg = __riscv_vneg_v_i32m1(_a, 2);
   vint32m1_t res_lt = __riscv_vmerge_vvm_i32m1(_a, a_neg, lt_mask, 2);
   return vreinterpretq_i32_m64(
@@ -1435,7 +1440,7 @@ FORCE_INLINE __m64 _mm_sign_pi8(__m64 a, __m64 b) {
   vint8m1_t _b = vreinterpretq_m64_i8(b);
 
   vbool8_t lt_mask = __riscv_vmslt_vx_i8m1_b8(_b, 0, 8);
-  vbool8_t zero_mask = __riscv_vmslt_vx_i8m1_b8(_b, 0, 8);
+  vbool8_t zero_mask = __riscv_vmseq_vx_i8m1_b8(_b, 0, 8);
   vint8m1_t a_neg = __riscv_vneg_v_i8m1(_a, 8);
   vint8m1_t res_lt = __riscv_vmerge_vvm_i8m1(_a, a_neg, lt_mask, 8);
   return vreinterpretq_i8_m64(__riscv_vmerge_vxm_i8m1(res_lt, 0, zero_mask, 8));
@@ -1485,23 +1490,49 @@ FORCE_INLINE __m64 _mm_sign_pi8(__m64 a, __m64 b) {
 
 // FORCE_INLINE __m128i _mm_srli_si128 (__m128i a, int imm8) {}
 
-// FORCE_INLINE void _mm_store_pd (double* mem_addr, __m128d a) {}
+FORCE_INLINE void _mm_store_pd(double *mem_addr, __m128d a) {
+  vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
+  __riscv_vse64_v_f64m1(mem_addr, _a, 2);
+}
 
-// FORCE_INLINE void _mm_store_pd1 (double* mem_addr, __m128d a) {}
+FORCE_INLINE void _mm_store_pd1(double *mem_addr, __m128d a) {
+  vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
+  vfloat64m1_t a_arranged = __riscv_vrgather_vx_f64m1(_a, 0, 2);
+  __riscv_vse64_v_f64m1(mem_addr, a_arranged, 2);
+}
 
-// FORCE_INLINE void _mm_store_ps (float* mem_addr, __m128 a) {}
+FORCE_INLINE void _mm_store_ps(float *mem_addr, __m128 a) {
+  vfloat32m1_t _a = vreinterpretq_m128_f32(a);
+  __riscv_vse32_v_f32m1(mem_addr, _a, 4);
+}
 
-// FORCE_INLINE void _mm_store_ps1 (float* mem_addr, __m128 a) {}
+FORCE_INLINE void _mm_store_ps1(float *mem_addr, __m128 a) {
+  vfloat32m1_t _a = vreinterpretq_m128_f32(a);
+  vfloat32m1_t a_arranged = __riscv_vrgather_vx_f32m1(_a, 0, 4);
+  __riscv_vse32_v_f32m1(mem_addr, a_arranged, 4);
+}
 
-// FORCE_INLINE void _mm_store_sd (double* mem_addr, __m128d a) {}
+FORCE_INLINE void _mm_store_sd(double *mem_addr, __m128d a) {
+  vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
+  __riscv_vse64_v_f64m1(mem_addr, _a, 1);
+}
 
-// FORCE_INLINE void _mm_store_si128 (__m128i* mem_addr, __m128i a) {}
+FORCE_INLINE void _mm_store_si128(__m128i *mem_addr, __m128i a) {
+  *mem_addr = a;
+}
 
-// FORCE_INLINE void _mm_store_ss (float* mem_addr, __m128 a) {}
+FORCE_INLINE void _mm_store_ss(float *mem_addr, __m128 a) {
+  vfloat32m1_t _a = vreinterpretq_m128_f32(a);
+  __riscv_vse32_v_f32m1(mem_addr, _a, 1);
+}
 
-// FORCE_INLINE void _mm_store1_pd (double* mem_addr, __m128d a) {}
+FORCE_INLINE void _mm_store1_pd(double *mem_addr, __m128d a) {
+  return _mm_store_pd1(mem_addr, a);
+}
 
-// FORCE_INLINE void _mm_store1_ps (float* mem_addr, __m128 a) {}
+FORCE_INLINE void _mm_store1_ps(float *mem_addr, __m128 a) {
+  return _mm_store_ps1(mem_addr, a);
+}
 
 // FORCE_INLINE void _mm_storeh_pd (double* mem_addr, __m128d a) {}
 
@@ -1588,9 +1619,9 @@ FORCE_INLINE __m128d _mm_sub_sd(__m128d a, __m128d b) {
 }
 
 FORCE_INLINE __m64 _mm_sub_si64(__m64 a, __m64 b) {
-  vfloat64m1_t _a = vreinterpretq_m64_f64(a);
-  vfloat64m1_t _b = vreinterpretq_m64_f64(b);
-  return vreinterpretq_f64_m64(__riscv_vfsub_vv_f64m1(_a, _b, 1));
+  vint64m1_t _a = vreinterpretq_m64_i64(a);
+  vint64m1_t _b = vreinterpretq_m64_i64(b);
+  return vreinterpretq_i64_m64(__riscv_vsub_vv_i64m1(_a, _b, 1));
 }
 
 FORCE_INLINE __m128 _mm_sub_ss(__m128 a, __m128 b) {
@@ -1623,25 +1654,25 @@ FORCE_INLINE int _mm_test_all_zeros(__m128i mask, __m128i a) {
   vint32m1_t _a = vreinterpretq_m128i_i32(a);
   vint32m1_t _mask = vreinterpretq_m128i_i32(mask);
   vint32m1_t _and = __riscv_vand_vv_i32m1(_a, _mask, 4);
-  vint32m1_t redsum =
-      __riscv_vredsum_vs_i32m1_i32m1(__riscv_vmv_v_x_i32m1(0, 4), _and, 4);
-  return !(int)__riscv_vmv_x_s_i32m1_i32(redsum);
+  vint32m1_t redor =
+      __riscv_vredor_vs_i32m1_i32m1(_and, __riscv_vmv_v_x_i32m1(0, 4), 4);
+  return !(int)__riscv_vmv_x_s_i32m1_i32(redor);
 }
 
 FORCE_INLINE int _mm_test_mix_ones_zeros(__m128i mask, __m128i a) {
   vint32m1_t _mask = vreinterpretq_m128i_i32(mask);
   vint32m1_t _a = vreinterpretq_m128i_i32(a);
   vint32m1_t zf_and = __riscv_vand_vv_i32m1(_a, _mask, 4);
-  vint32m1_t zf_redsum =
-      __riscv_vredsum_vs_i32m1_i32m1(__riscv_vmv_v_x_i32m1(0, 4), zf_and, 4);
-  int zf_neg = (int)__riscv_vmv_x_s_i32m1_i32(zf_redsum);
+  vint32m1_t zf_redor =
+      __riscv_vredor_vs_i32m1_i32m1(zf_and, __riscv_vmv_v_x_i32m1(0, 4), 4);
+  int zf_neg = (int)__riscv_vmv_x_s_i32m1_i32(zf_redor);
 
   vint32m1_t a_not = __riscv_vnot_v_i32m1(_a, 4);
   vint32m1_t cf_and = __riscv_vand_vv_i32m1(a_not, _mask, 4);
-  vint32m1_t cf_redsum =
-      __riscv_vredsum_vs_i32m1_i32m1(__riscv_vmv_v_x_i32m1(0, 4), cf_and, 4);
-  int cf_neg = (int)__riscv_vmv_x_s_i32m1_i32(cf_redsum);
-  return zf_neg & cf_neg;
+  vint32m1_t cf_redor =
+      __riscv_vredor_vs_i32m1_i32m1(cf_and, __riscv_vmv_v_x_i32m1(0, 4), 4);
+  int cf_neg = (int)__riscv_vmv_x_s_i32m1_i32(cf_redor);
+  return !!(zf_neg | cf_neg);
 }
 
 FORCE_INLINE int _mm_testc_si128(__m128i a, __m128i b) {
@@ -1649,24 +1680,24 @@ FORCE_INLINE int _mm_testc_si128(__m128i a, __m128i b) {
   vint32m1_t _b = vreinterpretq_m128i_i32(b);
   vint32m1_t a_not = __riscv_vnot_v_i32m1(_a, 4);
   vint32m1_t cf_and = __riscv_vand_vv_i32m1(a_not, _b, 4);
-  vint32m1_t cf_redsum =
-      __riscv_vredsum_vs_i32m1_i32m1(__riscv_vmv_v_x_i32m1(0, 4), cf_and, 4);
-  return !(int)__riscv_vmv_x_s_i32m1_i32(cf_redsum);
+  vint32m1_t cf_redor =
+      __riscv_vredor_vs_i32m1_i32m1(cf_and, __riscv_vmv_v_x_i32m1(0, 4), 4);
+  return !(int)__riscv_vmv_x_s_i32m1_i32(cf_redor);
 }
 
 FORCE_INLINE int _mm_testnzc_si128(__m128i a, __m128i b) {
   vint32m1_t _a = vreinterpretq_m128i_i32(a);
   vint32m1_t _mask = vreinterpretq_m128i_i32(b);
   vint32m1_t zf_and = __riscv_vand_vv_i32m1(_a, _mask, 4);
-  vint32m1_t zf_redsum =
-      __riscv_vredsum_vs_i32m1_i32m1(__riscv_vmv_v_x_i32m1(0, 4), zf_and, 4);
-  int zf_neg = (int)__riscv_vmv_x_s_i32m1_i32(zf_redsum);
+  vint32m1_t zf_redor =
+      __riscv_vredor_vs_i32m1_i32m1(zf_and, __riscv_vmv_v_x_i32m1(0, 4), 4);
+  int zf_neg = !!(int)__riscv_vmv_x_s_i32m1_i32(zf_redor);
 
   vint32m1_t a_not = __riscv_vnot_v_i32m1(_a, 4);
   vint32m1_t cf_and = __riscv_vand_vv_i32m1(a_not, _mask, 4);
-  vint32m1_t cf_redsum =
-      __riscv_vredsum_vs_i32m1_i32m1(__riscv_vmv_v_x_i32m1(0, 4), cf_and, 4);
-  int cf_neg = (int)__riscv_vmv_x_s_i32m1_i32(cf_redsum);
+  vint32m1_t cf_redor =
+      __riscv_vredor_vs_i32m1_i32m1(cf_and, __riscv_vmv_v_x_i32m1(0, 4), 4);
+  int cf_neg = !!(int)__riscv_vmv_x_s_i32m1_i32(cf_redor);
   return zf_neg & cf_neg;
 }
 
@@ -1674,9 +1705,9 @@ FORCE_INLINE int _mm_testz_si128(__m128i a, __m128i b) {
   vint32m1_t _a = vreinterpretq_m128i_i32(a);
   vint32m1_t _b = vreinterpretq_m128i_i32(b);
   vint32m1_t zf_and = __riscv_vand_vv_i32m1(_a, _b, 4);
-  vint32m1_t zf_redsum =
-      __riscv_vredsum_vs_i32m1_i32m1(__riscv_vmv_v_x_i32m1(0, 4), zf_and, 4);
-  return !(int)__riscv_vmv_x_s_i32m1_i32(zf_redsum);
+  vint32m1_t zf_redor =
+      __riscv_vredor_vs_i32m1_i32m1(zf_and, __riscv_vmv_v_x_i32m1(0, 4), 4);
+  return !(int)__riscv_vmv_x_s_i32m1_i32(zf_redor);
 }
 
 // FORCE_INLINE void _MM_TRANSPOSE4_PS (__m128 row0, __m128 row1, __m128 row2,
