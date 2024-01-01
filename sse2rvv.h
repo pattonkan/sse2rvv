@@ -2053,13 +2053,29 @@ FORCE_INLINE __m128 _mm_sub_ss(__m128 a, __m128 b) {
   return vreinterpretq_f32_m128(__riscv_vmerge_vvm_f32m1(_a, sub, mask, 4));
 }
 
-// FORCE_INLINE __m128i _mm_subs_epi16 (__m128i a, __m128i b) {}
+FORCE_INLINE __m128i _mm_subs_epi16(__m128i a, __m128i b) {
+  vint16m1_t _a = vreinterpretq_m128i_i16(a);
+  vint16m1_t _b = vreinterpretq_m128i_i16(b);
+  return vreinterpretq_i16_m128i(__riscv_vssub_vv_i16m1(_a, _b, 8));
+}
 
-// FORCE_INLINE __m128i _mm_subs_epi8 (__m128i a, __m128i b) {}
+FORCE_INLINE __m128i _mm_subs_epi8(__m128i a, __m128i b) {
+  vint8m1_t _a = vreinterpretq_m128i_i8(a);
+  vint8m1_t _b = vreinterpretq_m128i_i8(b);
+  return vreinterpretq_i8_m128i(__riscv_vssub_vv_i8m1(_a, _b, 16));
+}
 
-// FORCE_INLINE __m128i _mm_subs_epu16 (__m128i a, __m128i b) {}
+FORCE_INLINE __m128i _mm_subs_epu16(__m128i a, __m128i b) {
+  vuint16m1_t _a = vreinterpretq_m128i_u16(a);
+  vuint16m1_t _b = vreinterpretq_m128i_u16(b);
+  return vreinterpretq_u16_m128i(__riscv_vssubu_vv_u16m1(_a, _b, 8));
+}
 
-// FORCE_INLINE __m128i _mm_subs_epu8 (__m128i a, __m128i b) {}
+FORCE_INLINE __m128i _mm_subs_epu8(__m128i a, __m128i b) {
+  vuint8m1_t _a = vreinterpretq_m128i_u8(a);
+  vuint8m1_t _b = vreinterpretq_m128i_u8(b);
+  return vreinterpretq_u8_m128i(__riscv_vssubu_vv_u8m1(_a, _b, 16));
+}
 
 FORCE_INLINE int _mm_test_all_ones(__m128i a) {
   vint32m1_t _a = vreinterpretq_m128i_i32(a);
