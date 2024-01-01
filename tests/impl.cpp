@@ -2173,29 +2173,29 @@ result_t test_mm_getcsr(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_insert_pi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
-  //   const int16_t insert = (int16_t)impl.test_cases_ints[iter];
-  //   __m64 a;
-  //   __m64 b;
-  //
-  // #define TEST_IMPL(IDX)
-  //   int16_t d##IDX[4];
-  //   for (int i = 0; i < 4; i++) {
-  //     d##IDX[i] = _a[i];
-  //   }
-  //   d##IDX[IDX] = insert;
-  //
-  //   a = load_m64(_a);
-  //   b = _mm_insert_pi16(a, insert, IDX);
-  //   CHECK_RESULT(VALIDATE_INT16_M64(b, d##IDX))
-  //
-  //   IMM_4_ITER
-  // #undef TEST_IMPL
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
+  const int16_t insert = (int16_t)impl.test_cases_ints[iter];
+  __m64 a;
+  __m64 b;
+
+#define TEST_IMPL(IDX)                                                         \
+  int16_t d##IDX[4];                                                           \
+  for (int i = 0; i < 4; i++) {                                                \
+    d##IDX[i] = _a[i];                                                         \
+  }                                                                            \
+  d##IDX[IDX] = insert;                                                        \
+                                                                               \
+  a = load_m64(_a);                                                            \
+  b = _mm_insert_pi16(a, insert, IDX);                                         \
+  CHECK_RESULT(VALIDATE_INT16_M64(b, d##IDX))
+
+  IMM_4_ITER
+#undef TEST_IMPL
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_load_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
@@ -2766,11 +2766,30 @@ result_t test_m_pextrw(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_m_pinsrw(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // return test_mm_insert_pi16(impl, iter);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
+  const int16_t insert = (int16_t)impl.test_cases_ints[iter];
+  __m64 a;
+  __m64 b;
+
+#define TEST_IMPL(IDX)                                                         \
+  int16_t d##IDX[4];                                                           \
+  for (int i = 0; i < 4; i++) {                                                \
+    d##IDX[i] = _a[i];                                                         \
+  }                                                                            \
+  d##IDX[IDX] = insert;                                                        \
+                                                                               \
+  a = load_m64(_a);                                                            \
+  b = _m_pinsrw(a, insert, IDX);                                               \
+  CHECK_RESULT(VALIDATE_INT16_M64(b, d##IDX))
+
+  IMM_4_ITER
+#undef TEST_IMPL
+  return TEST_SUCCESS;
+
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_m_pmaxsw(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
@@ -5590,28 +5609,28 @@ result_t test_mm_extract_epi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_insert_epi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
-  //   const int16_t insert = (int16_t)*impl.test_cases_int_pointer2;
-  //
-  // #define TEST_IMPL(IDX)
-  //   int16_t d##IDX[8];
-  //   for (int i = 0; i < 8; i++) {
-  //     d##IDX[i] = _a[i];
-  //   }
-  //   d##IDX[IDX] = insert;
-  //
-  //   __m128i a##IDX = load_m128i(_a);
-  //   __m128i b##IDX = _mm_insert_epi16(a##IDX, insert, IDX);
-  //   CHECK_RESULT(VALIDATE_INT16_M128(b##IDX, d##IDX))
-  //
-  //   IMM_8_ITER
-  // #undef TEST_IMPL
-  //
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
+  const int16_t insert = (int16_t)*impl.test_cases_int_pointer2;
+
+#define TEST_IMPL(IDX)                                                         \
+  int16_t d##IDX[8];                                                           \
+  for (int i = 0; i < 8; i++) {                                                \
+    d##IDX[i] = _a[i];                                                         \
+  }                                                                            \
+  d##IDX[IDX] = insert;                                                        \
+                                                                               \
+  __m128i a##IDX = load_m128i(_a);                                             \
+  __m128i b##IDX = _mm_insert_epi16(a##IDX, insert, IDX);                      \
+  CHECK_RESULT(VALIDATE_INT16_M128(b##IDX, d##IDX))
+
+  IMM_8_ITER
+#undef TEST_IMPL
+
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_lfence(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
@@ -9931,105 +9950,107 @@ result_t test_mm_floor_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_insert_epi32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
-  //   const int32_t insert = (int32_t)*impl.test_cases_int_pointer2;
-  //   __m128i a, b;
-  //
-  // #define TEST_IMPL(IDX)
-  //   int32_t d##IDX[4];
-  //   for (int i = 0; i < 4; i++) {
-  //     d##IDX[i] = _a[i];
-  //   }
-  //   d##IDX[IDX] = insert;
-  //
-  //   a = load_m128i(_a);
-  //   b = _mm_insert_epi32(a, (int)insert, IDX);
-  //   CHECK_RESULT(VALIDATE_INT32_M128(b, d##IDX));
-  //
-  //   IMM_4_ITER
-  // #undef TEST_IMPL
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
+  const int32_t insert = (int32_t)*impl.test_cases_int_pointer2;
+  __m128i a, b;
+
+#define TEST_IMPL(IDX)                                                         \
+  int32_t d##IDX[4];                                                           \
+  for (int i = 0; i < 4; i++) {                                                \
+    d##IDX[i] = _a[i];                                                         \
+  }                                                                            \
+  d##IDX[IDX] = insert;                                                        \
+                                                                               \
+  a = load_m128i(_a);                                                          \
+  b = _mm_insert_epi32(a, (int)insert, IDX);                                   \
+  CHECK_RESULT(VALIDATE_INT32_M128(b, d##IDX));
+
+  IMM_4_ITER
+#undef TEST_IMPL
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_insert_epi64(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int64_t *_a = (const int64_t *)impl.test_cases_int_pointer1;
-  //   int64_t insert = (int64_t)*impl.test_cases_int_pointer2;
-  //
-  //   __m128i a, b;
-  //   int64_t d[2];
-  // #define TEST_IMPL(IDX)
-  //   d[0] = _a[0];
-  //   d[1] = _a[1];
-  //   d[IDX] = insert;
-  //   a = load_m128i(_a);
-  //   b = _mm_insert_epi64(a, insert, IDX);
-  // CHECK_RESULT(validate_int64(b, d[0], d[1]));
-  //
-  //   IMM_2_ITER
-  // #undef TEST_IMPL
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int64_t *_a = (const int64_t *)impl.test_cases_int_pointer1;
+  int64_t insert = (int64_t)*impl.test_cases_int_pointer2;
+
+  __m128i a, b;
+  int64_t d[2];
+#define TEST_IMPL(IDX)                                                         \
+  d[0] = _a[0];                                                                \
+  d[1] = _a[1];                                                                \
+  d[IDX] = insert;                                                             \
+  a = load_m128i(_a);                                                          \
+  b = _mm_insert_epi64(a, insert, IDX);                                        \
+  CHECK_RESULT(validate_int64(b, d[0], d[1]));
+
+  IMM_2_ITER
+#undef TEST_IMPL
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_insert_epi8(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int8_t *_a = (const int8_t *)impl.test_cases_int_pointer1;
-  //   const int8_t insert = (int8_t)*impl.test_cases_int_pointer2;
-  //   __m128i a, b;
-  //   int8_t d[16];
-  //
-  // #define TEST_IMPL(IDX)
-  //   for (int i = 0; i < 16; i++) {
-  //     d[i] = _a[i];
-  //   }
-  //   d[IDX] = insert;
-  //   a = load_m128i(_a);
-  //   b = _mm_insert_epi8(a, insert, IDX);
-  // CHECK_RESULT(VALIDATE_INT8_M128(b, d));
-  //
-  //   IMM_16_ITER
-  // #undef TEST_IMPL
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int8_t *_a = (const int8_t *)impl.test_cases_int_pointer1;
+  const int8_t insert = (int8_t)*impl.test_cases_int_pointer2;
+  __m128i a, b;
+  int8_t d[16];
+
+#define TEST_IMPL(IDX)                                                         \
+  for (int i = 0; i < 16; i++) {                                               \
+    d[i] = _a[i];                                                              \
+  }                                                                            \
+  d[IDX] = insert;                                                             \
+  a = load_m128i(_a);                                                          \
+  b = _mm_insert_epi8(a, insert, IDX);                                         \
+  CHECK_RESULT(VALIDATE_INT8_M128(b, d));
+
+  IMM_16_ITER
+#undef TEST_IMPL
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_insert_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = impl.test_cases_float_pointer1;
-  //   const float *_b = impl.test_cases_float_pointer2;
-  //
-  //   __m128 a, b, c;
-  // #define TEST_IMPL(IDX)
-  //   float d##IDX[4] = {_a[0], _a[1], _a[2], _a[3]};
-  //   d##IDX[(IDX >> 4) & 0x3] = _b[(IDX >> 6) & 0x3];
-  //
-  //   for (int j = 0; j < 4; j++) {
-  //     if (IDX & (1 << j)) {
-  //       d##IDX[j] = 0;
-  //     }
-  //   }
-  //
-  //   a = _mm_load_ps(_a);
-  //   b = _mm_load_ps(_b);
-  //   c = _mm_insert_ps(a, b, IDX);
-  // CHECK_RESULT(validate_float(c, d##IDX[0], d##IDX[1], d##IDX[2],
-  // d##IDX[3]));
-  //
-  //   IMM_256_ITER
-  // #undef TEST_IMPL
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  const float *_b = impl.test_cases_float_pointer2;
+
+  __m128 a, b, c;
+  float _c[4];
+#define TEST_IMPL(IDX)                                                         \
+  for (int j = 0; j < 4; j++) {                                                \
+    _c[j] = _a[j];                                                             \
+  }                                                                            \
+  _c[(IDX >> 4) & 0x3] = _b[(IDX >> 6) & 0x3];                                 \
+                                                                               \
+  for (int j = 0; j < 4; j++) {                                                \
+    if (IDX & (1 << j)) {                                                      \
+      _c[j] = 0;                                                               \
+    }                                                                          \
+  }                                                                            \
+                                                                               \
+  a = _mm_load_ps(_a);                                                         \
+  b = _mm_load_ps(_b);                                                         \
+  c = _mm_insert_ps(a, b, IDX);                                                \
+  CHECK_RESULT(validate_float(c, _c[0], _c[1], _c[2], _c[3]));
+
+  IMM_256_ITER
+#undef TEST_IMPL
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_max_epi32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
