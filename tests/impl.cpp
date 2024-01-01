@@ -2061,43 +2061,41 @@ result_t test_mm_div_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_extract_pi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // FIXME GCC has bug on "_mm_extract_pi16" intrinsics. We will enable this
-  // test when GCC fix this bug.
-  // see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=98495 for more
-  // information
-  // #if defined(__clang__) || defined(_MSC_VER)
-  //   uint64_t *_a = (uint64_t *)impl.test_cases_int_pointer1;
-  //   const int idx = iter & 0x3;
-  //
-  //   __m64 a = load_m64(_a);
-  //   int c;
-  //   switch (idx) {
-  //   case 0:
-  //     c = _mm_extract_pi16(a, 0);
-  //     break;
-  //   case 1:
-  //     c = _mm_extract_pi16(a, 1);
-  //     break;
-  //   case 2:
-  //     c = _mm_extract_pi16(a, 2);
-  //     break;
-  //   case 3:
-  //     c = _mm_extract_pi16(a, 3);
-  //     break;
-  //   }
-  //
-  //   ASSERT_RETURN((uint64_t)c == ((*_a >> (idx * 16)) & 0xFFFF));
-  //   ASSERT_RETURN(0 == ((uint64_t)c & 0xFFFF0000));
-  //   return TEST_SUCCESS;
-  // #else
-  // #else
+#ifdef ENABLE_TEST_ALL
+// FIXME GCC has bug on "_mm_extract_pi16" intrinsics. We will enable this
+// test when GCC fix this bug.
+// see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=98495 for more
+// information
+#if defined(__clang__) || defined(_MSC_VER)
+  uint64_t *_a = (uint64_t *)impl.test_cases_int_pointer1;
+  const int idx = iter & 0x3;
+
+  __m64 a = load_m64(_a);
+  int c;
+  switch (idx) {
+  case 0:
+    c = _mm_extract_pi16(a, 0);
+    break;
+  case 1:
+    c = _mm_extract_pi16(a, 1);
+    break;
+  case 2:
+    c = _mm_extract_pi16(a, 2);
+    break;
+  case 3:
+    c = _mm_extract_pi16(a, 3);
+    break;
+  }
+
+  ASSERT_RETURN((uint64_t)c == ((*_a >> (idx * 16)) & 0xFFFF));
+  ASSERT_RETURN(0 == ((uint64_t)c & 0xFFFF0000));
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
-  // #endif
-  // #else
+#endif
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_malloc(const SSE2RVV_TEST_IMPL &impl, uint32_t iter);
@@ -5552,43 +5550,43 @@ result_t test_mm_div_sd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_extract_epi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   uint16_t *_a = (uint16_t *)impl.test_cases_int_pointer1;
-  //   const int idx = iter & 0x7;
-  //   __m128i a = load_m128i(_a);
-  //   int c;
-  //   switch (idx) {
-  //   case 0:
-  //     c = _mm_extract_epi16(a, 0);
-  //     break;
-  //   case 1:
-  //     c = _mm_extract_epi16(a, 1);
-  //     break;
-  //   case 2:
-  //     c = _mm_extract_epi16(a, 2);
-  //     break;
-  //   case 3:
-  //     c = _mm_extract_epi16(a, 3);
-  //     break;
-  //   case 4:
-  //     c = _mm_extract_epi16(a, 4);
-  //     break;
-  //   case 5:
-  //     c = _mm_extract_epi16(a, 5);
-  //     break;
-  //   case 6:
-  //     c = _mm_extract_epi16(a, 6);
-  //     break;
-  //   case 7:
-  //     c = _mm_extract_epi16(a, 7);
-  //     break;
-  //   }
-  //
-  //   ASSERT_RETURN(c == *(_a + idx));
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  uint16_t *_a = (uint16_t *)impl.test_cases_int_pointer1;
+  const int idx = iter & 0x7;
+  __m128i a = load_m128i(_a);
+  int c;
+  switch (idx) {
+  case 0:
+    c = _mm_extract_epi16(a, 0);
+    break;
+  case 1:
+    c = _mm_extract_epi16(a, 1);
+    break;
+  case 2:
+    c = _mm_extract_epi16(a, 2);
+    break;
+  case 3:
+    c = _mm_extract_epi16(a, 3);
+    break;
+  case 4:
+    c = _mm_extract_epi16(a, 4);
+    break;
+  case 5:
+    c = _mm_extract_epi16(a, 5);
+    break;
+  case 6:
+    c = _mm_extract_epi16(a, 6);
+    break;
+  case 7:
+    c = _mm_extract_epi16(a, 7);
+    break;
+  }
+
+  ASSERT_RETURN(c == *(_a + idx));
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_insert_epi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
@@ -9792,76 +9790,77 @@ result_t test_mm_dp_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_extract_epi32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   int32_t *_a = (int32_t *)impl.test_cases_int_pointer1;
-  //   __m128i a = load_m128i(_a);
-  //   int c;
-  //
-  // #define TEST_IMPL(IDX)
-  //   c = _mm_extract_epi32(a, IDX);
-  // ASSERT_RETURN(c == *(_a + IDX));
-  //
-  //   IMM_4_ITER
-  // #undef TEST_IMPL
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  int32_t *_a = (int32_t *)impl.test_cases_int_pointer1;
+  __m128i a = load_m128i(_a);
+  int c;
+
+#define TEST_IMPL(IDX)                                                         \
+  c = _mm_extract_epi32(a, IDX);                                               \
+  ASSERT_RETURN(c == *(_a + IDX));
+
+  IMM_4_ITER
+#undef TEST_IMPL
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_extract_epi64(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   int64_t *_a = (int64_t *)impl.test_cases_int_pointer1;
-  //   __m128i a = load_m128i(_a);
-  //   __int64 c;
-  //
-  // #define TEST_IMPL(IDX)
-  //   c = _mm_extract_epi64(a, IDX);
-  //  ASSERT_RETURN(c == *(_a + IDX));
-  //
-  //   IMM_2_ITER
-  // #undef TEST_IMPL
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  int64_t *_a = (int64_t *)impl.test_cases_int_pointer1;
+  __m128i a = load_m128i(_a);
+  __int64 c;
+
+#define TEST_IMPL(IDX)                                                         \
+  c = _mm_extract_epi64(a, IDX);                                               \
+  ASSERT_RETURN(c == *(_a + IDX));
+
+  IMM_2_ITER
+#undef TEST_IMPL
+
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_extract_epi8(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   uint8_t *_a = (uint8_t *)impl.test_cases_int_pointer1;
-  //   __m128i a = load_m128i(_a);
-  //   int c;
-  //
-  // #define TEST_IMPL(IDX)
-  //   c = _mm_extract_epi8(a, IDX);
-  //  ASSERT_RETURN(c == *(_a + IDX));
-  //
-  //   IMM_8_ITER
-  // #undef TEST_IMPL
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  uint8_t *_a = (uint8_t *)impl.test_cases_int_pointer1;
+  __m128i a = load_m128i(_a);
+  int c;
+
+#define TEST_IMPL(IDX)                                                         \
+  c = _mm_extract_epi8(a, IDX);                                                \
+  ASSERT_RETURN(c == *(_a + IDX));
+
+  IMM_8_ITER
+#undef TEST_IMPL
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_extract_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = (const float *)impl.test_cases_float_pointer1;
-  //
-  //   __m128 a = _mm_load_ps(_a);
-  //   int32_t c;
-  //
-  // #define TEST_IMPL(IDX)
-  //   c = _mm_extract_ps(a, IDX);
-  //  ASSERT_RETURN(c == *(const int32_t *)(_a + IDX));
-  //
-  //   IMM_4_ITER
-  // #undef TEST_IMPL
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = (const float *)impl.test_cases_float_pointer1;
+
+  __m128 a = _mm_load_ps(_a);
+  int32_t c;
+
+#define TEST_IMPL(IDX)                                                         \
+  c = _mm_extract_ps(a, IDX);                                                  \
+  ASSERT_RETURN(c == *(const int32_t *)(_a + IDX));
+
+  IMM_4_ITER
+#undef TEST_IMPL
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_floor_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
