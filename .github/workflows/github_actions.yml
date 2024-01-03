@@ -35,8 +35,8 @@ jobs:
           distro: ubuntu22.04
           install: |
             apt-get update -q -y
-            apt-get install -q -y make gcc
-            apt-get install -q -y g++
+            apt-get install -q -y make gcc-13
+            apt-get install -q -y g++-13
           run: |
             make test
 
