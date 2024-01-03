@@ -32,11 +32,11 @@ jobs:
         uses: uraimo/run-on-arch-action@v2.5.0
         with:
           arch: riscv64
-          distro: ubuntu22.04
+          distro: ubuntu_devel
           install: |
             apt-get update -q -y
-            apt-get install -q -y make gcc-13
-            apt-get install -q -y g++-13
+            apt-get install -q -y make gcc
+            apt-get install -q -y g++
           run: |
             make test
 
