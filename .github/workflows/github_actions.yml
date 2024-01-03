@@ -33,10 +33,13 @@ jobs:
         with:
           arch: riscv64
           distro: ubuntu_devel
+          env: |
+            CXX: clang++
+            CC: clang
           install: |
             apt-get update -q -y
-            apt-get install -q -y make gcc
-            apt-get install -q -y g++
+            apt-get install -q -y make clang
+            apt-get install -q -y clang++
           run: |
             make test
 
