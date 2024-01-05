@@ -2285,57 +2285,51 @@ result_t test_mm_loadr_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_loadu_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *addr = impl.test_cases_float_pointer1;
-  //
-  //   __m128 ret = _mm_loadu_ps(addr);
-  //
-  //   return validate_float(ret, addr[0], addr[1], addr[2], addr[3]);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *addr = impl.test_cases_float_pointer1;
+
+  __m128 ret = _mm_loadu_ps(addr);
+
+  return validate_float(ret, addr[0], addr[1], addr[2], addr[3]);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_loadu_si16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // The GCC version before 11 does not implement intrinsic function
-  // _mm_loadu_si16. Check https://gcc.gnu.org/bugzilla/show_bug.cgi?id=95483
-  // for more information.
-  // #if (defined(__GNUC__) && !defined(__clang__)) && (__GNUC__ <= 10)
-  // #else
+#ifdef ENABLE_TEST_ALL
+// The GCC version before 11 does not implement intrinsic function
+// _mm_loadu_si16. Check https://gcc.gnu.org/bugzilla/show_bug.cgi?id=95483
+// for more information.
+#if (defined(__GNUC__) && !defined(__clang__)) && (__GNUC__ <= 10)
+#else
+  const int16_t *addr = (const int16_t *)impl.test_cases_int_pointer1;
+
+  __m128i ret = _mm_loadu_si16((const void *)addr);
+
+  return validate_int16(ret, addr[0], 0, 0, 0, 0, 0, 0, 0);
+#endif
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
-  // #else
-  //   const int16_t *addr = (const int16_t *)impl.test_cases_int_pointer1;
-  //
-  //   __m128i ret = _mm_loadu_si16((const void *)addr);
-  //
-  //   return validate_int16(ret, addr[0], 0, 0, 0, 0, 0, 0, 0);
-  // #endif
-  // #else
-  return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_loadu_si64(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // Versions of GCC prior to 9 do not implement intrinsic function
-  // _mm_loadu_si64. Check https://gcc.gnu.org/bugzilla/show_bug.cgi?id=78782
-  // for more information.
-  // #if (defined(__GNUC__) && !defined(__clang__)) && (__GNUC__ < 9)
-  // #else
+#ifdef ENABLE_TEST_ALL
+// Versions of GCC prior to 9 do not implement intrinsic function
+// _mm_loadu_si64. Check https://gcc.gnu.org/bugzilla/show_bug.cgi?id=78782
+// for more information.
+#if (defined(__GNUC__) && !defined(__clang__)) && (__GNUC__ < 9)
+#else
+  const int64_t *addr = (const int64_t *)impl.test_cases_int_pointer1;
+
+  __m128i ret = _mm_loadu_si64((const void *)addr);
+
+  return validate_int64(ret, addr[0], 0);
+#endif
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
-  // #else
-  //   const int64_t *addr = (const int64_t *)impl.test_cases_int_pointer1;
-  //
-  //   __m128i ret = _mm_loadu_si64((const void *)addr);
-  //
-  //   return validate_int64(ret, addr[0], 0);
-  // #endif
-  // #else
-  return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_malloc(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
@@ -5749,44 +5743,41 @@ result_t test_mm_loadr_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_loadu_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const double *p = (const double *)impl.test_cases_float_pointer1;
-  //   __m128d a = _mm_loadu_pd(p);
-  //   return validate_double(a, p[0], p[1]);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const double *p = (const double *)impl.test_cases_float_pointer1;
+  __m128d a = _mm_loadu_pd(p);
+  return validate_double(a, p[0], p[1]);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_loadu_si128(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
-  //   __m128i c = _mm_loadu_si128((const __m128i *)_a);
-  //   return VALIDATE_INT32_M128(c, _a);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
+  __m128i c = _mm_loadu_si128((const __m128i *)_a);
+  return VALIDATE_INT32_M128(c, _a);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_loadu_si32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // The GCC version before 11 does not implement intrinsic function
-  // _mm_loadu_si32. Check https://gcc.gnu.org/bugzilla/show_bug.cgi?id=95483
-  // for more information.
-  // #if (defined(__GNUC__) && !defined(__clang__)) && (__GNUC__ <= 10)
-  // #else
+#ifdef ENABLE_TEST_ALL
+// The GCC version before 11 does not implement intrinsic function
+// _mm_loadu_si32. Check https://gcc.gnu.org/bugzilla/show_bug.cgi?id=95483
+// for more information.
+#if (defined(__GNUC__) && !defined(__clang__)) && (__GNUC__ <= 10)
+#else
+  const int32_t *addr = (const int32_t *)impl.test_cases_int_pointer1;
+
+  __m128i ret = _mm_loadu_si32((const void *)addr);
+
+  return validate_int32(ret, addr[0], 0, 0, 0);
+#endif
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
-  // #else
-  //   const int32_t *addr = (const int32_t *)impl.test_cases_int_pointer1;
-  //
-  //   __m128i ret = _mm_loadu_si32((const void *)addr);
-  //
-  //   return validate_int32(ret, addr[0], 0, 0, 0);
-  // #endif
-  // #else
-  return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_madd_epi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
