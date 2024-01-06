@@ -2200,21 +2200,87 @@ FORCE_INLINE __m128 _mm_setr_ps(float e3, float e2, float e1, float e0) {
 
 // FORCE_INLINE void _mm_sfence (void) {}
 
-// FORCE_INLINE __m128i _mm_shuffle_epi32 (__m128i a, int imm8) {}
+FORCE_INLINE __m128i _mm_shuffle_epi32(__m128i a, int imm8) {
+  vuint32m1_t _a = vreinterpretq_m128i_u32(a);
+  vuint32m1_t imm8_dup = __riscv_vmv_v_x_u32m1(imm8, 4);
+  vuint32m1_t vid = __riscv_vsll_vx_u32m1(__riscv_vid_v_u32m1(4), 1, 4);
+  vuint32m1_t idxs =
+      __riscv_vand_vx_u32m1(__riscv_vsrl_vv_u32m1(imm8_dup, vid, 4), 0x3, 4);
+  return vreinterpretq_u32_m128i(__riscv_vrgather_vv_u32m1(_a, idxs, 4));
+}
 
-// FORCE_INLINE __m128i _mm_shuffle_epi8 (__m128i a, __m128i b) {}
+FORCE_INLINE __m128i _mm_shuffle_epi8(__m128i a, __m128i b) {
+  vint8m1_t _a = vreinterpretq_m128i_i8(a);
+  vint8m1_t _b = vreinterpretq_m128i_i8(b);
+  vbool8_t mask_lt_zero = __riscv_vmslt_vx_i8m1_b8(_b, 0, 16);
+  vuint8m1_t idxs =
+      __riscv_vreinterpret_v_i8m1_u8m1(__riscv_vand_vx_i8m1(_b, 0xf, 16));
+  vint8m1_t shuffle = __riscv_vrgather_vv_i8m1(_a, idxs, 16);
+  return vreinterpretq_i8_m128i(
+      __riscv_vmerge_vxm_i8m1(shuffle, 0, mask_lt_zero, 16));
+}
 
-// FORCE_INLINE __m128d _mm_shuffle_pd (__m128d a, __m128d b, int imm8) {}
+FORCE_INLINE __m128d _mm_shuffle_pd(__m128d a, __m128d b, int imm8) {
+  vuint64m1_t _a = vreinterpretq_m128d_u64(a);
+  vuint64m1_t _b = vreinterpretq_m128d_u64(b);
+  vuint64m1_t a_s = __riscv_vslidedown_vx_u64m1(_a, imm8 & 0x1, 2);
+  vuint64m1_t b_s = __riscv_vslidedown_vx_u64m1(_b, (imm8 >> 1) & 0x1, 2);
+  return vreinterpretq_u64_m128d(__riscv_vslideup_vx_u64m1(a_s, b_s, 1, 2));
+}
 
-// FORCE_INLINE __m64 _mm_shuffle_pi16 (__m64 a, int imm8) {}
+FORCE_INLINE __m64 _mm_shuffle_pi16(__m64 a, int imm8) {
+  vuint16m1_t _a = vreinterpretq_m64_u16(a);
+  vuint16m1_t imm8_dup = __riscv_vmv_v_x_u16m1(imm8, 4);
+  vuint16m1_t vid = __riscv_vsll_vx_u16m1(__riscv_vid_v_u16m1(4), 1, 4);
+  vuint16m1_t idxs =
+      __riscv_vand_vx_u16m1(__riscv_vsrl_vv_u16m1(imm8_dup, vid, 4), 0x3, 4);
+  return vreinterpretq_u16_m64(__riscv_vrgather_vv_u16m1(_a, idxs, 4));
+}
 
-// FORCE_INLINE __m64 _mm_shuffle_pi8 (__m64 a, __m64 b) {}
+FORCE_INLINE __m64 _mm_shuffle_pi8(__m64 a, __m64 b) {
+  vint8m1_t _a = vreinterpretq_m64_i8(a);
+  vint8m1_t _b = vreinterpretq_m64_i8(b);
+  vbool8_t mask_lt_zero = __riscv_vmslt_vx_i8m1_b8(_b, 0, 8);
+  vuint8m1_t idxs =
+      __riscv_vreinterpret_v_i8m1_u8m1(__riscv_vand_vx_i8m1(_b, 0x7, 8));
+  vint8m1_t shuffle = __riscv_vrgather_vv_i8m1(_a, idxs, 8);
+  return vreinterpretq_i8_m64(
+      __riscv_vmerge_vxm_i8m1(shuffle, 0, mask_lt_zero, 8));
+}
 
-// FORCE_INLINE __m128 _mm_shuffle_ps (__m128 a, __m128 b, unsigned int imm8) {}
+FORCE_INLINE __m128 _mm_shuffle_ps(__m128 a, __m128 b, unsigned int imm8) {
+  vuint32m1_t _a = vreinterpretq_m128_u32(a);
+  vuint32m1_t _b = vreinterpretq_m128_u32(b);
+  vuint32m1_t imm8_dup = __riscv_vmv_v_x_u32m1(imm8, 4);
+  vuint32m1_t vid = __riscv_vsll_vx_u32m1(__riscv_vid_v_u32m1(4), 1, 4);
+  vuint32m1_t idxs =
+      __riscv_vand_vx_u32m1(__riscv_vsrl_vv_u32m1(imm8_dup, vid, 4), 0x3, 4);
+  vuint32m1_t a_shuffle = __riscv_vrgather_vv_u32m1(_a, idxs, 2);
+  vuint32m1_t b_shuffle = __riscv_vrgather_vv_u32m1(_b, idxs, 4);
+  return vreinterpretq_u32_m128(
+      __riscv_vslideup_vx_u32m1(b_shuffle, a_shuffle, 0, 2));
+}
 
-// FORCE_INLINE __m128i _mm_shufflehi_epi16 (__m128i a, int imm8) {}
+FORCE_INLINE __m128i _mm_shufflehi_epi16(__m128i a, int imm8) {
+  vuint16m1_t _a = vreinterpretq_m64_u16(a);
+  vuint16m1_t imm8_dup = __riscv_vmv_v_x_u16m1(imm8, 4);
+  vuint16m1_t vid = __riscv_vsll_vx_u16m1(__riscv_vid_v_u16m1(4), 1, 4);
+  vuint16m1_t idxs = __riscv_vadd_vx_u16m1(
+      __riscv_vand_vx_u16m1(__riscv_vsrl_vv_u16m1(imm8_dup, vid, 4), 0x3, 4), 4,
+      4);
+  vuint16m1_t shuffle = __riscv_vrgather_vv_u16m1(_a, idxs, 4);
+  return vreinterpretq_u16_m64(__riscv_vslideup_vx_u16m1(_a, shuffle, 4, 8));
+}
 
-// FORCE_INLINE __m128i _mm_shufflelo_epi16 (__m128i a, int imm8) {}
+FORCE_INLINE __m128i _mm_shufflelo_epi16(__m128i a, int imm8) {
+  vuint16m1_t _a = vreinterpretq_m64_u16(a);
+  vuint16m1_t imm8_dup = __riscv_vmv_v_x_u16m1(imm8, 4);
+  vuint16m1_t vid = __riscv_vsll_vx_u16m1(__riscv_vid_v_u16m1(4), 1, 4);
+  vuint16m1_t idxs =
+      __riscv_vand_vx_u16m1(__riscv_vsrl_vv_u16m1(imm8_dup, vid, 4), 0x3, 4);
+  vuint16m1_t shuffle = __riscv_vrgather_vv_u16m1(_a, idxs, 4);
+  return vreinterpretq_u16_m64(__riscv_vslideup_vx_u16m1(_a, shuffle, 0, 4));
+}
 
 FORCE_INLINE __m128i _mm_sign_epi16(__m128i a, __m128i b) {
   vint16m1_t _a = vreinterpretq_m128i_i16(a);
