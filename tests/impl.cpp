@@ -1495,7 +1495,7 @@ result_t test_mm_comineq_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_cvt_pi2ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
+#ifdef ENABLE_TEST_ALL
   const float *_a = impl.test_cases_float_pointer1;
   const int32_t *_b = impl.test_cases_int_pointer2;
 
@@ -1509,13 +1509,13 @@ result_t test_mm_cvt_pi2ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   __m128 c = _mm_cvt_pi2ps(a, b);
 
   return validate_float(c, dx, dy, dz, dw);
-  // #else
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_cvt_ps2pi(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
+#ifdef ENABLE_TEST_ALL
   const float *_a = impl.test_cases_float_pointer1;
   int32_t d[2];
 
@@ -1527,13 +1527,13 @@ result_t test_mm_cvt_ps2pi(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   __m64 ret = _mm_cvt_ps2pi(a);
 
   return VALIDATE_INT32_M64(ret, d);
-  // #else
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_cvt_si2ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
+#ifdef ENABLE_TEST_ALL
   const float *_a = impl.test_cases_float_pointer1;
   const int32_t b = *impl.test_cases_int_pointer2;
 
@@ -1546,9 +1546,9 @@ result_t test_mm_cvt_si2ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   __m128 c = _mm_cvt_si2ss(a, b);
 
   return validate_float(c, dx, dy, dz, dw);
-  // #else
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_cvt_ss2si(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
@@ -1986,42 +1986,42 @@ result_t test_mm_cvttss_si64(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_div_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = impl.test_cases_float_pointer1;
-  //   const float *_b = impl.test_cases_float_pointer2;
-  //   float f0 = _a[0] / _b[0];
-  //   float f1 = _a[1] / _b[1];
-  //   float f2 = _a[2] / _b[2];
-  //   float f3 = _a[3] / _b[3];
-  //
-  //   __m128 a = load_m128(_a);
-  //   __m128 b = load_m128(_b);
-  //   __m128 c = _mm_div_ps(a, b);
-  //
-  //   return validate_float(c, f0, f1, f2, f3);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  const float *_b = impl.test_cases_float_pointer2;
+  float f0 = _a[0] / _b[0];
+  float f1 = _a[1] / _b[1];
+  float f2 = _a[2] / _b[2];
+  float f3 = _a[3] / _b[3];
+
+  __m128 a = load_m128(_a);
+  __m128 b = load_m128(_b);
+  __m128 c = _mm_div_ps(a, b);
+
+  return validate_float(c, f0, f1, f2, f3);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_div_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = impl.test_cases_float_pointer1;
-  //   const float *_b = impl.test_cases_float_pointer2;
-  //
-  //   float d0 = _a[0] / _b[0];
-  //   float d1 = _a[1];
-  //   float d2 = _a[2];
-  //   float d3 = _a[3];
-  //
-  //   __m128 a = load_m128(_a);
-  //   __m128 b = load_m128(_b);
-  //   __m128 c = _mm_div_ss(a, b);
-  //
-  //   return validate_float(c, d0, d1, d2, d3);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  const float *_b = impl.test_cases_float_pointer2;
+
+  float d0 = _a[0] / _b[0];
+  float d1 = _a[1];
+  float d2 = _a[2];
+  float d3 = _a[3];
+
+  __m128 a = load_m128(_a);
+  __m128 b = load_m128(_b);
+  __m128 c = _mm_div_ss(a, b);
+
+  return validate_float(c, d0, d1, d2, d3);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_extract_pi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
@@ -5545,42 +5545,42 @@ result_t test_mm_cvttsd_si64x(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_div_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const double *_a = (const double *)impl.test_cases_float_pointer1;
-  //   const double *_b = (const double *)impl.test_cases_float_pointer2;
-  //   double d0 = 0.0, d1 = 0.0;
-  //
-  //   if (_b[0] != 0.0)
-  //     d0 = _a[0] / _b[0];
-  //   if (_b[1] != 0.0)
-  //     d1 = _a[1] / _b[1];
-  //
-  //   __m128d a = load_m128d(_a);
-  //   __m128d b = load_m128d(_b);
-  //   __m128d c = _mm_div_pd(a, b);
-  //   return validate_double(c, d0, d1);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const double *_a = (const double *)impl.test_cases_float_pointer1;
+  const double *_b = (const double *)impl.test_cases_float_pointer2;
+  double d0 = 0.0, d1 = 0.0;
+
+  if (_b[0] != 0.0)
+    d0 = _a[0] / _b[0];
+  if (_b[1] != 0.0)
+    d1 = _a[1] / _b[1];
+
+  __m128d a = load_m128d(_a);
+  __m128d b = load_m128d(_b);
+  __m128d c = _mm_div_pd(a, b);
+  return validate_double(c, d0, d1);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_div_sd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const double *_a = (const double *)impl.test_cases_float_pointer1;
-  //   const double *_b = (const double *)impl.test_cases_float_pointer2;
-  //
-  //   double d0 = _a[0] / _b[0];
-  //   double d1 = _a[1];
-  //
-  //   __m128d a = load_m128d(_a);
-  //   __m128d b = load_m128d(_b);
-  //
-  //   __m128d c = _mm_div_sd(a, b);
-  //
-  //   return validate_double(c, d0, d1);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const double *_a = (const double *)impl.test_cases_float_pointer1;
+  const double *_b = (const double *)impl.test_cases_float_pointer2;
+
+  double d0 = _a[0] / _b[0];
+  double d1 = _a[1];
+
+  __m128d a = load_m128d(_a);
+  __m128d b = load_m128d(_b);
+
+  __m128d c = _mm_div_sd(a, b);
+
+  return validate_double(c, d0, d1);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_extract_epi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
