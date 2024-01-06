@@ -47,6 +47,9 @@ void print_64_bits_s64_arr(const char *var_name, const int64_t *u) {
 void print_64_bits_f32_arr(const char *var_name, const float *f) {
   printf("%s0: %.3f, %s1: %.3f\n", var_name, f[0], var_name, f[1]);
 }
+void print_64_bits_f64_arr(const char *var_name, const double *f) {
+  printf("%s0: %.6f\n", var_name, f[0]);
+}
 void print_128_bits_u8_arr(const char *var_name, const uint8_t *u) {
   printf("%s0: %3u, %s1: %3u, %s2: %3u, %s3: %3u, %s4: %3u, %s5: %3u, "
          "%s6: %3u, %s7: %3u, %s8: %3u, %s9: %3u, %s10: %3u, %s11: %3u, "
@@ -96,6 +99,9 @@ void print_128_bits_s64_arr(const char *var_name, const int64_t *u) {
 void print_128_bits_f32_arr(const char *var_name, const float *f) {
   printf("%s0: %.3f, %s1: %.3f, %s2: %.3f, %s3: %.3f\n", var_name, f[0],
          var_name, f[1], var_name, f[2], var_name, f[3]);
+}
+void print_128_bits_f64_arr(const char *var_name, const double *f) {
+  printf("%s0: %.6f, %s1: %.6f\n", var_name, f[0], var_name, f[1]);
 }
 
 void print_u8_64(const char *var_name, uint8_t u0, uint8_t u1, uint8_t u2,
