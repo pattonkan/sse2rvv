@@ -367,11 +367,6 @@ static float ranf() { return next() / TWOPOWER64; }
 
 static float ranf(float low, float high) { return ranf() * (high - low) + low; }
 
-// Enable the tests which are using the macro of another tests
-result_t test_mm_slli_si128(const SSE2RVV_TEST_IMPL &impl, uint32_t iter);
-result_t test_mm_srli_si128(const SSE2RVV_TEST_IMPL &impl, uint32_t iter);
-result_t test_mm_shuffle_pi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter);
-
 // This function is not called from "run_single_test", but for other intrinsic
 // tests that might need to call "_mm_set_epi32".
 __m128i do_mm_set_epi32(int32_t x, int32_t y, int32_t z, int32_t w) {
@@ -3165,102 +3160,58 @@ result_t test_mm_sfence(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_shuffle_pi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
-  //   __m64 a;
-  //   __m64 d;
-  //
-  // #define TEST_IMPL(IDX)
-  //   a = load_m64(_a);
-  //   d = _mm_shuffle_pi16(a, IDX);
-  //
-  //   int16_t _d##IDX[4];
-  //   _d##IDX[0] = _a[IDX & 0x3];
-  //   _d##IDX[1] = _a[(IDX >> 2) & 0x3];
-  //   _d##IDX[2] = _a[(IDX >> 4) & 0x3];
-  //   _d##IDX[3] = _a[(IDX >> 6) & 0x3];
-  //   if (VALIDATE_INT16_M64(d, _d##IDX) != TEST_SUCCESS) {
-  //     return TEST_FAIL;
-  //   }
-  //
-  //   IMM_256_ITER
-  // #undef TEST_IMPL
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
+  __m64 a;
+  __m64 d;
+
+#define TEST_IMPL(IDX)                                                         \
+  a = load_m64(_a);                                                            \
+  d = _mm_shuffle_pi16(a, IDX);                                                \
+                                                                               \
+  int16_t _d##IDX[4];                                                          \
+  _d##IDX[0] = _a[IDX & 0x3];                                                  \
+  _d##IDX[1] = _a[(IDX >> 2) & 0x3];                                           \
+  _d##IDX[2] = _a[(IDX >> 4) & 0x3];                                           \
+  _d##IDX[3] = _a[(IDX >> 6) & 0x3];                                           \
+  if (VALIDATE_INT16_M64(d, _d##IDX) != TEST_SUCCESS) {                        \
+    return TEST_FAIL;                                                          \
+  }
+
+  IMM_256_ITER
+#undef TEST_IMPL
+
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
-// Note, NEON does not have a general purpose shuffled command like SSE.
-// When invoking this method, there is special code for a number of the most
-// common shuffle permutations
 result_t test_mm_shuffle_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = impl.test_cases_float_pointer1;
-  //   const float *_b = impl.test_cases_float_pointer2;
-  //   result_t isValid = TEST_SUCCESS;
-  //   __m128 a = load_m128(_a);
-  //   __m128 b = load_m128(_b);
-  // Test many permutations of the shuffle operation, including all
-  // permutations which have an optimized/customized implementation
-  //   __m128 ret;
-  //   ret = _mm_shuffle_ps(a, b, _MM_SHUFFLE(0, 1, 2, 3));
-  //   if (!validate_float(ret, _a[3], _a[2], _b[1], _b[0])) {
-  //     isValid = TEST_FAIL;
-  //   }
-  //   ret = _mm_shuffle_ps(a, b, _MM_SHUFFLE(3, 2, 1, 0));
-  //   if (!validate_float(ret, _a[0], _a[1], _b[2], _b[3])) {
-  //     isValid = TEST_FAIL;
-  //   }
-  //   ret = _mm_shuffle_ps(a, b, _MM_SHUFFLE(0, 0, 1, 1));
-  //   if (!validate_float(ret, _a[1], _a[1], _b[0], _b[0])) {
-  //     isValid = TEST_FAIL;
-  //   }
-  //   ret = _mm_shuffle_ps(a, b, _MM_SHUFFLE(3, 1, 0, 2));
-  //   if (!validate_float(ret, _a[2], _a[0], _b[1], _b[3])) {
-  //     isValid = TEST_FAIL;
-  //   }
-  //   ret = _mm_shuffle_ps(a, b, _MM_SHUFFLE(1, 0, 3, 2));
-  //   if (!validate_float(ret, _a[2], _a[3], _b[0], _b[1])) {
-  //     isValid = TEST_FAIL;
-  //   }
-  //   ret = _mm_shuffle_ps(a, b, _MM_SHUFFLE(2, 3, 0, 1));
-  //   if (!validate_float(ret, _a[1], _a[0], _b[3], _b[2])) {
-  //     isValid = TEST_FAIL;
-  //   }
-  //   ret = _mm_shuffle_ps(a, b, _MM_SHUFFLE(0, 0, 2, 2));
-  //   if (!validate_float(ret, _a[2], _a[2], _b[0], _b[0])) {
-  //     isValid = TEST_FAIL;
-  //   }
-  //   ret = _mm_shuffle_ps(a, b, _MM_SHUFFLE(2, 2, 0, 0));
-  //   if (!validate_float(ret, _a[0], _a[0], _b[2], _b[2])) {
-  //     isValid = TEST_FAIL;
-  //   }
-  //   ret = _mm_shuffle_ps(a, b, _MM_SHUFFLE(3, 2, 0, 2));
-  //   if (!validate_float(ret, _a[2], _a[0], _b[2], _b[3])) {
-  //     isValid = TEST_FAIL;
-  //   }
-  //   ret = _mm_shuffle_ps(a, b, _MM_SHUFFLE(1, 1, 3, 3));
-  //   if (!validate_float(ret, _a[3], _a[3], _b[1], _b[1])) {
-  //     isValid = TEST_FAIL;
-  //   }
-  //   ret = _mm_shuffle_ps(a, b, _MM_SHUFFLE(2, 0, 1, 0));
-  //   if (!validate_float(ret, _a[0], _a[1], _b[0], _b[2])) {
-  //     isValid = TEST_FAIL;
-  //   }
-  //   ret = _mm_shuffle_ps(a, b, _MM_SHUFFLE(2, 0, 0, 1));
-  //   if (!validate_float(ret, _a[1], _a[0], _b[0], _b[2])) {
-  //     isValid = TEST_FAIL;
-  //   }
-  //   ret = _mm_shuffle_ps(a, b, _MM_SHUFFLE(2, 0, 3, 2));
-  //   if (!validate_float(ret, _a[2], _a[3], _b[0], _b[2])) {
-  //     isValid = TEST_FAIL;
-  //   }
-  //
-  //   return isValid;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  const float *_b = impl.test_cases_float_pointer2;
+  __m128 a, b, c;
+  float _c[4];
+
+#define TEST_IMPL(IDX)                                                         \
+  _c[0] = _a[((IDX) & 0x3)];                                                   \
+  _c[1] = _a[((IDX >> 2) & 0x3)];                                              \
+  _c[2] = _b[((IDX >> 4) & 0x3)];                                              \
+  _c[3] = _b[((IDX >> 6) & 0x3)];                                              \
+                                                                               \
+  a = load_m128(_a);                                                           \
+  b = load_m128(_b);                                                           \
+  c = _mm_shuffle_ps(a, b, IDX);                                               \
+  CHECK_RESULT(validate_float(c, _c[0], _c[1], _c[2], _c[3]))
+
+  IMM_256_ITER
+#undef TEST_IMPL
+
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_sqrt_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
@@ -6745,108 +6696,109 @@ result_t test_mm_setzero_si128(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_shuffle_epi32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int32_t *_a = impl.test_cases_int_pointer1;
-  //   __m128i a, c;
-  //
-  // #define TEST_IMPL(IDX)
-  //   int32_t d##IDX[4];
-  //   d##IDX[0] = _a[((IDX) & 0x3)];
-  //   d##IDX[1] = _a[((IDX >> 2) & 0x3)];
-  //   d##IDX[2] = _a[((IDX >> 4) & 0x3)];
-  //   d##IDX[3] = _a[((IDX >> 6) & 0x3)];
-  //
-  //   a = load_m128i(_a);
-  //   c = _mm_shuffle_epi32(a, IDX);
-  // CHECK_RESULT(VALIDATE_INT32_M128(c, d##IDX))
-  //
-  //   IMM_256_ITER
-  // #undef TEST_IMPL
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int32_t *_a = impl.test_cases_int_pointer1;
+  __m128i a, c;
+  int32_t _c[4];
+
+#define TEST_IMPL(IDX)                                                         \
+  _c[0] = _a[((IDX) & 0x3)];                                                   \
+  _c[1] = _a[((IDX >> 2) & 0x3)];                                              \
+  _c[2] = _a[((IDX >> 4) & 0x3)];                                              \
+  _c[3] = _a[((IDX >> 6) & 0x3)];                                              \
+                                                                               \
+  a = load_m128i(_a);                                                          \
+  c = _mm_shuffle_epi32(a, IDX);                                               \
+  CHECK_RESULT(VALIDATE_INT32_M128(c, _c))
+
+  IMM_256_ITER
+#undef TEST_IMPL
+
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_shuffle_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const double *_a = (const double *)impl.test_cases_float_pointer1;
-  //   const double *_b = (const double *)impl.test_cases_float_pointer2;
-  //   __m128d a, b, c;
-  //
-  // #define TEST_IMPL(IDX)
-  //   a = load_m128d(_a);
-  //   b = load_m128d(_b);
-  //   c = _mm_shuffle_pd(a, b, IDX);
-  //
-  //   double d0##IDX = _a[IDX & 0x1];
-  //   double d1##IDX = _b[(IDX & 0x2) >> 1];
-  // CHECK_RESULT(validate_double(c, d0##IDX, d1##IDX))
-  //
-  //   IMM_4_ITER
-  // #undef TEST_IMPL
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const double *_a = (const double *)impl.test_cases_float_pointer1;
+  const double *_b = (const double *)impl.test_cases_float_pointer2;
+  __m128d a, b, c;
+  double _c[2];
+
+#define TEST_IMPL(IDX)                                                         \
+  a = load_m128d(_a);                                                          \
+  b = load_m128d(_b);                                                          \
+  c = _mm_shuffle_pd(a, b, IDX);                                               \
+                                                                               \
+  _c[0] = _a[IDX & 0x1];                                                       \
+  _c[1] = _b[(IDX & 0x2) >> 1];                                                \
+  CHECK_RESULT(validate_double(c, _c[0], _c[1]))
+
+  IMM_4_ITER
+#undef TEST_IMPL
+
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_shufflehi_epi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
-  //   __m128i a, c;
-  //
-  // #define TEST_IMPL(IDX)
-  //   int16_t d##IDX[8];
-  //   d##IDX[0] = _a[0];
-  //   d##IDX[1] = _a[1];
-  //   d##IDX[2] = _a[2];
-  //   d##IDX[3] = _a[3];
-  //   d##IDX[4] = ((const int64_t *)_a)[1] >> ((IDX & 0x3) * 16);
-  //   d##IDX[5] = ((const int64_t *)_a)[1] >> (((IDX >> 2) & 0x3) * 16);
-  //   d##IDX[6] = ((const int64_t *)_a)[1] >> (((IDX >> 4) & 0x3) * 16);
-  //   d##IDX[7] = ((const int64_t *)_a)[1] >> (((IDX >> 6) & 0x3) * 16);
-  //
-  //   a = load_m128i(_a);
-  //   c = _mm_shufflehi_epi16(a, IDX);
-  //
-  //   CHECK_RESULT(VALIDATE_INT16_M128(c, d##IDX))
-  //
-  //   IMM_256_ITER
-  // #undef TEST_IMPL
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
+  __m128i a, c;
+  int16_t _c[8];
+
+#define TEST_IMPL(IDX)                                                         \
+  _c[0] = _a[0];                                                               \
+  _c[1] = _a[1];                                                               \
+  _c[2] = _a[2];                                                               \
+  _c[3] = _a[3];                                                               \
+  _c[4] = ((const int64_t *)_a)[1] >> ((IDX & 0x3) * 16);                      \
+  _c[5] = ((const int64_t *)_a)[1] >> (((IDX >> 2) & 0x3) * 16);               \
+  _c[6] = ((const int64_t *)_a)[1] >> (((IDX >> 4) & 0x3) * 16);               \
+  _c[7] = ((const int64_t *)_a)[1] >> (((IDX >> 6) & 0x3) * 16);               \
+  a = load_m128i(_a);                                                          \
+  c = _mm_shufflehi_epi16(a, IDX);                                             \
+  CHECK_RESULT(VALIDATE_INT16_M128(c, _c))
+
+  IMM_256_ITER
+#undef TEST_IMPL
+
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_shufflelo_epi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
-  //   __m128i a, c;
-  //
-  // #define TEST_IMPL(IDX)
-  //   int16_t d##IDX[8];
-  //   d##IDX[0] = ((const int64_t *)_a)[0] >> ((IDX & 0x3) * 16);
-  //   d##IDX[1] = ((const int64_t *)_a)[0] >> (((IDX >> 2) & 0x3) * 16);
-  //   d##IDX[2] = ((const int64_t *)_a)[0] >> (((IDX >> 4) & 0x3) * 16);
-  //   d##IDX[3] = ((const int64_t *)_a)[0] >> (((IDX >> 6) & 0x3) * 16);
-  //   d##IDX[4] = _a[4];
-  //   d##IDX[5] = _a[5];
-  //   d##IDX[6] = _a[6];
-  //   d##IDX[7] = _a[7];
-  //
-  //   a = load_m128i(_a);
-  //   c = _mm_shufflelo_epi16(a, IDX);
-  //
-  //   CHECK_RESULT(VALIDATE_INT16_M128(c, d##IDX))
-  //
-  //   IMM_256_ITER
-  // #undef TEST_IMPL
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
+  __m128i a, c;
+  int16_t _c[8];
+
+#define TEST_IMPL(IDX)                                                         \
+  _c[0] = ((const int64_t *)_a)[0] >> ((IDX & 0x3) * 16);                      \
+  _c[1] = ((const int64_t *)_a)[0] >> (((IDX >> 2) & 0x3) * 16);               \
+  _c[2] = ((const int64_t *)_a)[0] >> (((IDX >> 4) & 0x3) * 16);               \
+  _c[3] = ((const int64_t *)_a)[0] >> (((IDX >> 6) & 0x3) * 16);               \
+  _c[4] = _a[4];                                                               \
+  _c[5] = _a[5];                                                               \
+  _c[6] = _a[6];                                                               \
+  _c[7] = _a[7];                                                               \
+  a = load_m128i(_a);                                                          \
+  c = _mm_shufflelo_epi16(a, IDX);                                             \
+  CHECK_RESULT(VALIDATE_INT16_M128(c, _c))
+
+  IMM_256_ITER
+#undef TEST_IMPL
+
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_sll_epi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
@@ -9029,50 +8981,50 @@ result_t test_mm_mulhrs_pi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_shuffle_epi8(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int8_t *_a = (const int8_t *)impl.test_cases_int_pointer1;
-  //   const int8_t *_b = (const int8_t *)impl.test_cases_int_pointer2;
-  //   int8_t dst[16];
-  //
-  //   for (int i = 0; i < 16; i++) {
-  //     if (_b[i] & 0x80) {
-  //       dst[i] = 0;
-  //     } else {
-  //       dst[i] = _a[_b[i] & 0x0F];
-  //     }
-  //   }
-  //   __m128i a = load_m128i(_a);
-  //   __m128i b = load_m128i(_b);
-  //   __m128i ret = _mm_shuffle_epi8(a, b);
-  //
-  //   return VALIDATE_INT8_M128(ret, dst);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int8_t *_a = (const int8_t *)impl.test_cases_int_pointer1;
+  const int8_t *_b = (const int8_t *)impl.test_cases_int_pointer2;
+  int8_t dst[16];
+
+  for (int i = 0; i < 16; i++) {
+    if (_b[i] & 0x80) {
+      dst[i] = 0;
+    } else {
+      dst[i] = _a[_b[i] & 0x0F];
+    }
+  }
+  __m128i a = load_m128i(_a);
+  __m128i b = load_m128i(_b);
+  __m128i ret = _mm_shuffle_epi8(a, b);
+
+  return VALIDATE_INT8_M128(ret, dst);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_shuffle_pi8(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int8_t *_a = (const int8_t *)impl.test_cases_int_pointer1;
-  //   const int8_t *_b = (const int8_t *)impl.test_cases_int_pointer2;
-  //   int8_t dst[8];
-  //
-  //   for (int i = 0; i < 8; i++) {
-  //     if (_b[i] & 0x80) {
-  //       dst[i] = 0;
-  //     } else {
-  //       dst[i] = _a[_b[i] & 0x07];
-  //     }
-  //   }
-  //
-  //   __m64 a = load_m64(_a);
-  //   __m64 b = load_m64(_b);
-  //   __m64 ret = _mm_shuffle_pi8(a, b);
-  //
-  //   return VALIDATE_INT8_M64(ret, dst);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int8_t *_a = (const int8_t *)impl.test_cases_int_pointer1;
+  const int8_t *_b = (const int8_t *)impl.test_cases_int_pointer2;
+  int8_t dst[8];
+
+  for (int i = 0; i < 8; i++) {
+    if (_b[i] & 0x80) {
+      dst[i] = 0;
+    } else {
+      dst[i] = _a[_b[i] & 0x07];
+    }
+  }
+
+  __m64 a = load_m64(_a);
+  __m64 b = load_m64(_b);
+  __m64 ret = _mm_shuffle_pi8(a, b);
+
+  return VALIDATE_INT8_M64(ret, dst);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_sign_epi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
