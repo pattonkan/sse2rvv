@@ -7108,128 +7108,127 @@ result_t test_mm_srai_epi32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_srl_epi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
-  //   const int64_t count = (int64_t)(iter % 18 - 1); // range: -1 ~ 16
-  //
-  //   uint16_t d[8];
-  //   d[0] = (count & ~15) ? 0 : (uint16_t)(_a[0]) >> count;
-  //   d[1] = (count & ~15) ? 0 : (uint16_t)(_a[1]) >> count;
-  //   d[2] = (count & ~15) ? 0 : (uint16_t)(_a[2]) >> count;
-  //   d[3] = (count & ~15) ? 0 : (uint16_t)(_a[3]) >> count;
-  //   d[4] = (count & ~15) ? 0 : (uint16_t)(_a[4]) >> count;
-  //   d[5] = (count & ~15) ? 0 : (uint16_t)(_a[5]) >> count;
-  //   d[6] = (count & ~15) ? 0 : (uint16_t)(_a[6]) >> count;
-  //   d[7] = (count & ~15) ? 0 : (uint16_t)(_a[7]) >> count;
-  //
-  //   __m128i a = load_m128i(_a);
-  //   __m128i b = _mm_set1_epi64x(count);
-  //   __m128i c = _mm_srl_epi16(a, b);
-  //
-  //   return VALIDATE_INT16_M128(c, d);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
+  const int64_t count = (int64_t)(iter % 18 - 1); // range: -1 ~ 16
+
+  uint16_t _d[8];
+  _d[0] = (count > 15) ? 0 : (uint16_t)(_a[0]) >> count;
+  _d[1] = (count > 15) ? 0 : (uint16_t)(_a[1]) >> count;
+  _d[2] = (count > 15) ? 0 : (uint16_t)(_a[2]) >> count;
+  _d[3] = (count > 15) ? 0 : (uint16_t)(_a[3]) >> count;
+  _d[4] = (count > 15) ? 0 : (uint16_t)(_a[4]) >> count;
+  _d[5] = (count > 15) ? 0 : (uint16_t)(_a[5]) >> count;
+  _d[6] = (count > 15) ? 0 : (uint16_t)(_a[6]) >> count;
+  _d[7] = (count > 15) ? 0 : (uint16_t)(_a[7]) >> count;
+
+  __m128i a = load_m128i(_a);
+  __m128i b = _mm_set1_epi64x(count);
+  __m128i c = _mm_srl_epi16(a, b);
+  return VALIDATE_INT16_M128(c, _d);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_srl_epi32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
-  //   const int64_t count = (int64_t)(iter % 34 - 1); // range: -1 ~ 32
-  //
-  //   uint32_t d[4];
-  //   d[0] = (count & ~31) ? 0 : (uint32_t)(_a[0]) >> count;
-  //   d[1] = (count & ~31) ? 0 : (uint32_t)(_a[1]) >> count;
-  //   d[2] = (count & ~31) ? 0 : (uint32_t)(_a[2]) >> count;
-  //   d[3] = (count & ~31) ? 0 : (uint32_t)(_a[3]) >> count;
-  //
-  //   __m128i a = load_m128i(_a);
-  //   __m128i b = _mm_set1_epi64x(count);
-  //   __m128i c = _mm_srl_epi32(a, b);
-  //
-  //   return VALIDATE_INT32_M128(c, d);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
+  const int64_t count = (int64_t)(iter % 34 - 1); // range: -1 ~ 32
+
+  uint32_t d[4];
+  d[0] = (count > 31) ? 0 : (uint32_t)(_a[0]) >> count;
+  d[1] = (count > 31) ? 0 : (uint32_t)(_a[1]) >> count;
+  d[2] = (count > 31) ? 0 : (uint32_t)(_a[2]) >> count;
+  d[3] = (count > 31) ? 0 : (uint32_t)(_a[3]) >> count;
+
+  __m128i a = load_m128i(_a);
+  __m128i b = _mm_set1_epi64x(count);
+  __m128i c = _mm_srl_epi32(a, b);
+
+  return VALIDATE_INT32_M128(c, d);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_srl_epi64(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int64_t *_a = (const int64_t *)impl.test_cases_int_pointer1;
-  //   const int64_t count = (int64_t)(iter % 66 - 1); // range: -1 ~ 64
-  //
-  //   uint64_t d0 = (count & ~63) ? 0 : (uint64_t)(_a[0]) >> count;
-  //   uint64_t d1 = (count & ~63) ? 0 : (uint64_t)(_a[1]) >> count;
-  //
-  //   __m128i a = load_m128i(_a);
-  //   __m128i b = _mm_set1_epi64x(count);
-  //   __m128i c = _mm_srl_epi64(a, b);
-  //
-  //   return validate_int64(c, d0, d1);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int64_t *_a = (const int64_t *)impl.test_cases_int_pointer1;
+  const int64_t count = (int64_t)(iter % 66 - 1); // range: -1 ~ 64
+
+  uint64_t d0 = (count > 63) ? 0 : (uint64_t)(_a[0]) >> count;
+  uint64_t d1 = (count > 63) ? 0 : (uint64_t)(_a[1]) >> count;
+
+  __m128i a = load_m128i(_a);
+  __m128i b = _mm_set1_epi64x(count);
+  __m128i c = _mm_srl_epi64(a, b);
+
+  return validate_int64(c, d0, d1);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_srli_epi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
-  //   const int count = (int)(iter % 18 - 1); // range: -1 ~ 16
-  //
-  //   int16_t d[8];
-  //   d[0] = count & (~15) ? 0 : (uint16_t)(_a[0]) >> count;
-  //   d[1] = count & (~15) ? 0 : (uint16_t)(_a[1]) >> count;
-  //   d[2] = count & (~15) ? 0 : (uint16_t)(_a[2]) >> count;
-  //   d[3] = count & (~15) ? 0 : (uint16_t)(_a[3]) >> count;
-  //   d[4] = count & (~15) ? 0 : (uint16_t)(_a[4]) >> count;
-  //   d[5] = count & (~15) ? 0 : (uint16_t)(_a[5]) >> count;
-  //   d[6] = count & (~15) ? 0 : (uint16_t)(_a[6]) >> count;
-  //   d[7] = count & (~15) ? 0 : (uint16_t)(_a[7]) >> count;
-  //
-  //   __m128i a = load_m128i(_a);
-  //   __m128i c = _mm_srli_epi16(a, count);
-  //
-  //   return VALIDATE_INT16_M128(c, d);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
+  const int count = (int)(iter % 18 - 1); // range: -1 ~ 16
+
+  int16_t d[8];
+  d[0] = count & ~15 ? 0 : (uint16_t)(_a[0]) >> count;
+  d[1] = count & ~15 ? 0 : (uint16_t)(_a[1]) >> count;
+  d[2] = count & ~15 ? 0 : (uint16_t)(_a[2]) >> count;
+  d[3] = count & ~15 ? 0 : (uint16_t)(_a[3]) >> count;
+  d[4] = count & ~15 ? 0 : (uint16_t)(_a[4]) >> count;
+  d[5] = count & ~15 ? 0 : (uint16_t)(_a[5]) >> count;
+  d[6] = count & ~15 ? 0 : (uint16_t)(_a[6]) >> count;
+  d[7] = count & ~15 ? 0 : (uint16_t)(_a[7]) >> count;
+
+  __m128i a = load_m128i(_a);
+  __m128i c = _mm_srli_epi16(a, count);
+
+  return VALIDATE_INT16_M128(c, d);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_srli_epi32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
-  //   const int count = (int)(iter % 34 - 1); // range: -1 ~ 32
-  //
-  //   int32_t d[4];
-  //   d[0] = count & (~31) ? 0 : (uint32_t)(_a[0]) >> count;
-  //   d[1] = count & (~31) ? 0 : (uint32_t)(_a[1]) >> count;
-  //   d[2] = count & (~31) ? 0 : (uint32_t)(_a[2]) >> count;
-  //   d[3] = count & (~31) ? 0 : (uint32_t)(_a[3]) >> count;
-  //
-  //   __m128i a = load_m128i(_a);
-  //   __m128i c = _mm_srli_epi32(a, count);
-  //
-  //   return VALIDATE_INT32_M128(c, d);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
+  const int count = (int)(iter % 34 - 1); // range: -1 ~ 32
+
+  int32_t d[4];
+  d[0] = count & ~31 ? 0 : (uint32_t)(_a[0]) >> count;
+  d[1] = count & ~31 ? 0 : (uint32_t)(_a[1]) >> count;
+  d[2] = count & ~31 ? 0 : (uint32_t)(_a[2]) >> count;
+  d[3] = count & ~31 ? 0 : (uint32_t)(_a[3]) >> count;
+
+  __m128i a = load_m128i(_a);
+  __m128i c = _mm_srli_epi32(a, count);
+
+  return VALIDATE_INT32_M128(c, d);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_srli_epi64(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int64_t *_a = (const int64_t *)impl.test_cases_int_pointer1;
-  //   const int count = (int)(iter % 66 - 1); // range: -1 ~ 64
-  //
-  //   int64_t d0 = count & (~63) ? 0 : (uint64_t)(_a[0]) >> count;
-  //   int64_t d1 = count & (~63) ? 0 : (uint64_t)(_a[1]) >> count;
-  //
-  //   __m128i a = load_m128i(_a);
-  //   __m128i c = _mm_srli_epi64(a, count);
-  //
-  //   return validate_int64(c, d0, d1);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int64_t *_a = (const int64_t *)impl.test_cases_int_pointer1;
+  const int count = (int)(iter % 66 - 1); // range: -1 ~ 64
+
+  int64_t d0 = count & ~63 ? 0 : (uint64_t)(_a[0]) >> count;
+  int64_t d1 = count & ~63 ? 0 : (uint64_t)(_a[1]) >> count;
+
+  __m128i a = load_m128i(_a);
+  __m128i c = _mm_srli_epi64(a, count);
+
+  return validate_int64(c, d0, d1);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_srli_si128(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
