@@ -2438,13 +2438,41 @@ FORCE_INLINE __m128 _mm_sqrt_ss(__m128 a) {
   return vreinterpretq_f32_m128(__riscv_vslideup_vx_f32m1(_a, rnd, 0, 1));
 }
 
-// FORCE_INLINE __m128i _mm_sra_epi16 (__m128i a, __m128i count) {}
+FORCE_INLINE __m128i _mm_sra_epi16(__m128i a, __m128i count) {
+  vint16m1_t _a = vreinterpretq_m128i_i16(a);
+  vint64m1_t _count = vreinterpretq_m128i_i64(count);
+  int64_t count_non_vec = __riscv_vmv_x_s_i64m1_i64(_count);
+  int64_t count_non_vec_shift = count_non_vec >> 1;
+  vint16m1_t a_s = __riscv_vsra_vx_i16m1(_a, count_non_vec_shift, 8);
+  return vreinterpretq_i16_m128i(
+      __riscv_vsra_vx_i16m1(a_s, count_non_vec - count_non_vec_shift, 8));
+}
 
-// FORCE_INLINE __m128i _mm_sra_epi32 (__m128i a, __m128i count) {}
+FORCE_INLINE __m128i _mm_sra_epi32(__m128i a, __m128i count) {
+  vint32m1_t _a = vreinterpretq_m128i_i32(a);
+  vint64m1_t _count = vreinterpretq_m128i_i64(count);
+  int64_t count_non_vec = __riscv_vmv_x_s_i64m1_i64(_count);
+  int64_t count_non_vec_shift = count_non_vec >> 1;
+  vint32m1_t a_s = __riscv_vsra_vx_i32m1(_a, count_non_vec_shift, 4);
+  return vreinterpretq_i32_m128i(
+      __riscv_vsra_vx_i32m1(a_s, count_non_vec - count_non_vec_shift, 4));
+}
 
-// FORCE_INLINE __m128i _mm_srai_epi16 (__m128i a, int imm8) {}
+FORCE_INLINE __m128i _mm_srai_epi16(__m128i a, int imm8) {
+  vint16m1_t _a = vreinterpretq_m128i_i16(a);
+  int64_t imm8_shift = imm8 >> 1;
+  vint16m1_t a_s = __riscv_vsra_vx_i16m1(_a, imm8_shift, 8);
+  return vreinterpretq_i16_m128i(
+      __riscv_vsra_vx_i16m1(a_s, imm8 - imm8_shift, 8));
+}
 
-// FORCE_INLINE __m128i _mm_srai_epi32 (__m128i a, int imm8) {}
+FORCE_INLINE __m128i _mm_srai_epi32(__m128i a, int imm8) {
+  vint32m1_t _a = vreinterpretq_m128i_i32(a);
+  int64_t imm8_shift = imm8 >> 1;
+  vint32m1_t a_s = __riscv_vsra_vx_i32m1(_a, imm8_shift, 4);
+  return vreinterpretq_i32_m128i(
+      __riscv_vsra_vx_i32m1(a_s, imm8 - imm8_shift, 4));
+}
 
 // FORCE_INLINE __m128i _mm_srl_epi16 (__m128i a, __m128i count) {}
 
