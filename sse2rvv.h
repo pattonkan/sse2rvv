@@ -2353,17 +2353,62 @@ FORCE_INLINE __m64 _mm_sign_pi8(__m64 a, __m64 b) {
   return vreinterpretq_i8_m64(__riscv_vmerge_vxm_i8m1(res_lt, 0, zero_mask, 8));
 }
 
-// FORCE_INLINE __m128i _mm_sll_epi16 (__m128i a, __m128i count) {}
+FORCE_INLINE __m128i _mm_sll_epi16(__m128i a, __m128i count) {
+  vint16m1_t _a = vreinterpretq_m128i_i16(a);
+  vint64m1_t _count = vreinterpretq_m128i_i64(count);
+  int64_t shift = __riscv_vmv_x_s_i64m1_i64(_count);
+  if (shift > 15) {
+    return vreinterpretq_i16_m128i(__riscv_vmv_v_x_i16m1(0, 8));
+  }
+  return vreinterpretq_i16_m128i(__riscv_vsll_vx_i16m1(_a, shift, 8));
+}
 
-// FORCE_INLINE __m128i _mm_sll_epi32 (__m128i a, __m128i count) {}
+FORCE_INLINE __m128i _mm_sll_epi32(__m128i a, __m128i count) {
+  vint32m1_t _a = vreinterpretq_m128i_i32(a);
+  vint64m1_t _count = vreinterpretq_m128i_i64(count);
+  int64_t shift = __riscv_vmv_x_s_i64m1_i64(_count);
+  if (shift > 31) {
+    return vreinterpretq_i32_m128i(__riscv_vmv_v_x_i32m1(0, 4));
+  }
+  return vreinterpretq_i32_m128i(__riscv_vsll_vx_i32m1(_a, shift, 4));
+}
 
-// FORCE_INLINE __m128i _mm_sll_epi64 (__m128i a, __m128i count) {}
+FORCE_INLINE __m128i _mm_sll_epi64(__m128i a, __m128i count) {
+  vint64m1_t _a = vreinterpretq_m128i_i64(a);
+  vint64m1_t _count = vreinterpretq_m128i_i64(count);
+  int64_t shift = __riscv_vmv_x_s_i64m1_i64(_count);
+  if (shift > 63) {
+    return vreinterpretq_i64_m128i(__riscv_vmv_v_x_i64m1(0, 2));
+  }
+  return vreinterpretq_i64_m128i(__riscv_vsll_vx_i64m1(_a, shift, 2));
+}
 
-// FORCE_INLINE __m128i _mm_slli_epi16 (__m128i a, int imm8) {}
+FORCE_INLINE __m128i _mm_slli_epi16(__m128i a, int imm8) {
+  vint16m1_t _a = vreinterpretq_m128i_i16(a);
+  const int _imm8 = imm8 & 0xff;
+  if (_imm8 > 15) {
+    return vreinterpretq_i16_m128i(__riscv_vmv_v_x_i16m1(0, 8));
+  }
+  return vreinterpretq_i16_m128i(__riscv_vsll_vx_i16m1(_a, _imm8, 8));
+}
 
-// FORCE_INLINE __m128i _mm_slli_epi32 (__m128i a, int imm8) {}
+FORCE_INLINE __m128i _mm_slli_epi32(__m128i a, int imm8) {
+  vint32m1_t _a = vreinterpretq_m128i_i32(a);
+  const int _imm8 = imm8 & 0xff;
+  if (_imm8 > 31) {
+    return vreinterpretq_i32_m128i(__riscv_vmv_v_x_i32m1(0, 4));
+  }
+  return vreinterpretq_i32_m128i(__riscv_vsll_vx_i32m1(_a, _imm8, 4));
+}
 
-// FORCE_INLINE __m128i _mm_slli_epi64 (__m128i a, int imm8) {}
+FORCE_INLINE __m128i _mm_slli_epi64(__m128i a, int imm8) {
+  vint64m1_t _a = vreinterpretq_m128i_i64(a);
+  const int _imm8 = imm8 & 0xff;
+  if (_imm8 > 63) {
+    return vreinterpretq_i64_m128i(__riscv_vmv_v_x_i64m1(0, 2));
+  }
+  return vreinterpretq_i64_m128i(__riscv_vsll_vx_i64m1(_a, _imm8, 2));
+}
 
 // FORCE_INLINE __m128i _mm_slli_si128 (__m128i a, int imm8) {}
 
