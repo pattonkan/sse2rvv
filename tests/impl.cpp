@@ -7022,89 +7022,89 @@ result_t test_mm_sqrt_sd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_sra_epi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
-  //   const int64_t count = (int64_t)(iter % 18 - 1); // range: -1 ~ 16
-  //
-  //   int16_t d[8];
-  //   d[0] = (count & ~15) ? (_a[0] < 0 ? ~UINT16_C(0) : 0) : (_a[0] >> count);
-  //   d[1] = (count & ~15) ? (_a[1] < 0 ? ~UINT16_C(0) : 0) : (_a[1] >> count);
-  //   d[2] = (count & ~15) ? (_a[2] < 0 ? ~UINT16_C(0) : 0) : (_a[2] >> count);
-  //   d[3] = (count & ~15) ? (_a[3] < 0 ? ~UINT16_C(0) : 0) : (_a[3] >> count);
-  //   d[4] = (count & ~15) ? (_a[4] < 0 ? ~UINT16_C(0) : 0) : (_a[4] >> count);
-  //   d[5] = (count & ~15) ? (_a[5] < 0 ? ~UINT16_C(0) : 0) : (_a[5] >> count);
-  //   d[6] = (count & ~15) ? (_a[6] < 0 ? ~UINT16_C(0) : 0) : (_a[6] >> count);
-  //   d[7] = (count & ~15) ? (_a[7] < 0 ? ~UINT16_C(0) : 0) : (_a[7] >> count);
-  //
-  //   __m128i a = _mm_load_si128((const __m128i *)_a);
-  //   __m128i b = _mm_set1_epi64x(count);
-  //   __m128i c = _mm_sra_epi16(a, b);
-  //
-  //   return VALIDATE_INT16_M128(c, d);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
+  const int64_t count = (int64_t)(iter % 18 - 1); // range: -1 ~ 16
+
+  int16_t d[8];
+  d[0] = (count & ~15) ? (_a[0] < 0 ? ~UINT16_C(0) : 0) : (_a[0] >> count);
+  d[1] = (count & ~15) ? (_a[1] < 0 ? ~UINT16_C(0) : 0) : (_a[1] >> count);
+  d[2] = (count & ~15) ? (_a[2] < 0 ? ~UINT16_C(0) : 0) : (_a[2] >> count);
+  d[3] = (count & ~15) ? (_a[3] < 0 ? ~UINT16_C(0) : 0) : (_a[3] >> count);
+  d[4] = (count & ~15) ? (_a[4] < 0 ? ~UINT16_C(0) : 0) : (_a[4] >> count);
+  d[5] = (count & ~15) ? (_a[5] < 0 ? ~UINT16_C(0) : 0) : (_a[5] >> count);
+  d[6] = (count & ~15) ? (_a[6] < 0 ? ~UINT16_C(0) : 0) : (_a[6] >> count);
+  d[7] = (count & ~15) ? (_a[7] < 0 ? ~UINT16_C(0) : 0) : (_a[7] >> count);
+
+  __m128i a = _mm_load_si128((const __m128i *)_a);
+  __m128i b = _mm_set1_epi64x(count);
+  __m128i c = _mm_sra_epi16(a, b);
+
+  return VALIDATE_INT16_M128(c, d);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_sra_epi32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
-  //   const int64_t count = (int64_t)(iter % 34 - 1); // range: -1 ~ 32
-  //
-  //   int32_t d[4];
-  //   d[0] = (count & ~31) ? (_a[0] < 0 ? ~UINT32_C(0) : 0) : _a[0] >> count;
-  //   d[1] = (count & ~31) ? (_a[1] < 0 ? ~UINT32_C(0) : 0) : _a[1] >> count;
-  //   d[2] = (count & ~31) ? (_a[2] < 0 ? ~UINT32_C(0) : 0) : _a[2] >> count;
-  //   d[3] = (count & ~31) ? (_a[3] < 0 ? ~UINT32_C(0) : 0) : _a[3] >> count;
-  //
-  //   __m128i a = _mm_load_si128((const __m128i *)_a);
-  //   __m128i b = _mm_set1_epi64x(count);
-  //   __m128i c = _mm_sra_epi32(a, b);
-  //
-  //   return VALIDATE_INT32_M128(c, d);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
+  const int64_t count = (int64_t)(iter % 34 - 1); // range: -1 ~ 32
+
+  int32_t d[4];
+  d[0] = (count & ~31) ? (_a[0] < 0 ? ~UINT32_C(0) : 0) : _a[0] >> count;
+  d[1] = (count & ~31) ? (_a[1] < 0 ? ~UINT32_C(0) : 0) : _a[1] >> count;
+  d[2] = (count & ~31) ? (_a[2] < 0 ? ~UINT32_C(0) : 0) : _a[2] >> count;
+  d[3] = (count & ~31) ? (_a[3] < 0 ? ~UINT32_C(0) : 0) : _a[3] >> count;
+
+  __m128i a = _mm_load_si128((const __m128i *)_a);
+  __m128i b = _mm_set1_epi64x(count);
+  __m128i c = _mm_sra_epi32(a, b);
+
+  return VALIDATE_INT32_M128(c, d);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_srai_epi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
-  //   const int32_t b = (int32_t)(iter % 18 - 1); // range: -1 ~ 16
-  //   int16_t d[8];
-  //   int count = (b & ~15) ? 15 : b;
-  //
-  //   for (int i = 0; i < 8; i++) {
-  //     d[i] = _a[i] >> count;
-  //   }
-  //
-  //   __m128i a = _mm_load_si128((const __m128i *)_a);
-  //   __m128i c = _mm_srai_epi16(a, b);
-  //
-  //   return VALIDATE_INT16_M128(c, d);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
+  const int32_t b = (int32_t)(iter % 18 - 1); // range: -1 ~ 16
+  int16_t d[8];
+  int count = (b & ~15) ? 15 : b;
+
+  for (int i = 0; i < 8; i++) {
+    d[i] = _a[i] >> count;
+  }
+
+  __m128i a = _mm_load_si128((const __m128i *)_a);
+  __m128i c = _mm_srai_epi16(a, b);
+
+  return VALIDATE_INT16_M128(c, d);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_srai_epi32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
-  //   const int32_t b = (int32_t)(iter % 34 - 1); // range: -1 ~ 32
-  //
-  //   int32_t d[4];
-  //   int count = (b & ~31) ? 31 : b;
-  //   for (int i = 0; i < 4; i++) {
-  //     d[i] = _a[i] >> count;
-  //   }
-  //
-  //   __m128i a = _mm_load_si128((const __m128i *)_a);
-  //   __m128i c = _mm_srai_epi32(a, b);
-  //
-  //   return VALIDATE_INT32_M128(c, d);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
+  const int32_t b = (int32_t)(iter % 34 - 1); // range: -1 ~ 32
+
+  int32_t d[4];
+  int count = (b & ~31) ? 31 : b;
+  for (int i = 0; i < 4; i++) {
+    d[i] = _a[i] >> count;
+  }
+
+  __m128i a = _mm_load_si128((const __m128i *)_a);
+  __m128i c = _mm_srai_epi32(a, b);
+
+  return VALIDATE_INT32_M128(c, d);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_srl_epi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
