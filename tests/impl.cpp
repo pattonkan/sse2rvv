@@ -264,22 +264,12 @@ public:
       }
 
       ret = run_single_test(test, i);
-      if (ret == TEST_FAIL) // the test failed...
-      {
-        // Set a breakpoint here if you want to step through the failure
-        // case in the debugger
-        ret = run_single_test(test, i);
+      if (ret == TEST_FAIL) {
         break;
       }
     }
     return ret;
   }
-};
-
-const char *instructionString[] = {
-#define _(x) #x,
-    INTRIN_LIST
-#undef _
 };
 
 // Produce rounding which is the same as SSE instructions with _MM_ROUND_NEAREST
@@ -10192,24 +10182,23 @@ result_t test_mm_min_epu32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_minpos_epu16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
-  //   uint16_t index = 0, min = (uint16_t)_a[0];
-  //   for (int i = 0; i < 8; i++) {
-  //     if ((uint16_t)_a[i] < min) {
-  //       index = (uint16_t)i;
-  //       min = (uint16_t)_a[i];
-  //     }
-  //   }
-  //
-  //   uint16_t d[8] = {min, index, 0, 0, 0, 0, 0, 0};
-  //
-  //   __m128i a = load_m128i(_a);
-  //   __m128i ret = _mm_minpos_epu16(a);
-  //   return VALIDATE_UINT16_M128(ret, d);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
+  uint16_t index = 0, min = (uint16_t)_a[0];
+  for (int i = 0; i < 8; i++) {
+    if ((uint16_t)_a[i] < min) {
+      index = (uint16_t)i;
+      min = (uint16_t)_a[i];
+    }
+  }
+  uint16_t _c[8] = {min, index, 0, 0, 0, 0, 0, 0};
+
+  __m128i a = load_m128i(_a);
+  __m128i c = _mm_minpos_epu16(a);
+  return VALIDATE_UINT16_M128(c, _c);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_mpsadbw_epu8(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
