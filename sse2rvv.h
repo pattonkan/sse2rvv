@@ -101,7 +101,7 @@ typedef union ALIGN_STRUCT(16) SIMDVec {
   __riscv_vreinterpret_v_u32m1_u16m1(__riscv_vreinterpret_v_f32m1_u32m1(x))
 #define vreinterpretq_m128_u32(x) __riscv_vreinterpret_v_f32m1_u32m1(x)
 #define vreinterpretq_m128_u64(x)                                              \
-  __riscv_vreinterpret_v_f64m1_u64m1(__riscv_vreinterpret_v_f32m1_f64m1(x))
+  __riscv_vreinterpret_v_u32m1_u64m1(__riscv_vreinterpret_v_f32m1_u32m1(x))
 #define vreinterpretq_m128_i8(x)                                               \
   __riscv_vreinterpret_v_i32m1_i8m1(__riscv_vreinterpret_v_f32m1_i32m1(x))
 #define vreinterpretq_m128_i16(x)                                              \
@@ -110,7 +110,9 @@ typedef union ALIGN_STRUCT(16) SIMDVec {
 #define vreinterpretq_m128_i64(x)                                              \
   __riscv_vreinterpret_v_i32m1_i64m1(__riscv_vreinterpret_v_f32m1_i32m1(x))
 #define vreinterpretq_m128_f32(x) (x)
-#define vreinterpretq_m128_f64(x) __riscv_vreinterpret_v_f32m1_f64m1(x)
+#define vreinterpretq_m128_f64(x)                                              \
+  __riscv_vreinterpret_v_u64m1_f64m1(__riscv_vreinterpret_v_u32m1_u64m1(       \
+      __riscv_vreinterpret_v_f32m1_u32m1(x)))
 
 #define vreinterpretq_u8_m128(x)                                               \
   __riscv_vreinterpret_v_u32m1_f32m1(__riscv_vreinterpret_v_u8m1_u32m1(x))
@@ -118,7 +120,7 @@ typedef union ALIGN_STRUCT(16) SIMDVec {
   __riscv_vreinterpret_v_u32m1_f32m1(__riscv_vreinterpret_v_u16m1_u32m1(x))
 #define vreinterpretq_u32_m128(x) __riscv_vreinterpret_v_u32m1_f32m1(x)
 #define vreinterpretq_u64_m128(x)                                              \
-  __riscv_vreinterpret_v_f64m1_f32m1(__riscv_vreinterpret_v_u64m1_f64m1(x))
+  __riscv_vreinterpret_v_u32m1_f32m1(__riscv_vreinterpret_v_u64m1_u32m1(x))
 #define vreinterpretq_i8_m128(x)                                               \
   __riscv_vreinterpret_v_i32m1_f32m1(__riscv_vreinterpret_v_i8m1_i32m1(x))
 #define vreinterpretq_i16_m128(x)                                              \
@@ -127,7 +129,9 @@ typedef union ALIGN_STRUCT(16) SIMDVec {
 #define vreinterpretq_i64_m128(x)                                              \
   __riscv_vreinterpret_v_f64m1_f32m1(__riscv_vreinterpret_v_i64m1_f64m1(x))
 #define vreinterpretq_f32_m128(x) (x)
-#define vreinterpretq_f64_m128(x) __riscv_vreinterpret_v_f64m1_f32m1(x)
+#define vreinterpretq_f64_m128(x)                                              \
+  __riscv_vreinterpret_v_u32m1_f32m1(__riscv_vreinterpret_v_u64m1_u32m1(       \
+      __riscv_vreinterpret_v_f64m1_u64m1(x)))
 
 #define vreinterpretq_m128d_u8(x)                                              \
   __riscv_vreinterpret_v_u64m1_u8m1(__riscv_vreinterpret_v_f64m1_u64m1(x))
@@ -1948,21 +1952,57 @@ FORCE_INLINE __m128i _mm_minpos_epu16(__m128i a) {
       __riscv_vslideup_vx_u16m1(zeros, min_index, 0, 2));
 }
 
-// FORCE_INLINE __m128i _mm_move_epi64 (__m128i a) {}
+FORCE_INLINE __m128i _mm_move_epi64(__m128i a) {
+  vuint64m1_t _a = vreinterpretq_m128i_u64(a);
+  vuint64m1_t zeros = __riscv_vmv_v_x_u64m1(0, 2);
+  return vreinterpretq_u64_m128i(__riscv_vslideup_vx_u64m1(zeros, _a, 0, 1));
+}
 
-// FORCE_INLINE __m128d _mm_move_sd (__m128d a, __m128d b) {}
+FORCE_INLINE __m128d _mm_move_sd(__m128d a, __m128d b) {
+  vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
+  vfloat64m1_t _b = vreinterpretq_m128d_f64(b);
+  return vreinterpretq_f64_m128d(__riscv_vslideup_vx_f64m1(_a, _b, 0, 1));
+}
 
-// FORCE_INLINE __m128 _mm_move_ss (__m128 a, __m128 b) {}
+FORCE_INLINE __m128 _mm_move_ss(__m128 a, __m128 b) {
+  vfloat32m1_t _a = vreinterpretq_m128_f32(a);
+  vfloat32m1_t _b = vreinterpretq_m128_f32(b);
+  return vreinterpretq_f32_m128(__riscv_vslideup_vx_f32m1(_a, _b, 0, 1));
+}
 
-// FORCE_INLINE __m128d _mm_movedup_pd (__m128d a) {}
+FORCE_INLINE __m128d _mm_movedup_pd(__m128d a) {
+  vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
+  return vreinterpretq_f64_m128d(__riscv_vslideup_vx_f64m1(_a, _a, 1, 2));
+}
 
-// FORCE_INLINE __m128 _mm_movehdup_ps (__m128 a) {}
+FORCE_INLINE __m128 _mm_movehdup_ps(__m128 a) {
+  // TODO optimize with vmacc
+  vuint64m1_t _a = vreinterpretq_m128_u64(a);
+  vuint64m1_t a_low = __riscv_vsrl_vx_u64m1(_a, 32, 2);
+  vuint64m1_t a_high = __riscv_vsll_vx_u64m1(a_low, 32, 2);
+  return vreinterpretq_u64_m128(__riscv_vor_vv_u64m1(a_high, a_low, 2));
+}
 
-// FORCE_INLINE __m128 _mm_movehl_ps (__m128 a, __m128 b) {}
+FORCE_INLINE __m128 _mm_movehl_ps(__m128 a, __m128 b) {
+  vfloat64m1_t _a = vreinterpretq_m128_f64(a);
+  vfloat64m1_t _b = vreinterpretq_m128_f64(b);
+  vfloat64m1_t b_s = __riscv_vslidedown_vx_f64m1(_b, 1, 2);
+  return vreinterpretq_f64_m128(__riscv_vslideup_vx_f64m1(_a, b_s, 0, 1));
+}
 
-// FORCE_INLINE __m128 _mm_moveldup_ps (__m128 a) {}
+FORCE_INLINE __m128 _mm_moveldup_ps(__m128 a) {
+  // TODO optimize with vmacc
+  vuint64m1_t _a = vreinterpretq_m128_u64(a);
+  vuint64m1_t a_high = __riscv_vsll_vx_u64m1(_a, 32, 2);
+  vuint64m1_t a_low = __riscv_vsrl_vx_u64m1(a_high, 32, 2);
+  return vreinterpretq_u64_m128(__riscv_vor_vv_u64m1(a_high, a_low, 2));
+}
 
-// FORCE_INLINE __m128 _mm_movelh_ps (__m128 a, __m128 b) {}
+FORCE_INLINE __m128 _mm_movelh_ps(__m128 a, __m128 b) {
+  vfloat64m1_t _a = vreinterpretq_m128_f64(a);
+  vfloat64m1_t _b = vreinterpretq_m128_f64(b);
+  return vreinterpretq_f64_m128(__riscv_vslideup_vx_f64m1(_a, _b, 1, 2));
+}
 
 // FORCE_INLINE int _mm_movemask_epi8 (__m128i a) {}
 
