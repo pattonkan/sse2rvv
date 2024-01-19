@@ -1931,7 +1931,22 @@ FORCE_INLINE __m128 _mm_min_ss(__m128 a, __m128 b) {
   return vreinterpretq_f32_m128(__riscv_vslideup_vx_f32m1(_a, min, 0, 1));
 }
 
-// FORCE_INLINE __m128i _mm_minpos_epu16 (__m128i a) {}
+FORCE_INLINE __m128i _mm_minpos_epu16(__m128i a) {
+  // TODO add macro for ignoring index
+  vuint16m1_t _a = vreinterpretq_m128i_u16(a);
+  vuint16m1_t a_min = __riscv_vredminu_vs_u16m1_u16m1(_a, _a, 8);
+  vuint16m1_t a_min_dup = __riscv_vrgather_vx_u16m1(a_min, 0, 8);
+  vuint16m1_t vid = __riscv_vid_v_u16m1(8);
+  vbool16_t eq_mask = __riscv_vmseq_vv_u16m1_b16(_a, a_min_dup, 8);
+  vuint16m1_t min_vids = __riscv_vmerge_vvm_u16m1(
+      __riscv_vmv_v_x_u16m1(UINT16_MAX, 8), vid, eq_mask, 8);
+  // FIXME sth wrong with __riscv_vredminu_vs_u16m1_u16m1_m()
+  vuint16m1_t min_vid = __riscv_vredminu_vs_u16m1_u16m1(min_vids, min_vids, 8);
+  vuint16m1_t min_index = __riscv_vslideup_vx_u16m1(a_min_dup, min_vid, 1, 2);
+  vuint16m1_t zeros = __riscv_vmv_v_x_u16m1(0, 8);
+  return vreinterpretq_u16_m128i(
+      __riscv_vslideup_vx_u16m1(zeros, min_index, 0, 2));
+}
 
 // FORCE_INLINE __m128i _mm_move_epi64 (__m128i a) {}
 
