@@ -2004,13 +2004,33 @@ FORCE_INLINE __m128 _mm_movelh_ps(__m128 a, __m128 b) {
   return vreinterpretq_f64_m128(__riscv_vslideup_vx_f64m1(_a, _b, 1, 2));
 }
 
-// FORCE_INLINE int _mm_movemask_epi8 (__m128i a) {}
+FORCE_INLINE int _mm_movemask_epi8(__m128i a) {
+  vint8m1_t _a = vreinterpretq_m128i_i8(a);
+  vuint16m1_t nonzeros =
+      __riscv_vreinterpret_v_b8_u16m1(__riscv_vmslt_vx_i8m1_b8(_a, 0, 16));
+  return (int)__riscv_vmv_x_s_u16m1_u16(nonzeros);
+}
 
-// FORCE_INLINE int _mm_movemask_pd (__m128d a) {}
+FORCE_INLINE int _mm_movemask_pd(__m128d a) {
+  vint64m1_t _a = vreinterpretq_m128d_i64(a);
+  vuint8m1_t nonzeros =
+      __riscv_vreinterpret_v_b64_u8m1(__riscv_vmslt_vx_i64m1_b64(_a, 0, 2));
+  return (int)(__riscv_vmv_x_s_u8m1_u8(nonzeros) & 0x3);
+}
 
-// FORCE_INLINE int _mm_movemask_pi8 (__m64 a) {}
+FORCE_INLINE int _mm_movemask_pi8(__m64 a) {
+  vint8m1_t _a = vreinterpretq_m128i_i8(a);
+  vuint8m1_t nonzeros =
+      __riscv_vreinterpret_v_b8_u8m1(__riscv_vmslt_vx_i8m1_b8(_a, 0, 8));
+  return (int)__riscv_vmv_x_s_u8m1_u8(nonzeros);
+}
 
-// FORCE_INLINE int _mm_movemask_ps (__m128 a) {}
+FORCE_INLINE int _mm_movemask_ps(__m128 a) {
+  vint32m1_t _a = vreinterpretq_m128_i32(a);
+  vuint8m1_t nonzeros =
+      __riscv_vreinterpret_v_b32_u8m1(__riscv_vmslt_vx_i32m1_b32(_a, 0, 4));
+  return (int)(__riscv_vmv_x_s_u8m1_u8(nonzeros) & 0xf);
+}
 
 // FORCE_INLINE __m64 _mm_movepi64_pi64 (__m128i a) {}
 
@@ -2081,7 +2101,7 @@ FORCE_INLINE __m64 _m_pminsw(__m64 a, __m64 b) { return _mm_min_pi16(a, b); }
 
 FORCE_INLINE __m64 _m_pminub(__m64 a, __m64 b) { return _mm_min_pu8(a, b); }
 
-// FORCE_INLINE int _m_pmovmskb (__m64 a) {}
+FORCE_INLINE int _m_pmovmskb(__m64 a) { return _mm_movemask_pi8(a); }
 
 // FORCE_INLINE __m64 _m_pmulhuw (__m64 a, __m64 b) {}
 
