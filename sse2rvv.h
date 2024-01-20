@@ -205,7 +205,7 @@ typedef union ALIGN_STRUCT(16) SIMDVec {
   __riscv_vreinterpret_v_u32m1_u8m1(__riscv_vreinterpret_v_i32m1_u32m1(x))
 #define vreinterpretq_m64_u16(x)                                               \
   __riscv_vreinterpret_v_u32m1_u16m1(__riscv_vreinterpret_v_i32m1_u32m1(x))
-#define vreinterpretq_m64_u32(x) __riscv_vreinterpret_v_f32m1_u32m1(x)
+#define vreinterpretq_m64_u32(x) __riscv_vreinterpret_v_i32m1_u32m1(x)
 #define vreinterpretq_m64_u64(x)                                               \
   __riscv_vreinterpret_v_f64m1_u64m1(__riscv_vreinterpret_v_f32m1_f64m1(x))
 #define vreinterpretq_m64_i8(x) __riscv_vreinterpret_v_i32m1_i8m1(x)
@@ -222,7 +222,7 @@ typedef union ALIGN_STRUCT(16) SIMDVec {
   __riscv_vreinterpret_v_u32m1_i32m1(__riscv_vreinterpret_v_u16m1_u32m1(x))
 #define vreinterpretq_u32_m64(x) __riscv_vreinterpret_v_u32m1_f32m1(x)
 #define vreinterpretq_u64_m64(x)                                               \
-  __riscv_vreinterpret_v_f64m1_f32m1(__riscv_vreinterpret_v_u64m1_f64m1(x))
+  __riscv_vreinterpret_v_u32m1_i32m1(__riscv_vreinterpret_v_u64m1_u32m1(x))
 #define vreinterpretq_i8_m64(x) __riscv_vreinterpret_v_i8m1_i32m1(x)
 #define vreinterpretq_i16_m64(x) __riscv_vreinterpret_v_i16m1_i32m1(x)
 #define vreinterpretq_i32_m64(x) (x)
@@ -2045,33 +2045,108 @@ FORCE_INLINE __m128i _mm_movpi64_epi64(__m64 a) {
 // FORCE_INLINE __m128i _mm_mpsadbw_epu8 (__m128i a, __m128i b, const int imm8)
 // {}
 
-// FORCE_INLINE __m128i _mm_mul_epi32 (__m128i a, __m128i b) {}
+FORCE_INLINE __m128i _mm_mul_epi32(__m128i a, __m128i b) {
+  vint64m1_t _a = vreinterpretq_m128i_i64(a);
+  vint64m1_t _b = vreinterpretq_m128i_i64(b);
+  vint32mf2_t a_srl = __riscv_vnsra_wx_i32mf2(_a, 0, 2);
+  vint32mf2_t b_srl = __riscv_vnsra_wx_i32mf2(_b, 0, 2);
+  return vreinterpretq_i64_m128i(__riscv_vwmul_vv_i64m1(a_srl, b_srl, 2));
+}
 
-// FORCE_INLINE __m128i _mm_mul_epu32 (__m128i a, __m128i b) {}
+FORCE_INLINE __m128i _mm_mul_epu32(__m128i a, __m128i b) {
+  vuint64m1_t _a = vreinterpretq_m128i_u64(a);
+  vuint64m1_t _b = vreinterpretq_m128i_u64(b);
+  vuint32mf2_t a_srl = __riscv_vnsrl_wx_u32mf2(_a, 0, 2);
+  vuint32mf2_t b_srl = __riscv_vnsrl_wx_u32mf2(_b, 0, 2);
+  return vreinterpretq_u64_m128i(__riscv_vwmulu_vv_u64m1(a_srl, b_srl, 2));
+}
 
-// FORCE_INLINE __m128d _mm_mul_pd (__m128d a, __m128d b) {}
+FORCE_INLINE __m128d _mm_mul_pd(__m128d a, __m128d b) {
+  vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
+  vfloat64m1_t _b = vreinterpretq_m128d_f64(b);
+  return vreinterpretq_f64_m128d(__riscv_vfmul_vv_f64m1(_a, _b, 2));
+}
 
-// FORCE_INLINE __m128 _mm_mul_ps (__m128 a, __m128 b) {}
+FORCE_INLINE __m128 _mm_mul_ps(__m128 a, __m128 b) {
+  vfloat32m1_t _a = vreinterpretq_m128_f32(a);
+  vfloat32m1_t _b = vreinterpretq_m128_f32(b);
+  return vreinterpretq_f32_m128(__riscv_vfmul_vv_f32m1(_a, _b, 4));
+}
 
-// FORCE_INLINE __m128d _mm_mul_sd (__m128d a, __m128d b) {}
+FORCE_INLINE __m128d _mm_mul_sd(__m128d a, __m128d b) {
+  vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
+  vfloat64m1_t _b = vreinterpretq_m128d_f64(b);
+  vfloat64m1_t mul = __riscv_vfmul_vv_f64m1(_a, _b, 2);
+  return vreinterpretq_f64_m128d(__riscv_vslideup_vx_f64m1(_a, mul, 0, 1));
+}
 
-// FORCE_INLINE __m128 _mm_mul_ss (__m128 a, __m128 b) {}
+FORCE_INLINE __m128 _mm_mul_ss(__m128 a, __m128 b) {
+  vfloat32m1_t _a = vreinterpretq_m128_f32(a);
+  vfloat32m1_t _b = vreinterpretq_m128_f32(b);
+  vfloat32m1_t mul = __riscv_vfmul_vv_f32m1(_a, _b, 4);
+  return vreinterpretq_f32_m128(__riscv_vslideup_vx_f32m1(_a, mul, 0, 1));
+}
 
-// FORCE_INLINE __m64 _mm_mul_su32 (__m64 a, __m64 b) {}
+FORCE_INLINE __m64 _mm_mul_su32(__m64 a, __m64 b) {
+  vuint32mf2_t _a =
+      __riscv_vlmul_trunc_v_u32m1_u32mf2(vreinterpretq_m64_u32(a));
+  vuint32mf2_t _b =
+      __riscv_vlmul_trunc_v_u32m1_u32mf2(vreinterpretq_m64_u32(b));
+  return vreinterpretq_u64_m64(__riscv_vwmulu_vv_u64m1(_a, _b, 2));
+}
 
-// FORCE_INLINE __m128i _mm_mulhi_epi16 (__m128i a, __m128i b) {}
+FORCE_INLINE __m128i _mm_mulhi_epi16(__m128i a, __m128i b) {
+  vint16m1_t _a = vreinterpretq_m128i_i16(a);
+  vint16m1_t _b = vreinterpretq_m128i_i16(b);
+  vint32m2_t ab_mul = __riscv_vwmul_vv_i32m2(_a, _b, 8);
+  return vreinterpretq_i16_m128i(__riscv_vnsra_wx_i16m1(ab_mul, 16, 8));
+}
 
-// FORCE_INLINE __m128i _mm_mulhi_epu16 (__m128i a, __m128i b) {}
+FORCE_INLINE __m128i _mm_mulhi_epu16(__m128i a, __m128i b) {
+  vuint16m1_t _a = vreinterpretq_m128i_u16(a);
+  vuint16m1_t _b = vreinterpretq_m128i_u16(b);
+  vuint32m2_t ab_mul = __riscv_vwmulu_vv_u32m2(_a, _b, 8);
+  return vreinterpretq_u16_m128i(__riscv_vnsrl_wx_u16m1(ab_mul, 16, 8));
+}
 
-// FORCE_INLINE __m64 _mm_mulhi_pu16 (__m64 a, __m64 b) {}
+FORCE_INLINE __m64 _mm_mulhi_pu16(__m64 a, __m64 b) {
+  vuint16m1_t _a = vreinterpretq_m64_u16(a);
+  vuint16m1_t _b = vreinterpretq_m64_u16(b);
+  vuint32m2_t ab_mul = __riscv_vwmulu_vv_u32m2(_a, _b, 8);
+  return vreinterpretq_u16_m64(__riscv_vnsrl_wx_u16m1(ab_mul, 16, 8));
+}
 
-// FORCE_INLINE __m128i _mm_mulhrs_epi16 (__m128i a, __m128i b) {}
+FORCE_INLINE __m128i _mm_mulhrs_epi16(__m128i a, __m128i b) {
+  vint16m1_t _a = vreinterpretq_m128i_i16(a);
+  vint16m1_t _b = vreinterpretq_m128i_i16(b);
+  vint32m2_t ab_mul = __riscv_vwmul_vv_i32m2(_a, _b, 8);
+  vint32m2_t sra = __riscv_vsra_vx_i32m2(ab_mul, 14, 8);
+  return vreinterpretq_i16_m128i(
+      __riscv_vnclip_wx_i16m1(sra, 1, __RISCV_VXRM_RNU, 8));
+}
 
-// FORCE_INLINE __m64 _mm_mulhrs_pi16 (__m64 a, __m64 b) {}
+FORCE_INLINE __m64 _mm_mulhrs_pi16(__m64 a, __m64 b) {
+  vint16m1_t _a = vreinterpretq_m64_i16(a);
+  vint16m1_t _b = vreinterpretq_m64_i16(b);
+  vint32m2_t ab_mul = __riscv_vwmul_vv_i32m2(_a, _b, 8);
+  vint32m2_t sra = __riscv_vsra_vx_i32m2(ab_mul, 14, 8);
+  return vreinterpretq_i16_m64(
+      __riscv_vnclip_wx_i16m1(sra, 1, __RISCV_VXRM_RNU, 8));
+}
 
-// FORCE_INLINE __m128i _mm_mullo_epi16 (__m128i a, __m128i b) {}
+FORCE_INLINE __m128i _mm_mullo_epi16(__m128i a, __m128i b) {
+  vint16m1_t _a = vreinterpretq_m128i_i16(a);
+  vint16m1_t _b = vreinterpretq_m128i_i16(b);
+  vint32m2_t ab_mul = __riscv_vwmul_vv_i32m2(_a, _b, 8);
+  return vreinterpretq_i16_m128i(__riscv_vnsra_wx_i16m1(ab_mul, 0, 8));
+}
 
-// FORCE_INLINE __m128i _mm_mullo_epi32 (__m128i a, __m128i b) {}
+FORCE_INLINE __m128i _mm_mullo_epi32(__m128i a, __m128i b) {
+  vint32m1_t _a = vreinterpretq_m128i_i32(a);
+  vint32m1_t _b = vreinterpretq_m128i_i32(b);
+  vint64m2_t ab_mul = __riscv_vwmul_vv_i64m2(_a, _b, 4);
+  return vreinterpretq_i32_m128i(__riscv_vnsra_wx_i32m1(ab_mul, 0, 4));
+}
 
 // FORCE_INLINE __m128d _mm_or_pd (__m128d a, __m128d b) {}
 
