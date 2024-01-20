@@ -2032,9 +2032,15 @@ FORCE_INLINE int _mm_movemask_ps(__m128 a) {
   return (int)(__riscv_vmv_x_s_u8m1_u8(nonzeros) & 0xf);
 }
 
-// FORCE_INLINE __m64 _mm_movepi64_pi64 (__m128i a) {}
+FORCE_INLINE __m64 _mm_movepi64_pi64(__m128i a) {
+  return vreinterpretq_i32_m64(vreinterpretq_m128i_i32(a));
+}
 
-// FORCE_INLINE __m128i _mm_movpi64_epi64 (__m64 a) {}
+FORCE_INLINE __m128i _mm_movpi64_epi64(__m64 a) {
+  vint32m1_t _a = vreinterpretq_m128i_i32(a);
+  vint32m1_t zeros = __riscv_vmv_v_x_i32m1(0, 4);
+  return vreinterpretq_i32_m64(__riscv_vslideup_vx_i32m1(zeros, _a, 0, 2));
+}
 
 // FORCE_INLINE __m128i _mm_mpsadbw_epu8 (__m128i a, __m128i b, const int imm8)
 // {}
