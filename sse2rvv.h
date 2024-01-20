@@ -2178,11 +2178,23 @@ FORCE_INLINE __m128i _mm_mullo_epi32(__m128i a, __m128i b) {
   return vreinterpretq_i32_m128i(__riscv_vnsra_wx_i32m1(ab_mul, 0, 4));
 }
 
-// FORCE_INLINE __m128d _mm_or_pd (__m128d a, __m128d b) {}
+FORCE_INLINE __m128d _mm_or_pd(__m128d a, __m128d b) {
+  vint64m1_t _a = vreinterpretq_m128d_i64(a);
+  vint64m1_t _b = vreinterpretq_m128d_i64(b);
+  return vreinterpretq_i64_m128d(__riscv_vor_vv_i64m1(_a, _b, 2));
+}
 
-// FORCE_INLINE __m128 _mm_or_ps (__m128 a, __m128 b) {}
+FORCE_INLINE __m128 _mm_or_ps(__m128 a, __m128 b) {
+  vint32m1_t _a = vreinterpretq_m128_i32(a);
+  vint32m1_t _b = vreinterpretq_m128_i32(b);
+  return vreinterpretq_i32_m128(__riscv_vor_vv_i32m1(_a, _b, 4));
+}
 
-// FORCE_INLINE __m128i _mm_or_si128 (__m128i a, __m128i b) {}
+FORCE_INLINE __m128i _mm_or_si128(__m128i a, __m128i b) {
+  vint32m1_t _a = vreinterpretq_m128i_i32(a);
+  vint32m1_t _b = vreinterpretq_m128i_i32(b);
+  return vreinterpretq_i32_m128i(__riscv_vor_vv_i32m1(_a, _b, 4));
+}
 
 // FORCE_INLINE __m128i _mm_packs_epi16 (__m128i a, __m128i b) {}
 
