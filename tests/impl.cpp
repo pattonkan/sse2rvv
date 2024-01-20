@@ -6285,108 +6285,108 @@ result_t test_mm_or_si128(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_packs_epi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   int8_t max = INT8_MAX;
-  //   int8_t min = INT8_MIN;
-  //   const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
-  //   const int16_t *_b = (const int16_t *)impl.test_cases_int_pointer2;
-  //
-  //   int8_t d[16];
-  //   for (int i = 0; i < 8; i++) {
-  //     if (_a[i] > max)
-  //       d[i] = max;
-  //     else if (_a[i] < min)
-  //       d[i] = min;
-  //     else
-  //       d[i] = (int8_t)_a[i];
-  //   }
-  //   for (int i = 0; i < 8; i++) {
-  //     if (_b[i] > max)
-  //       d[i + 8] = max;
-  //     else if (_b[i] < min)
-  //       d[i + 8] = min;
-  //     else
-  //       d[i + 8] = (int8_t)_b[i];
-  //   }
-  //
-  //   __m128i a = load_m128i(_a);
-  //   __m128i b = load_m128i(_b);
-  //   __m128i c = _mm_packs_epi16(a, b);
-  //
-  //   return VALIDATE_INT8_M128(c, d);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  int8_t max = INT8_MAX;
+  int8_t min = INT8_MIN;
+  const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
+  const int16_t *_b = (const int16_t *)impl.test_cases_int_pointer2;
+
+  int8_t d[16];
+  for (int i = 0; i < 8; i++) {
+    if (_a[i] > max)
+      d[i] = max;
+    else if (_a[i] < min)
+      d[i] = min;
+    else
+      d[i] = (int8_t)_a[i];
+  }
+  for (int i = 0; i < 8; i++) {
+    if (_b[i] > max)
+      d[i + 8] = max;
+    else if (_b[i] < min)
+      d[i + 8] = min;
+    else
+      d[i + 8] = (int8_t)_b[i];
+  }
+
+  __m128i a = load_m128i(_a);
+  __m128i b = load_m128i(_b);
+  __m128i c = _mm_packs_epi16(a, b);
+
+  return VALIDATE_INT8_M128(c, d);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_packs_epi32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   int16_t max = INT16_MAX;
-  //   int16_t min = INT16_MIN;
-  //   const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
-  //   const int32_t *_b = (const int32_t *)impl.test_cases_int_pointer2;
-  //
-  //   int16_t d[8];
-  //   for (int i = 0; i < 4; i++) {
-  //     if (_a[i] > max)
-  //       d[i] = max;
-  //     else if (_a[i] < min)
-  //       d[i] = min;
-  //     else
-  //       d[i] = (int16_t)_a[i];
-  //   }
-  //   for (int i = 0; i < 4; i++) {
-  //     if (_b[i] > max)
-  //       d[i + 4] = max;
-  //     else if (_b[i] < min)
-  //       d[i + 4] = min;
-  //     else
-  //       d[i + 4] = (int16_t)_b[i];
-  //   }
-  //
-  //   __m128i a = load_m128i(_a);
-  //   __m128i b = load_m128i(_b);
-  //   __m128i c = _mm_packs_epi32(a, b);
-  //
-  //   return VALIDATE_INT16_M128(c, d);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  int16_t max = INT16_MAX;
+  int16_t min = INT16_MIN;
+  const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
+  const int32_t *_b = (const int32_t *)impl.test_cases_int_pointer2;
+
+  int16_t d[8];
+  for (int i = 0; i < 4; i++) {
+    if (_a[i] > max)
+      d[i] = max;
+    else if (_a[i] < min)
+      d[i] = min;
+    else
+      d[i] = (int16_t)_a[i];
+  }
+  for (int i = 0; i < 4; i++) {
+    if (_b[i] > max)
+      d[i + 4] = max;
+    else if (_b[i] < min)
+      d[i + 4] = min;
+    else
+      d[i + 4] = (int16_t)_b[i];
+  }
+
+  __m128i a = load_m128i(_a);
+  __m128i b = load_m128i(_b);
+  __m128i c = _mm_packs_epi32(a, b);
+
+  return VALIDATE_INT16_M128(c, d);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_packus_epi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   uint8_t max = UINT8_MAX;
-  //   uint8_t min = 0;
-  //   const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
-  //   const int16_t *_b = (const int16_t *)impl.test_cases_int_pointer2;
-  //
-  //   uint8_t d[16];
-  //   for (int i = 0; i < 8; i++) {
-  //     if (_a[i] > (int16_t)max)
-  //       d[i] = max;
-  //     else if (_a[i] < (int16_t)min)
-  //       d[i] = min;
-  //     else
-  //       d[i] = (uint8_t)_a[i];
-  //   }
-  //   for (int i = 0; i < 8; i++) {
-  //     if (_b[i] > (int16_t)max)
-  //       d[i + 8] = max;
-  //     else if (_b[i] < (int16_t)min)
-  //       d[i + 8] = min;
-  //     else
-  //       d[i + 8] = (uint8_t)_b[i];
-  //   }
-  //
-  //   __m128i a = load_m128i(_a);
-  //   __m128i b = load_m128i(_b);
-  //   __m128i c = _mm_packus_epi16(a, b);
-  //
-  //   return VALIDATE_UINT8_M128(c, d);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  uint8_t max = UINT8_MAX;
+  uint8_t min = 0;
+  const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
+  const int16_t *_b = (const int16_t *)impl.test_cases_int_pointer2;
+
+  uint8_t d[16];
+  for (int i = 0; i < 8; i++) {
+    if (_a[i] > (int16_t)max)
+      d[i] = max;
+    else if (_a[i] < (int16_t)min)
+      d[i] = min;
+    else
+      d[i] = (uint8_t)_a[i];
+  }
+  for (int i = 0; i < 8; i++) {
+    if (_b[i] > (int16_t)max)
+      d[i + 8] = max;
+    else if (_b[i] < (int16_t)min)
+      d[i + 8] = min;
+    else
+      d[i + 8] = (uint8_t)_b[i];
+  }
+
+  __m128i a = load_m128i(_a);
+  __m128i b = load_m128i(_b);
+  __m128i c = _mm_packus_epi16(a, b);
+
+  return VALIDATE_UINT8_M128(c, d);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_pause(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
@@ -10275,38 +10275,38 @@ result_t test_mm_mullo_epi32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_packus_epi32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   uint16_t max = UINT16_MAX;
-  //   uint16_t min = 0;
-  //   const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
-  //   const int32_t *_b = (const int32_t *)impl.test_cases_int_pointer2;
-  //
-  //   uint16_t d[8];
-  //   for (int i = 0; i < 4; i++) {
-  //     if (_a[i] > (int32_t)max)
-  //       d[i] = max;
-  //     else if (_a[i] < (int32_t)min)
-  //       d[i] = min;
-  //     else
-  //       d[i] = (uint16_t)_a[i];
-  //   }
-  //   for (int i = 0; i < 4; i++) {
-  //     if (_b[i] > (int32_t)max)
-  //       d[i + 4] = max;
-  //     else if (_b[i] < (int32_t)min)
-  //       d[i + 4] = min;
-  //     else
-  //       d[i + 4] = (uint16_t)_b[i];
-  //   }
-  //
-  //   __m128i a = load_m128i(_a);
-  //   __m128i b = load_m128i(_b);
-  //   __m128i c = _mm_packus_epi32(a, b);
-  //
-  //   return VALIDATE_UINT16_M128(c, d);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  uint16_t max = UINT16_MAX;
+  uint16_t min = 0;
+  const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
+  const int32_t *_b = (const int32_t *)impl.test_cases_int_pointer2;
+
+  uint16_t d[8];
+  for (int i = 0; i < 4; i++) {
+    if (_a[i] > (int32_t)max)
+      d[i] = max;
+    else if (_a[i] < (int32_t)min)
+      d[i] = min;
+    else
+      d[i] = (uint16_t)_a[i];
+  }
+  for (int i = 0; i < 4; i++) {
+    if (_b[i] > (int32_t)max)
+      d[i + 4] = max;
+    else if (_b[i] < (int32_t)min)
+      d[i + 4] = min;
+    else
+      d[i + 4] = (uint16_t)_b[i];
+  }
+
+  __m128i a = load_m128i(_a);
+  __m128i b = load_m128i(_b);
+  __m128i c = _mm_packus_epi32(a, b);
+
+  return VALIDATE_UINT16_M128(c, d);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_round_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
