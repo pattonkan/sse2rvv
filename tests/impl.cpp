@@ -6084,33 +6084,33 @@ result_t test_mm_movemask_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_movepi64_pi64(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int64_t *_a = (const int64_t *)impl.test_cases_int_pointer1;
-  //
-  //   int64_t d0 = _a[0];
-  //
-  //   __m128i a = load_m128i(_a);
-  //   __m64 c = _mm_movepi64_pi64(a);
-  //
-  //   return validate_int64(c, d0);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int64_t *_a = (const int64_t *)impl.test_cases_int_pointer1;
+
+  int64_t d0 = _a[0];
+
+  __m128i a = load_m128i(_a);
+  __m64 c = _mm_movepi64_pi64(a);
+
+  return validate_int64(c, d0);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_movpi64_epi64(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int64_t *_a = (const int64_t *)impl.test_cases_int_pointer1;
-  //
-  //   int64_t d0 = _a[0];
-  //
-  //   __m64 a = load_m64(_a);
-  //   __m128i c = _mm_movpi64_epi64(a);
-  //
-  //   return validate_int64(c, d0, 0);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int64_t *_a = (const int64_t *)impl.test_cases_int_pointer1;
+
+  int64_t d0 = _a[0];
+
+  __m64 a = load_m64(_a);
+  __m128i c = _mm_movpi64_epi64(a);
+
+  return validate_int64(c, d0, 0);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_mul_epu32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
