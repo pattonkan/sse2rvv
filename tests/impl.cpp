@@ -3321,70 +3321,72 @@ result_t test_mm_store1_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_storeh_pi(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *p = impl.test_cases_float_pointer1;
-  //   float d[4] = {1.0f, 2.0f, 3.0f, 4.0f};
-  //   __m128 a = _mm_load_ps(p);
-  //   __m64 *b = (__m64 *)d;
-  //
-  //   _mm_storeh_pi(b, a);
-  //   ASSERT_RETURN(d[0] == p[2]);
-  //   ASSERT_RETURN(d[1] == p[3]);
-  //   ASSERT_RETURN(d[2] == 3.0f);
-  //   ASSERT_RETURN(d[3] == 4.0f);
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *p = impl.test_cases_float_pointer1;
+  float d[4] = {1.0f, 2.0f, 3.0f, 4.0f};
+  __m128 a = _mm_load_ps(p);
+  __m64 *b = (__m64 *)d;
+
+  _mm_storeh_pi(b, a);
+  ASSERT_RETURN(d[0] == p[2]);
+  ASSERT_RETURN(d[1] == p[3]);
+  ASSERT_RETURN(d[2] == 3.0f);
+  ASSERT_RETURN(d[3] == 4.0f);
+
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_storel_pi(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *p = impl.test_cases_float_pointer1;
-  //   float d[4] = {1.0f, 2.0f, 3.0f, 4.0f};
-  //   __m128 a = _mm_load_ps(p);
-  //   __m64 *b = (__m64 *)d;
-  //
-  //   _mm_storel_pi(b, a);
-  //   ASSERT_RETURN(d[0] == p[0]);
-  //   ASSERT_RETURN(d[1] == p[1]);
-  //   ASSERT_RETURN(d[2] == 3.0f);
-  //   ASSERT_RETURN(d[3] == 4.0f);
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *p = impl.test_cases_float_pointer1;
+  float d[4] = {1.0f, 2.0f, 3.0f, 4.0f};
+  __m128 a = _mm_load_ps(p);
+  __m64 *b = (__m64 *)d;
+
+  _mm_storel_pi(b, a);
+  ASSERT_RETURN(d[0] == p[0]);
+  ASSERT_RETURN(d[1] == p[1]);
+  ASSERT_RETURN(d[2] == 3.0f);
+  ASSERT_RETURN(d[3] == 4.0f);
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_storer_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   float *p = impl.test_cases_float_pointer1;
-  //   float d[4];
-  //
-  //   __m128 a = load_m128(p);
-  //   _mm_storer_ps(d, a);
-  //
-  //   ASSERT_RETURN(d[0] == p[3]);
-  //   ASSERT_RETURN(d[1] == p[2]);
-  //   ASSERT_RETURN(d[2] == p[1]);
-  //   ASSERT_RETURN(d[3] == p[0]);
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  float *p = impl.test_cases_float_pointer1;
+  float d[4];
+
+  __m128 a = load_m128(p);
+  _mm_storer_ps(d, a);
+
+  ASSERT_RETURN(d[0] == p[3]);
+  ASSERT_RETURN(d[1] == p[2]);
+  ASSERT_RETURN(d[2] == p[1]);
+  ASSERT_RETURN(d[3] == p[0]);
+
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_storeu_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   float *_a = impl.test_cases_float_pointer1;
-  //   float f[4];
-  //   __m128 a = _mm_load_ps(_a);
-  //
-  //   _mm_storeu_ps(f, a);
-  //   return validate_float(a, f[0], f[1], f[2], f[3]);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  float *_a = impl.test_cases_float_pointer1;
+  float f[4];
+  __m128 a = _mm_load_ps(_a);
+
+  _mm_storeu_ps(f, a);
+  return validate_float(a, f[0], f[1], f[2], f[3]);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_storeu_si16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
@@ -7338,114 +7340,111 @@ result_t test_mm_store1_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_storeh_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   double *p = (double *)impl.test_cases_float_pointer1;
-  //   double mem;
-  //
-  //   __m128d a = load_m128d(p);
-  //   _mm_storeh_pd(&mem, a);
-  //
-  //   ASSERT_RETURN(mem == p[1]);
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  double *p = (double *)impl.test_cases_float_pointer1;
+  double mem;
+
+  __m128d a = load_m128d(p);
+  _mm_storeh_pd(&mem, a);
+
+  ASSERT_RETURN(mem == p[1]);
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_storel_epi64(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   int64_t *p = (int64_t *)impl.test_cases_int_pointer1;
-  //   __m128i mem;
-  //
-  //   __m128i a = load_m128i(p);
-  //   _mm_storel_epi64(&mem, a);
-  //
-  //   ASSERT_RETURN(((SIMDVec *)&mem)->m128_u64[0] == (uint64_t)p[0]);
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  int64_t *p = (int64_t *)impl.test_cases_int_pointer1;
+  __m128i mem;
+
+  __m128i a = load_m128i(p);
+  _mm_storel_epi64(&mem, a);
+
+  ASSERT_RETURN(((SIMDVec *)&mem)->m128_u64[0] == (uint64_t)p[0]);
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_storel_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   double *p = (double *)impl.test_cases_float_pointer1;
-  //   double mem;
-  //
-  //   __m128d a = load_m128d(p);
-  //   _mm_storel_pd(&mem, a);
-  //
-  //   ASSERT_RETURN(mem == p[0]);
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  double *p = (double *)impl.test_cases_float_pointer1;
+  double mem;
+
+  __m128d a = load_m128d(p);
+  _mm_storel_pd(&mem, a);
+
+  ASSERT_RETURN(mem == p[0]);
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_storer_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   double *p = (double *)impl.test_cases_float_pointer1;
-  //   double mem[2];
-  //
-  //   __m128d a = load_m128d(p);
-  //   _mm_storer_pd(mem, a);
-  //
-  //   __m128d res = load_m128d(mem);
-  //   return validate_double(res, p[1], p[0]);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  double *p = (double *)impl.test_cases_float_pointer1;
+  double mem[2];
+
+  __m128d a = load_m128d(p);
+  _mm_storer_pd(mem, a);
+
+  __m128d res = load_m128d(mem);
+  return validate_double(res, p[1], p[0]);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_storeu_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   double *p = (double *)impl.test_cases_float_pointer1;
-  //   double x = impl.test_cases_floats[iter + 4];
-  //   double y = impl.test_cases_floats[iter + 6];
-  //
-  //   __m128d a = _mm_set_pd(x, y);
-  //   _mm_storeu_pd(p, a);
-  //   ASSERT_RETURN(p[0] == y);
-  //   ASSERT_RETURN(p[1] == x);
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  double *p = (double *)impl.test_cases_float_pointer1;
+  double x = impl.test_cases_floats[iter + 4];
+  double y = impl.test_cases_floats[iter + 6];
+
+  __m128d a = _mm_set_pd(x, y);
+  _mm_storeu_pd(p, a);
+  ASSERT_RETURN(p[0] == y);
+  ASSERT_RETURN(p[1] == x);
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_storeu_si128(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
-  //   __m128i b;
-  //   __m128i a = load_m128i(_a);
-  //   _mm_storeu_si128(&b, a);
-  //   int32_t *_b = (int32_t *)&b;
-  //   return VALIDATE_INT32_M128(a, _b);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
+  __m128i b;
+  __m128i a = load_m128i(_a);
+  _mm_storeu_si128(&b, a);
+  int32_t *_b = (int32_t *)&b;
+  return VALIDATE_INT32_M128(a, _b);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_storeu_si32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // The GCC version before 11 does not implement intrinsic function
-  // _mm_storeu_si32. Check https://gcc.gnu.org/bugzilla/show_bug.cgi?id=95483
-  // for more information.
-  // #if (defined(__GNUC__) && !defined(__clang__)) && (__GNUC__ <= 10)
-  // #else
+#ifdef ENABLE_TEST_ALL
+// The GCC version before 11 does not implement intrinsic function
+// _mm_storeu_si32. Check https://gcc.gnu.org/bugzilla/show_bug.cgi?id=95483
+// for more information.
+#if (defined(__GNUC__) && !defined(__clang__)) && (__GNUC__ <= 10)
+#else
+  const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
+  __m128i b;
+  __m128i a = load_m128i(_a);
+  _mm_storeu_si32(&b, a);
+  int32_t *_b = (int32_t *)&b;
+  return validate_int32(b, _a[0], _b[1], _b[2], _b[3]);
+#endif
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
-  // #else
-  //   const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
-  //   __m128i b;
-  //   __m128i a = load_m128i(_a);
-  //   _mm_storeu_si32(&b, a);
-  //   int32_t *_b = (int32_t *)&b;
-  //   return validate_int32(b, _a[0], _b[1], _b[2], _b[3]);
-  // #endif
-  // #else
-  return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_stream_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {

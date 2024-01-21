@@ -2819,29 +2819,73 @@ FORCE_INLINE void _mm_store1_ps(float *mem_addr, __m128 a) {
   return _mm_store_ps1(mem_addr, a);
 }
 
-// FORCE_INLINE void _mm_storeh_pd (double* mem_addr, __m128d a) {}
+FORCE_INLINE void _mm_storeh_pd(double *mem_addr, __m128d a) {
+  vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
+  _a = __riscv_vslidedown_vx_f64m1(_a, 1, 2);
+  __riscv_vse64_v_f64m1(mem_addr, _a, 1);
+}
 
-// FORCE_INLINE void _mm_storeh_pi (__m64* mem_addr, __m128 a) {}
+FORCE_INLINE void _mm_storeh_pi(__m64 *mem_addr, __m128 a) {
+  vint32m1_t _a = vreinterpretq_m128_i32(a);
+  vint32m1_t addr = vreinterpretq_m64_i32(*mem_addr);
+  _a = __riscv_vslidedown_vx_i32m1(_a, 2, 2);
+  *mem_addr = __riscv_vslideup_vx_i32m1(addr, _a, 0, 2);
+}
 
-// FORCE_INLINE void _mm_storel_epi64 (__m128i* mem_addr, __m128i a) {}
+FORCE_INLINE void _mm_storel_epi64(__m128i *mem_addr, __m128i a) {
+  *mem_addr = a;
+}
 
-// FORCE_INLINE void _mm_storel_pd (double* mem_addr, __m128d a) {}
+FORCE_INLINE void _mm_storel_pd(double *mem_addr, __m128d a) {
+  vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
+  __riscv_vse64_v_f64m1(mem_addr, _a, 1);
+}
 
-// FORCE_INLINE void _mm_storel_pi (__m64* mem_addr, __m128 a) {}
+FORCE_INLINE void _mm_storel_pi(__m64 *mem_addr, __m128 a) {
+  vint32m1_t _a = vreinterpretq_m128_i32(a);
+  vint32m1_t addr = vreinterpretq_m64_i32(*mem_addr);
+  *mem_addr = __riscv_vslideup_vx_i32m1(addr, _a, 0, 2);
+}
 
-// FORCE_INLINE void _mm_storer_pd (double* mem_addr, __m128d a) {}
+FORCE_INLINE void _mm_storer_pd(double *mem_addr, __m128d a) {
+  vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
+  vfloat64m1_t a_down = __riscv_vslidedown_vx_f64m1(_a, 1, 2);
+  _a = __riscv_vslideup_vx_f64m1(a_down, _a, 1, 2);
+  __riscv_vse64_v_f64m1(mem_addr, _a, 2);
+}
 
-// FORCE_INLINE void _mm_storer_ps (float* mem_addr, __m128 a) {}
+FORCE_INLINE void _mm_storer_ps(float *mem_addr, __m128 a) {
+  vuint32m1_t _a = vreinterpretq_m128_u32(a);
+  vuint32m1_t vid = __riscv_vid_v_u32m1(4);
+  vuint32m1_t threes = vreinterpretq_m128i_u32(_mm_set1_epi32(3));
+  vuint32m1_t idxs = __riscv_vsub_vv_u32m1(threes, vid, 4);
+  vuint32m1_t a_rev = __riscv_vrgather_vv_u32m1(_a, idxs, 4);
+  __riscv_vse32_v_f32m1(mem_addr, __riscv_vreinterpret_v_u32m1_f32m1(a_rev), 4);
+}
 
-// FORCE_INLINE void _mm_storeu_pd (double* mem_addr, __m128d a) {}
+FORCE_INLINE void _mm_storeu_pd(double *mem_addr, __m128d a) {
+  vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
+  __riscv_vse64_v_f64m1(mem_addr, _a, 2);
+}
 
-// FORCE_INLINE void _mm_storeu_ps (float* mem_addr, __m128 a) {}
+FORCE_INLINE void _mm_storeu_ps(float *mem_addr, __m128 a) {
+  vfloat32m1_t _a = vreinterpretq_m128_f32(a);
+  __riscv_vse32_v_f32m1(mem_addr, _a, 4);
+}
 
-// FORCE_INLINE void _mm_storeu_si128 (__m128i* mem_addr, __m128i a) {}
+FORCE_INLINE void _mm_storeu_si128(__m128i *mem_addr, __m128i a) {
+  *mem_addr = a;
+}
 
-// FORCE_INLINE void _mm_storeu_si16 (void* mem_addr, __m128i a) {}
+FORCE_INLINE void _mm_storeu_si16(void *mem_addr, __m128i a) {
+  vint16m1_t _a = vreinterpretq_m128i_i16(a);
+  __riscv_vse16_v_i16m1((int16_t *)mem_addr, _a, 1);
+}
 
-// FORCE_INLINE void _mm_storeu_si32 (void* mem_addr, __m128i a) {}
+FORCE_INLINE void _mm_storeu_si32(void *mem_addr, __m128i a) {
+  vint32m1_t _a = vreinterpretq_m128i_i32(a);
+  __riscv_vse32_v_i32m1((int32_t *)mem_addr, _a, 1);
+}
 
 // FORCE_INLINE void _mm_storeu_si64 (void* mem_addr, __m128i a) {}
 
