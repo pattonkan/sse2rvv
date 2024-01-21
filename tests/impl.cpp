@@ -3435,33 +3435,33 @@ result_t test_mm_storeu_si64(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_stream_pi(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int64_t *_a = (const int64_t *)impl.test_cases_int_pointer1;
-  //   __m64 a = load_m64(_a);
-  //   __m64 p;
-  //
-  //   _mm_stream_pi(&p, a);
-  //   return validate_int64(p, _a[0]);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int64_t *_a = (const int64_t *)impl.test_cases_int_pointer1;
+  __m64 a = load_m64(_a);
+  __m64 p;
+
+  _mm_stream_pi(&p, a);
+  return validate_int64(p, _a[0]);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_stream_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = impl.test_cases_float_pointer1;
-  //   __m128 a = load_m128(_a);
-  //   alignas(16) float p[4];
-  //
-  //   _mm_stream_ps(p, a);
-  //   ASSERT_RETURN(p[0] == _a[0]);
-  //   ASSERT_RETURN(p[1] == _a[1]);
-  //   ASSERT_RETURN(p[2] == _a[2]);
-  //   ASSERT_RETURN(p[3] == _a[3]);
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  __m128 a = load_m128(_a);
+  alignas(16) float p[4];
+
+  _mm_stream_ps(p, a);
+  ASSERT_RETURN(p[0] == _a[0]);
+  ASSERT_RETURN(p[1] == _a[1]);
+  ASSERT_RETURN(p[2] == _a[2]);
+  ASSERT_RETURN(p[3] == _a[3]);
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_sub_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
@@ -7449,57 +7449,57 @@ result_t test_mm_storeu_si32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_stream_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const double *_a = (const double *)impl.test_cases_float_pointer1;
-  //   double p[2];
-  //
-  //   __m128d a = load_m128d(_a);
-  //   _mm_stream_pd(p, a);
-  //
-  //   return validate_double(a, p[0], p[1]);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const double *_a = (const double *)impl.test_cases_float_pointer1;
+  double p[2];
+
+  __m128d a = load_m128d(_a);
+  _mm_stream_pd(p, a);
+
+  return validate_double(a, p[0], p[1]);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_stream_si128(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
-  //   alignas(16) int32_t p[4];
-  //
-  //   __m128i a = load_m128i(_a);
-  //   _mm_stream_si128((__m128i *)p, a);
-  //
-  //   return VALIDATE_INT32_M128(a, p);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
+  alignas(16) int32_t p[4];
+
+  __m128i a = load_m128i(_a);
+  _mm_stream_si128((__m128i *)p, a);
+
+  return VALIDATE_INT32_M128(a, p);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_stream_si32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int32_t a = (const int32_t)impl.test_cases_ints[iter];
-  //   int32_t p;
-  //
-  //   _mm_stream_si32(&p, a);
-  //
-  //   ASSERT_RETURN(a == p)
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int32_t a = (const int32_t)impl.test_cases_ints[iter];
+  int32_t p;
+
+  _mm_stream_si32(&p, a);
+
+  ASSERT_RETURN(a == p)
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_stream_si64(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int64_t a = (const int64_t)impl.test_cases_ints[iter];
-  //   __int64 p[1];
-  //   _mm_stream_si64(p, a);
-  //   ASSERT_RETURN(p[0] == a);
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int64_t a = (const int64_t)impl.test_cases_ints[iter];
+  __int64 p[1];
+  _mm_stream_si64(p, a);
+  ASSERT_RETURN(p[0] == a);
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_sub_epi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
@@ -10589,16 +10589,16 @@ result_t test_mm_round_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_stream_load_si128(const SSE2RVV_TEST_IMPL &impl,
-                                   // #ifdef ENABLE_TEST_ALL
                                    uint32_t iter) {
-  //   int32_t *addr = impl.test_cases_int_pointer1;
-  //
-  //   __m128i ret = _mm_stream_load_si128((__m128i *)addr);
-  //
-  //   return VALIDATE_INT32_M128(ret, addr);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  int32_t *addr = impl.test_cases_int_pointer1;
+
+  __m128i ret = _mm_stream_load_si128((__m128i *)addr);
+
+  return VALIDATE_INT32_M128(ret, addr);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_test_all_ones(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
