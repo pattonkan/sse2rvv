@@ -3615,25 +3615,24 @@ result_t test_mm_unpacklo_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_xor_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int32_t *_a = (const int32_t *)impl.test_cases_float_pointer1;
-  //   const int32_t *_b = (const int32_t *)impl.test_cases_float_pointer2;
-  //
-  //   int32_t d0 = _a[0] ^ _b[0];
-  //   int32_t d1 = _a[1] ^ _b[1];
-  //   int32_t d2 = _a[2] ^ _b[2];
-  //   int32_t d3 = _a[3] ^ _b[3];
-  //
-  //   __m128 a = load_m128(_a);
-  //   __m128 b = load_m128(_b);
-  //   __m128 c = _mm_xor_ps(a, b);
-  //
-  //   return validate_float(c, *((float *)&d0), *((float *)&d1), *((float
-  //   *)&d2),
-  //                         *((float *)&d3));
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int32_t *_a = (const int32_t *)impl.test_cases_float_pointer1;
+  const int32_t *_b = (const int32_t *)impl.test_cases_float_pointer2;
+
+  int32_t d0 = _a[0] ^ _b[0];
+  int32_t d1 = _a[1] ^ _b[1];
+  int32_t d2 = _a[2] ^ _b[2];
+  int32_t d3 = _a[3] ^ _b[3];
+
+  __m128 a = load_m128(_a);
+  __m128 b = load_m128(_b);
+  __m128 c = _mm_xor_ps(a, b);
+
+  return validate_float(c, *((float *)&d0), *((float *)&d1), *((float *)&d2),
+                        *((float *)&d3));
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 /* SSE2 */
@@ -8159,39 +8158,39 @@ result_t test_mm_unpacklo_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_xor_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int64_t *_a = (const int64_t *)impl.test_cases_float_pointer1;
-  //   const int64_t *_b = (const int64_t *)impl.test_cases_float_pointer2;
-  //
-  //   int64_t d0 = _a[0] ^ _b[0];
-  //   int64_t d1 = _a[1] ^ _b[1];
-  //
-  //   __m128d a = load_m128d(_a);
-  //   __m128d b = load_m128d(_b);
-  //   __m128d c = _mm_xor_pd(a, b);
-  //
-  //   return validate_double(c, *((double *)&d0), *((double *)&d1));
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int64_t *_a = (const int64_t *)impl.test_cases_float_pointer1;
+  const int64_t *_b = (const int64_t *)impl.test_cases_float_pointer2;
+
+  int64_t d0 = _a[0] ^ _b[0];
+  int64_t d1 = _a[1] ^ _b[1];
+
+  __m128d a = load_m128d(_a);
+  __m128d b = load_m128d(_b);
+  __m128d c = _mm_xor_pd(a, b);
+
+  return validate_double(c, *((double *)&d0), *((double *)&d1));
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_xor_si128(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const int64_t *_a = (const int64_t *)impl.test_cases_int_pointer1;
-  //   const int64_t *_b = (const int64_t *)impl.test_cases_int_pointer2;
-  //
-  //   int64_t d0 = _a[0] ^ _b[0];
-  //   int64_t d1 = _a[1] ^ _b[1];
-  //
-  //   __m128i a = load_m128i(_a);
-  //   __m128i b = load_m128i(_b);
-  //   __m128i c = _mm_xor_si128(a, b);
-  //
-  //   return validate_int64(c, d0, d1);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int64_t *_a = (const int64_t *)impl.test_cases_int_pointer1;
+  const int64_t *_b = (const int64_t *)impl.test_cases_int_pointer2;
+
+  int64_t d0 = _a[0] ^ _b[0];
+  int64_t d1 = _a[1] ^ _b[1];
+
+  __m128i a = load_m128i(_a);
+  __m128i b = load_m128i(_b);
+  __m128i c = _mm_xor_si128(a, b);
+
+  return validate_int64(c, d0, d1);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 /* SSE3 */
