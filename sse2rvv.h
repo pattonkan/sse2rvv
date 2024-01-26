@@ -1841,12 +1841,23 @@ FORCE_INLINE void *_mm_malloc(size_t size, size_t align) {
   return NULL;
 }
 
-// FORCE_INLINE void _mm_maskmove_si64 (__m64 a, __m64 mask, char* mem_addr) {}
+FORCE_INLINE void _mm_maskmove_si64(__m64 a, __m64 mask, char *mem_addr) {
+  vint8m1_t _a = vreinterpretq_m64_i8(a);
+  vint8m1_t _mask = vreinterpretq_m64_i8(mask);
+  vbool8_t lt_mask = __riscv_vmslt_vx_i8m1_b8(_mask, 0, 8);
+  __riscv_vse8_v_i8m1_m(lt_mask, (int8_t *)mem_addr, _a, 8);
+}
 
-// FORCE_INLINE void _mm_maskmoveu_si128 (__m128i a, __m128i mask, char*
-// mem_addr) {}
+FORCE_INLINE void _mm_maskmoveu_si128(__m128i a, __m128i mask, char *mem_addr) {
+  vint8m1_t _a = vreinterpretq_m128i_i8(a);
+  vint8m1_t _mask = vreinterpretq_m128i_i8(mask);
+  vbool8_t lt_mask = __riscv_vmslt_vx_i8m1_b8(_mask, 0, 16);
+  __riscv_vse8_v_i8m1_m(lt_mask, (int8_t *)mem_addr, _a, 16);
+}
 
-// FORCE_INLINE void _m_maskmovq (__m64 a, __m64 mask, char* mem_addr) {}
+FORCE_INLINE void _m_maskmovq(__m64 a, __m64 mask, char *mem_addr) {
+  return _mm_maskmove_si64(a, mask, mem_addr);
+}
 
 FORCE_INLINE __m128i _mm_max_epi16(__m128i a, __m128i b) {
   vint16m1_t _a = vreinterpretq_m128i_i16(a);
