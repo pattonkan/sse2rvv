@@ -1696,7 +1696,10 @@ FORCE_INLINE __m128 _mm_insert_ps(__m128 a, __m128 b, const int imm8) {
   return vreinterpretq_i32_m128(__riscv_vmerge_vxm_i32m1(tmp2, 0, mask2, 4));
 }
 
-// FORCE_INLINE __m128i _mm_lddqu_si128 (__m128i const* mem_addr) {}
+FORCE_INLINE __m128i _mm_lddqu_si128(__m128i const *mem_addr) {
+  return vreinterpretq_i32_m128i(
+      __riscv_vle32_v_i32m1((int32_t const *)mem_addr, 4));
+}
 
 // FORCE_INLINE void _mm_lfence (void) {}
 
@@ -1741,7 +1744,9 @@ FORCE_INLINE __m128 _mm_load1_ps(float const *mem_addr) {
   return vreinterpretq_f32_m128(__riscv_vfmv_v_f_f32m1(mem_addr[0], 4));
 }
 
-// FORCE_INLINE __m128d _mm_loaddup_pd (double const* mem_addr) {}
+FORCE_INLINE __m128d _mm_loaddup_pd(double const *mem_addr) {
+  return vreinterpretq_f64_m128d(__riscv_vfmv_v_f_f64m1(mem_addr[0], 2));
+}
 
 FORCE_INLINE __m128d _mm_loadh_pd(__m128d a, double const *mem_addr) {
   vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
