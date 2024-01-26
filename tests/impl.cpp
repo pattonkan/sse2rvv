@@ -8475,102 +8475,96 @@ result_t test_mm_abs_pi8(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_alignr_epi8(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // #if defined(__clang__)
-  // #else
-  return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
-  // #else
-  //   const uint8_t *_a = (const uint8_t *)impl.test_cases_int_pointer1;
-  //   const uint8_t *_b = (const uint8_t *)impl.test_cases_int_pointer2;
-  //   unsigned int shift = (iter % 5) << 3;
-  //   uint8_t d[32];
-  //
-  //   if (shift >= 32) {
-  //     memset((void *)d, 0, sizeof(d));
-  //   } else {
-  //     memcpy((void *)d, (const void *)_b, 16);
-  //     memcpy((void *)(d + 16), (const void *)_a, 16);
-  //     // shifting
-  //     for (size_t x = 0; x < sizeof(d); x++) {
-  //       if (x + shift >= sizeof(d))
-  //         d[x] = 0;
-  //       else
-  //         d[x] = d[x + shift];
-  //     }
-  //   }
-  //
-  //   __m128i a = load_m128i(_a);
-  //   __m128i b = load_m128i(_b);
-  //   __m128i ret;
-  //   switch (iter % 5) {
-  //   case 0:
-  //     ret = _mm_alignr_epi8(a, b, 0);
-  //     break;
-  //   case 1:
-  //     ret = _mm_alignr_epi8(a, b, 8);
-  //     break;
-  //   case 2:
-  //     ret = _mm_alignr_epi8(a, b, 16);
-  //     break;
-  //   case 3:
-  //     ret = _mm_alignr_epi8(a, b, 24);
-  //     break;
-  //   case 4:
-  //     ret = _mm_alignr_epi8(a, b, 32);
-  //     break;
-  //   }
-  //
-  //   return VALIDATE_UINT8_M128(ret, d);
-  // #endif
+// #ifdef ENABLE_TEST_ALL
+#if defined(__clang__)
+#else
+  const uint8_t *_a = (const uint8_t *)impl.test_cases_int_pointer1;
+  const uint8_t *_b = (const uint8_t *)impl.test_cases_int_pointer2;
+  unsigned int shift = (iter % 5) << 3;
+  uint8_t d[32];
+
+  if (shift >= 32) {
+    memset((void *)d, 0, sizeof(d));
+  } else {
+    memcpy((void *)d, (const void *)_b, 16);
+    memcpy((void *)(d + 16), (const void *)_a, 16);
+    // shifting
+    for (size_t x = 0; x < sizeof(d); x++) {
+      if (x + shift >= sizeof(d))
+        d[x] = 0;
+      else
+        d[x] = d[x + shift];
+    }
+  }
+
+  __m128i a = load_m128i(_a);
+  __m128i b = load_m128i(_b);
+  __m128i ret;
+  switch (iter % 5) {
+  case 0:
+    ret = _mm_alignr_epi8(a, b, 0);
+    break;
+  case 1:
+    ret = _mm_alignr_epi8(a, b, 8);
+    break;
+  case 2:
+    ret = _mm_alignr_epi8(a, b, 16);
+    break;
+  case 3:
+    ret = _mm_alignr_epi8(a, b, 24);
+    break;
+  case 4:
+    ret = _mm_alignr_epi8(a, b, 32);
+    break;
+  }
+
+  return VALIDATE_UINT8_M128(ret, d);
+#endif
   // #else
   return TEST_UNIMPL;
   // #endif  // ENABLE_TEST_ALL
 }
 
 result_t test_mm_alignr_pi8(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // #if defined(__clang__)
-  // #else
-  return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
-  // #else
-  //   const uint8_t *_a = (const uint8_t *)impl.test_cases_int_pointer1;
-  //   const uint8_t *_b = (const uint8_t *)impl.test_cases_int_pointer2;
-  //   unsigned int shift = (iter % 3) << 3;
-  //   uint8_t d[16];
-  //
-  //   if (shift >= 16) {
-  //     memset((void *)d, 0, sizeof(d));
-  //   } else {
-  //     memcpy((void *)d, (const void *)_b, 8);
-  //     memcpy((void *)(d + 8), (const void *)_a, 8);
-  //     // shifting
-  //     for (size_t x = 0; x < sizeof(d); x++) {
-  //       if (x + shift >= sizeof(d))
-  //         d[x] = 0;
-  //       else
-  //         d[x] = d[x + shift];
-  //     }
-  //   }
-  //
-  //   __m64 a = load_m64(_a);
-  //   __m64 b = load_m64(_b);
-  //   __m64 ret;
-  //   switch (iter % 3) {
-  //   case 0:
-  //     ret = _mm_alignr_pi8(a, b, 0);
-  //     break;
-  //   case 1:
-  //     ret = _mm_alignr_pi8(a, b, 8);
-  //     break;
-  //   case 2:
-  //     ret = _mm_alignr_pi8(a, b, 16);
-  //     break;
-  //   }
-  //
-  //   return VALIDATE_UINT8_M64(ret, d);
-  // #endif
+// #ifdef ENABLE_TEST_ALL
+#if defined(__clang__)
+#else
+  const uint8_t *_a = (const uint8_t *)impl.test_cases_int_pointer1;
+  const uint8_t *_b = (const uint8_t *)impl.test_cases_int_pointer2;
+  unsigned int shift = (iter % 3) << 3;
+  uint8_t d[16];
+
+  if (shift >= 16) {
+    memset((void *)d, 0, sizeof(d));
+  } else {
+    memcpy((void *)d, (const void *)_b, 8);
+    memcpy((void *)(d + 8), (const void *)_a, 8);
+    // shifting
+    for (size_t x = 0; x < sizeof(d); x++) {
+      if (x + shift >= sizeof(d))
+        d[x] = 0;
+      else
+        d[x] = d[x + shift];
+    }
+  }
+
+  __m64 a = load_m64(_a);
+  __m64 b = load_m64(_b);
+  __m64 ret;
+  switch (iter % 3) {
+  case 0:
+    ret = _mm_alignr_pi8(a, b, 0);
+    break;
+  case 1:
+    ret = _mm_alignr_pi8(a, b, 8);
+    break;
+  case 2:
+    ret = _mm_alignr_pi8(a, b, 16);
+    break;
+  }
+
+  return VALIDATE_UINT8_M64(ret, d);
+#endif
   // #else
   return TEST_UNIMPL;
   // #endif  // ENABLE_TEST_ALL
