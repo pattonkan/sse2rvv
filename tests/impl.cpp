@@ -3414,26 +3414,23 @@ result_t test_mm_storeu_si16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_storeu_si64(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // Versions of GCC prior to 9 do not implement intrinsic function
-  // _mm_storeu_si64. Check https://gcc.gnu.org/bugzilla/show_bug.cgi?id=87558
-  // for more information.
-  // #if (defined(__GNUC__) && !defined(__clang__)) && (__GNUC__ < 9)
-  // #else
+#ifdef ENABLE_TEST_ALL
+// Versions of GCC prior to 9 do not implement intrinsic function
+// _mm_storeu_si64. Check https://gcc.gnu.org/bugzilla/show_bug.cgi?id=87558
+// for more information.
+#if (defined(__GNUC__) && !defined(__clang__)) && (__GNUC__ < 9)
+#else
+  const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
+  __m128i b;
+  __m128i a = load_m128i(_a);
+  _mm_storeu_si64(&b, a);
+  int64_t *_b = (int64_t *)&b;
+  int64_t *_c = (int64_t *)&a;
+  return validate_int64(b, _c[0], _b[1]);
+#endif
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
-  // #else
-  //   const int32_t *_a = (const int32_t *)impl.test_cases_int_pointer1;
-  //   __m128i b;
-  //   __m128i a = load_m128i(_a);
-  //   _mm_storeu_si64(&b, a);
-  //   int64_t *_b = (int64_t *)&b;
-  //   int64_t *_c = (int64_t *)&a;
-  //   return validate_int64(b, _c[0], _b[1]);
-  // #endif
-  // #else
-  return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_stream_pi(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {

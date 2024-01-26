@@ -2916,7 +2916,10 @@ FORCE_INLINE void _mm_storeu_si32(void *mem_addr, __m128i a) {
   __riscv_vse32_v_i32m1((int32_t *)mem_addr, _a, 1);
 }
 
-// FORCE_INLINE void _mm_storeu_si64 (void* mem_addr, __m128i a) {}
+FORCE_INLINE void _mm_storeu_si64(void *mem_addr, __m128i a) {
+  vuint64m1_t _a = vreinterpretq_m128i_u64(a);
+  __riscv_vse64_v_u64m1((uint64_t *)mem_addr, _a, 1);
+}
 
 FORCE_INLINE __m128i _mm_stream_load_si128(void *mem_addr) {
   return vreinterpretq_i32_m128i(
