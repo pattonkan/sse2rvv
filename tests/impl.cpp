@@ -3167,12 +3167,12 @@ result_t test_mm_setr_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_setzero_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   __m128 a = _mm_setzero_ps();
-  //   return validate_float(a, 0, 0, 0, 0);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  __m128 a = _mm_setzero_ps();
+  return validate_float(a, 0, 0, 0, 0);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_sfence(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
@@ -6761,21 +6761,21 @@ result_t test_mm_setr_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_setzero_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   __m128d a = _mm_setzero_pd();
-  //   return validate_double(a, 0, 0);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  __m128d a = _mm_setzero_pd();
+  return validate_double(a, 0, 0);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_setzero_si128(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   __m128i a = _mm_setzero_si128();
-  //   return validate_int32(a, 0, 0, 0, 0);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  __m128i a = _mm_setzero_si128();
+  return validate_int32(a, 0, 0, 0, 0);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_shuffle_epi32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {

@@ -2483,11 +2483,17 @@ FORCE_INLINE __m128 _mm_setr_ps(float e3, float e2, float e1, float e0) {
   return vreinterpretq_f32_m128(__riscv_vle32_v_f32m1(arr, 4));
 }
 
-// FORCE_INLINE __m128d _mm_setzero_pd (void) {}
+FORCE_INLINE __m128d _mm_setzero_pd(void) {
+  return vreinterpretq_f32_m128d(__riscv_vfmv_v_f_f32m1(0, 4));
+}
 
-// FORCE_INLINE __m128 _mm_setzero_ps (void) {}
+FORCE_INLINE __m128 _mm_setzero_ps(void) {
+  return vreinterpretq_f32_m128(__riscv_vfmv_v_f_f32m1(0, 4));
+}
 
-// FORCE_INLINE __m128i _mm_setzero_si128 () {}
+FORCE_INLINE __m128i _mm_setzero_si128() {
+  return vreinterpretq_f32_m128i(__riscv_vfmv_v_f_f32m1(0, 4));
+}
 
 // FORCE_INLINE void _mm_sfence (void) {}
 
