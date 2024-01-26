@@ -2051,12 +2051,22 @@ result_t test_mm_malloc(const SSE2RVV_TEST_IMPL &impl, uint32_t iter);
 // #ifdef ENABLE_TEST_ALL
 
 result_t test_mm_free(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   /* We verify _mm_malloc first, and there is no need to check _mm_free .
-  //   */ return test_mm_malloc(impl, iter);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  /* We verify _mm_malloc first, and there is no need to check _mm_free(). */
+  const size_t *a = (const size_t *)impl.test_cases_int_pointer1;
+  const size_t *b = (const size_t *)impl.test_cases_int_pointer2;
+  size_t size = *a % (1024 * 16) + 1;
+  size_t align = 2 << (*b % 5);
+
+  void *p = _mm_malloc(size, align);
+  if (!p)
+    return TEST_FAIL;
+  result_t res = (((uintptr_t)p % align) == 0) ? TEST_SUCCESS : TEST_FAIL;
+  _mm_free(p);
+  return res;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_get_flush_zero_mode(const SSE2RVV_TEST_IMPL &impl,
@@ -2282,21 +2292,21 @@ result_t test_mm_loadu_si64(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_malloc(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const size_t *a = (const size_t *)impl.test_cases_int_pointer1;
-  //   const size_t *b = (const size_t *)impl.test_cases_int_pointer2;
-  //   size_t size = *a % (1024 * 16) + 1;
-  //   size_t align = 2 << (*b % 5);
-  //
-  //   void *p = _mm_malloc(size, align);
-  //   if (!p)
-  //     return TEST_FAIL;
-  //   result_t res = (((uintptr_t)p % align) == 0) ? TEST_SUCCESS : TEST_FAIL;
-  //   _mm_free(p);
-  //   return res;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const size_t *a = (const size_t *)impl.test_cases_int_pointer1;
+  const size_t *b = (const size_t *)impl.test_cases_int_pointer2;
+  size_t size = *a % (1024 * 16) + 1;
+  size_t align = 2 << (*b % 5);
+
+  void *p = _mm_malloc(size, align);
+  if (!p)
+    return TEST_FAIL;
+  result_t res = (((uintptr_t)p % align) == 0) ? TEST_SUCCESS : TEST_FAIL;
+  _mm_free(p);
+  return res;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_maskmove_si64(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {

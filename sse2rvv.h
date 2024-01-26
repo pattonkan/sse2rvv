@@ -1468,7 +1468,7 @@ FORCE_INLINE int _mm_extract_ps(__m128 a, const int imm8) {
 
 // FORCE_INLINE __m128 _mm_floor_ss (__m128 a, __m128 b) {}
 
-// FORCE_INLINE void _mm_free (void * mem_addr) {}
+FORCE_INLINE void _mm_free(void *mem_addr) { free(mem_addr); }
 
 // FORCE_INLINE unsigned int _MM_GET_EXCEPTION_MASK () {}
 
@@ -1826,7 +1826,20 @@ FORCE_INLINE __m128i _mm_loadu_si64(void const *mem_addr) {
 
 // FORCE_INLINE __m64 _mm_maddubs_pi16 (__m64 a, __m64 b) {}
 
-// FORCE_INLINE void* _mm_malloc (size_t size, size_t align) {}
+FORCE_INLINE void *_mm_malloc(size_t size, size_t align) {
+  void *ptr;
+  if (align == 1) {
+    return malloc(size);
+  }
+  if (align == 2 || (sizeof(void *) == 8 && align == 4)) {
+    align = sizeof(void *);
+  }
+  ptr = aligned_alloc(align, size);
+  if (ptr) {
+    return ptr;
+  }
+  return NULL;
+}
 
 // FORCE_INLINE void _mm_maskmove_si64 (__m64 a, __m64 mask, char* mem_addr) {}
 
