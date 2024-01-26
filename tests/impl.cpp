@@ -9438,53 +9438,53 @@ result_t test_mm_blendv_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_ceil_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const double *_a = (const double *)impl.test_cases_float_pointer1;
-  //
-  //   double dx = ceil(_a[0]);
-  //   double dy = ceil(_a[1]);
-  //
-  //   __m128d a = load_m128d(_a);
-  //   __m128d ret = _mm_ceil_pd(a);
-  //
-  //   return validate_double(ret, dx, dy);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const double *_a = (const double *)impl.test_cases_float_pointer1;
+
+  double dx = ceil(_a[0]);
+  double dy = ceil(_a[1]);
+
+  __m128d a = load_m128d(_a);
+  __m128d ret = _mm_ceil_pd(a);
+
+  return validate_double(ret, dx, dy);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_ceil_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = impl.test_cases_float_pointer1;
-  //   float dx = ceilf(_a[0]);
-  //   float dy = ceilf(_a[1]);
-  //   float dz = ceilf(_a[2]);
-  //   float dw = ceilf(_a[3]);
-  //
-  //   __m128 a = _mm_load_ps(_a);
-  //   __m128 c = _mm_ceil_ps(a);
-  //   return validate_float(c, dx, dy, dz, dw);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  float dx = ceilf(_a[0]);
+  float dy = ceilf(_a[1]);
+  float dz = ceilf(_a[2]);
+  float dw = ceilf(_a[3]);
+
+  __m128 a = _mm_load_ps(_a);
+  __m128 c = _mm_ceil_ps(a);
+  return validate_float(c, dx, dy, dz, dw);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_ceil_sd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const double *_a = (const double *)impl.test_cases_float_pointer1;
-  //   const double *_b = (const double *)impl.test_cases_float_pointer2;
-  //
-  //   double dx = ceil(_b[0]);
-  //   double dy = _a[1];
-  //
-  //   __m128d a = load_m128d(_a);
-  //   __m128d b = load_m128d(_b);
-  //   __m128d ret = _mm_ceil_sd(a, b);
-  //
-  //   return validate_double(ret, dx, dy);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const double *_a = (const double *)impl.test_cases_float_pointer1;
+  const double *_b = (const double *)impl.test_cases_float_pointer2;
+
+  double dx = ceil(_b[0]);
+  double dy = _a[1];
+
+  __m128d a = load_m128d(_a);
+  __m128d b = load_m128d(_b);
+  __m128d ret = _mm_ceil_sd(a, b);
+
+  return validate_double(ret, dx, dy);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_ceil_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
@@ -9896,70 +9896,70 @@ result_t test_mm_extract_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_floor_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const double *_a = (const double *)impl.test_cases_float_pointer1;
-  //
-  //   double dx = floor(_a[0]);
-  //   double dy = floor(_a[1]);
-  //
-  //   __m128d a = load_m128d(_a);
-  //   __m128d ret = _mm_floor_pd(a);
-  //
-  //   return validate_double(ret, dx, dy);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const double *_a = (const double *)impl.test_cases_float_pointer1;
+
+  double dx = floor(_a[0]);
+  double dy = floor(_a[1]);
+
+  __m128d a = load_m128d(_a);
+  __m128d ret = _mm_floor_pd(a);
+
+  return validate_double(ret, dx, dy);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_floor_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = impl.test_cases_float_pointer1;
-  //   float dx = floorf(_a[0]);
-  //   float dy = floorf(_a[1]);
-  //   float dz = floorf(_a[2]);
-  //   float dw = floorf(_a[3]);
-  //
-  //   __m128 a = load_m128(_a);
-  //   __m128 c = _mm_floor_ps(a);
-  //   return validate_float(c, dx, dy, dz, dw);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  float dx = floorf(_a[0]);
+  float dy = floorf(_a[1]);
+  float dz = floorf(_a[2]);
+  float dw = floorf(_a[3]);
+
+  __m128 a = load_m128(_a);
+  __m128 c = _mm_floor_ps(a);
+  return validate_float(c, dx, dy, dz, dw);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_floor_sd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const double *_a = (const double *)impl.test_cases_float_pointer1;
-  //   const double *_b = (const double *)impl.test_cases_float_pointer2;
-  //
-  //   double dx = floor(_b[0]);
-  //   double dy = _a[1];
-  //
-  //   __m128d a = load_m128d(_a);
-  //   __m128d b = load_m128d(_b);
-  //   __m128d ret = _mm_floor_sd(a, b);
-  //
-  //   return validate_double(ret, dx, dy);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const double *_a = (const double *)impl.test_cases_float_pointer1;
+  const double *_b = (const double *)impl.test_cases_float_pointer2;
+
+  double dx = floor(_b[0]);
+  double dy = _a[1];
+
+  __m128d a = load_m128d(_a);
+  __m128d b = load_m128d(_b);
+  __m128d ret = _mm_floor_sd(a, b);
+
+  return validate_double(ret, dx, dy);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_floor_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = impl.test_cases_float_pointer1;
-  //   const float *_b = impl.test_cases_float_pointer1;
-  //
-  //   float f0 = floorf(_b[0]);
-  //
-  //   __m128 a = load_m128(_a);
-  //   __m128 b = load_m128(_b);
-  //   __m128 c = _mm_floor_ss(a, b);
-  //
-  //   return validate_float(c, f0, _a[1], _a[2], _a[3]);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  const float *_b = impl.test_cases_float_pointer1;
+
+  float f0 = floorf(_b[0]);
+
+  __m128 a = load_m128(_a);
+  __m128 b = load_m128(_b);
+  __m128 c = _mm_floor_ss(a, b);
+
+  return validate_float(c, f0, _a[1], _a[2], _a[3]);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_insert_epi32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
