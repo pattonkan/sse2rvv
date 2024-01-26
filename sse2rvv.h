@@ -45,6 +45,7 @@
 #define _sse2rvv_const const
 #endif
 
+#include <math.h>
 #include <riscv_vector.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -560,13 +561,53 @@ FORCE_INLINE __m128 _mm_castsi128_ps(__m128i a) {
   return __riscv_vreinterpret_v_i32m1_f32m1(a);
 }
 
-// FORCE_INLINE __m128d _mm_ceil_pd (__m128d a) {}
+FORCE_INLINE __m128d _mm_ceil_pd(__m128d a) {
+  // FIXME riscv round doesn't work
+  vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
+  double arr[2];
+  const int len = 2;
+  __riscv_vse64_v_f64m1(arr, _a, len);
+  for (int i = 0; i < len; i++) {
+    arr[i] = ceil(arr[i]);
+  }
+  return vreinterpretq_f64_m128d(__riscv_vle64_v_f64m1(arr, len));
+}
 
-// FORCE_INLINE __m128 _mm_ceil_ps (__m128 a) {}
+FORCE_INLINE __m128 _mm_ceil_ps(__m128 a) {
+  // FIXME riscv round doesn't work
+  vfloat32m1_t _a = vreinterpretq_m128_f32(a);
+  float arr[4];
+  const int len = 4;
+  __riscv_vse32_v_f32m1(arr, _a, len);
+  for (int i = 0; i < len; i++) {
+    arr[i] = ceil(arr[i]);
+  }
+  return vreinterpretq_f32_m128(__riscv_vle32_v_f32m1(arr, len));
+}
 
-// FORCE_INLINE __m128d _mm_ceil_sd (__m128d a, __m128d b) {}
+FORCE_INLINE __m128d _mm_ceil_sd(__m128d a, __m128d b) {
+  // FIXME riscv round doesn't work
+  vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
+  vfloat64m1_t _b = vreinterpretq_m128d_f64(b);
+  double arr[2];
+  const int len = 2;
+  __riscv_vse64_v_f64m1(arr, _b, len);
+  arr[0] = ceil(arr[0]);
+  vfloat64m1_t _arr = __riscv_vle64_v_f64m1(arr, 1);
+  return vreinterpretq_f64_m128d(__riscv_vslideup_vx_f64m1(_a, _arr, 0, 1));
+}
 
-// FORCE_INLINE __m128 _mm_ceil_ss (__m128 a, __m128 b) {}
+FORCE_INLINE __m128 _mm_ceil_ss(__m128 a, __m128 b) {
+  // FIXME riscv round doesn't work
+  vfloat32m1_t _a = vreinterpretq_m128_f32(a);
+  vfloat32m1_t _b = vreinterpretq_m128_f32(b);
+  float arr[4];
+  const int len = 4;
+  __riscv_vse32_v_f32m1(arr, _b, len);
+  arr[0] = ceil(arr[0]);
+  vfloat32m1_t _arr = __riscv_vle32_v_f32m1(arr, 1);
+  return vreinterpretq_f32_m128(__riscv_vslideup_vx_f32m1(_a, _arr, 0, 1));
+}
 
 // FORCE_INLINE void _mm_clflush (void const* p) {}
 
@@ -1460,13 +1501,53 @@ FORCE_INLINE int _mm_extract_ps(__m128 a, const int imm8) {
   return (int)__riscv_vmv_x_s_i32m1_i32(a_s);
 }
 
-// FORCE_INLINE __m128d _mm_floor_pd (__m128d a) {}
+FORCE_INLINE __m128d _mm_floor_pd(__m128d a) {
+  // FIXME riscv round doesn't work
+  vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
+  double arr[2];
+  const int len = 2;
+  __riscv_vse64_v_f64m1(arr, _a, len);
+  for (int i = 0; i < len; i++) {
+    arr[i] = floor(arr[i]);
+  }
+  return vreinterpretq_f64_m128d(__riscv_vle64_v_f64m1(arr, len));
+}
 
-// FORCE_INLINE __m128 _mm_floor_ps (__m128 a) {}
+FORCE_INLINE __m128 _mm_floor_ps(__m128 a) {
+  // FIXME riscv round doesn't work
+  vfloat32m1_t _a = vreinterpretq_m128_f32(a);
+  float arr[4];
+  const int len = 4;
+  __riscv_vse32_v_f32m1(arr, _a, len);
+  for (int i = 0; i < len; i++) {
+    arr[i] = floor(arr[i]);
+  }
+  return vreinterpretq_f32_m128(__riscv_vle32_v_f32m1(arr, len));
+}
 
-// FORCE_INLINE __m128d _mm_floor_sd (__m128d a, __m128d b) {}
+FORCE_INLINE __m128d _mm_floor_sd(__m128d a, __m128d b) {
+  // FIXME riscv round doesn't work
+  vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
+  vfloat64m1_t _b = vreinterpretq_m128d_f64(b);
+  double arr[2];
+  const int len = 2;
+  __riscv_vse64_v_f64m1(arr, _b, len);
+  arr[0] = floor(arr[0]);
+  vfloat64m1_t _arr = __riscv_vle64_v_f64m1(arr, 1);
+  return vreinterpretq_f64_m128d(__riscv_vslideup_vx_f64m1(_a, _arr, 0, 1));
+}
 
-// FORCE_INLINE __m128 _mm_floor_ss (__m128 a, __m128 b) {}
+FORCE_INLINE __m128 _mm_floor_ss(__m128 a, __m128 b) {
+  // FIXME riscv round doesn't work
+  vfloat32m1_t _a = vreinterpretq_m128_f32(a);
+  vfloat32m1_t _b = vreinterpretq_m128_f32(b);
+  float arr[4];
+  const int len = 4;
+  __riscv_vse32_v_f32m1(arr, _b, len);
+  arr[0] = floor(arr[0]);
+  vfloat32m1_t _arr = __riscv_vle32_v_f32m1(arr, 1);
+  return vreinterpretq_f32_m128(__riscv_vslideup_vx_f32m1(_a, _arr, 0, 1));
+}
 
 FORCE_INLINE void _mm_free(void *mem_addr) { free(mem_addr); }
 
