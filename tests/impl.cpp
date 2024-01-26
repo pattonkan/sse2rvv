@@ -2310,33 +2310,47 @@ result_t test_mm_malloc(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_maskmove_si64(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const uint8_t *_a = (const uint8_t *)impl.test_cases_int_pointer1;
-  //   const uint8_t *_mask = (const uint8_t *)impl.test_cases_int_pointer2;
-  //   char mem_addr[16];
-  //
-  //   const __m64 *a = (const __m64 *)_a;
-  //   const __m64 *mask = (const __m64 *)_mask;
-  //   _mm_maskmove_si64(*a, *mask, (char *)mem_addr);
-  //
-  //   for (int i = 0; i < 8; i++) {
-  //     if (_mask[i] >> 7) {
-  //       ASSERT_RETURN(_a[i] == (uint8_t)mem_addr[i]);
-  //     }
-  //   }
-  //
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const uint8_t *_a = (const uint8_t *)impl.test_cases_int_pointer1;
+  const uint8_t *_mask = (const uint8_t *)impl.test_cases_int_pointer2;
+  char mem_addr[16];
+
+  const __m64 *a = (const __m64 *)_a;
+  const __m64 *mask = (const __m64 *)_mask;
+  _mm_maskmove_si64(*a, *mask, (char *)mem_addr);
+
+  for (int i = 0; i < 8; i++) {
+    if (_mask[i] >> 7) {
+      ASSERT_RETURN(_a[i] == (uint8_t)mem_addr[i]);
+    }
+  }
+
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_m_maskmovq(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // return test_mm_maskmove_si64(impl, iter);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const uint8_t *_a = (const uint8_t *)impl.test_cases_int_pointer1;
+  const uint8_t *_mask = (const uint8_t *)impl.test_cases_int_pointer2;
+  char mem_addr[16];
+
+  const __m64 *a = (const __m64 *)_a;
+  const __m64 *mask = (const __m64 *)_mask;
+  _m_maskmovq(*a, *mask, (char *)mem_addr);
+
+  for (int i = 0; i < 8; i++) {
+    if (_mask[i] >> 7) {
+      ASSERT_RETURN(_a[i] == (uint8_t)mem_addr[i]);
+    }
+  }
+
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_max_pi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
@@ -5852,25 +5866,25 @@ result_t test_mm_madd_epi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_maskmoveu_si128(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const uint8_t *_a = (const uint8_t *)impl.test_cases_int_pointer1;
-  //   const uint8_t *_mask = (const uint8_t *)impl.test_cases_int_pointer2;
-  //   char mem_addr[16];
-  //
-  //   __m128i a = load_m128i(_a);
-  //   __m128i mask = load_m128i(_mask);
-  //   _mm_maskmoveu_si128(a, mask, mem_addr);
-  //
-  //   for (int i = 0; i < 16; i++) {
-  //     if (_mask[i] >> 7) {
-  //       ASSERT_RETURN(_a[i] == (uint8_t)mem_addr[i]);
-  //     }
-  //   }
-  //
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const uint8_t *_a = (const uint8_t *)impl.test_cases_int_pointer1;
+  const uint8_t *_mask = (const uint8_t *)impl.test_cases_int_pointer2;
+  char mem_addr[16];
+
+  __m128i a = load_m128i(_a);
+  __m128i mask = load_m128i(_mask);
+  _mm_maskmoveu_si128(a, mask, mem_addr);
+
+  for (int i = 0; i < 16; i++) {
+    if (_mask[i] >> 7) {
+      ASSERT_RETURN(_a[i] == (uint8_t)mem_addr[i]);
+    }
+  }
+
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_max_epi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
