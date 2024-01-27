@@ -3476,11 +3476,50 @@ FORCE_INLINE int _mm_ucomineq_ss(__m128 a, __m128 b) {
   return _mm_comineq_ss(a, b);
 }
 
-// FORCE_INLINE _mm_undefined_pd (void) {}
+FORCE_INLINE __m128d _mm_undefined_pd(void) {
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuninitialized"
+#endif
+  __m128d a;
+#if defined(_MSC_VER)
+  a = _mm_setzero_pd();
+#endif
+  return a;
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
+}
 
-// FORCE_INLINE __m128 _mm_undefined_ps (void) {}
+FORCE_INLINE __m128 _mm_undefined_ps(void) {
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuninitialized"
+#endif
+  __m128 a;
+#if defined(_MSC_VER)
+  a = _mm_setzero_ps();
+#endif
+  return a;
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
+}
 
-// FORCE_INLINE __m128i _mm_undefined_si128 (void) {}
+FORCE_INLINE __m128i _mm_undefined_si128(void) {
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuninitialized"
+#endif
+  __m128i a;
+#if defined(_MSC_VER)
+  a = _mm_setzero_si128();
+#endif
+  return a;
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
+}
 
 FORCE_INLINE __m128i _mm_unpackhi_epi16(__m128i a, __m128i b) {
   vuint16m2_t _a = __riscv_vlmul_ext_v_u16m1_u16m2(vreinterpretq_m128i_u16(a));
