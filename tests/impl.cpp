@@ -1363,9 +1363,9 @@ result_t test_mm_comieq_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   const float *_a = impl.test_cases_float_pointer1;
   const float *_b = impl.test_cases_float_pointer2;
 
-  int32_t _c = comieq_ss(_a[0], _b[0]);
   __m128 a = load_m128(_a);
   __m128 b = load_m128(_b);
+  int32_t _c = comieq_ss(_a[0], _b[0]);
   int32_t c = _mm_comieq_ss(a, b);
 
   return _c == c ? TEST_SUCCESS : TEST_FAIL;
@@ -1382,10 +1382,10 @@ result_t test_mm_comige_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   __m128 a = load_m128(_a);
   __m128 b = load_m128(_b);
 
-  int32_t result = comige_ss(_a[0], _b[0]);
-  int32_t ret = _mm_comige_ss(a, b);
+  int32_t _c = comige_ss(_a[0], _b[0]);
+  int32_t c = _mm_comige_ss(a, b);
 
-  return result == ret ? TEST_SUCCESS : TEST_FAIL;
+  return _c == c ? TEST_SUCCESS : TEST_FAIL;
 #else
   return TEST_UNIMPL;
 #endif // ENABLE_TEST_ALL
@@ -1398,10 +1398,10 @@ result_t test_mm_comigt_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   __m128 a = load_m128(_a);
   __m128 b = load_m128(_b);
 
-  int32_t result = comigt_ss(_a[0], _b[0]);
-  int32_t ret = _mm_comigt_ss(a, b);
+  int32_t _c = comigt_ss(_a[0], _b[0]);
+  int32_t c = _mm_comigt_ss(a, b);
 
-  return result == ret ? TEST_SUCCESS : TEST_FAIL;
+  return _c == c ? TEST_SUCCESS : TEST_FAIL;
 #else
   return TEST_UNIMPL;
 #endif // ENABLE_TEST_ALL
@@ -1421,10 +1421,10 @@ result_t test_mm_comile_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   __m128 a = load_m128(_a);
   __m128 b = load_m128(_b);
 
-  int32_t result = comile_ss(_a[0], _b[0]);
-  int32_t ret = _mm_comile_ss(a, b);
+  int32_t _C = comile_ss(_a[0], _b[0]);
+  int32_t c = _mm_comile_ss(a, b);
 
-  return result == ret ? TEST_SUCCESS : TEST_FAIL;
+  return _C == c ? TEST_SUCCESS : TEST_FAIL;
 #endif
 #else
   return TEST_UNIMPL;
@@ -1445,11 +1445,10 @@ result_t test_mm_comilt_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   __m128 a = load_m128(_a);
   __m128 b = load_m128(_b);
 
-  int32_t result = comilt_ss(_a[0], _b[0]);
+  int32_t _c = comilt_ss(_a[0], _b[0]);
+  int32_t c = _mm_comilt_ss(a, b);
 
-  int32_t ret = _mm_comilt_ss(a, b);
-
-  return result == ret ? TEST_SUCCESS : TEST_FAIL;
+  return _c == c ? TEST_SUCCESS : TEST_FAIL;
 #endif
 #else
   return TEST_UNIMPL;
@@ -3604,48 +3603,107 @@ result_t test_mm_ucomieq_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_ucomige_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // _mm_ucomige_ss is equal to _mm_comige_ss
-  //   return test_mm_comige_ss(impl, iter);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  const float *_b = impl.test_cases_float_pointer2;
+  __m128 a = load_m128(_a);
+  __m128 b = load_m128(_b);
+
+  int32_t _C = comige_ss(_a[0], _b[0]);
+  int32_t c = _mm_ucomige_ss(a, b);
+
+  return _C == c ? TEST_SUCCESS : TEST_FAIL;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_ucomigt_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // _mm_ucomigt_ss is equal to _mm_comigt_ss
-  //   return test_mm_comigt_ss(impl, iter);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  const float *_b = impl.test_cases_float_pointer2;
+  __m128 a = load_m128(_a);
+  __m128 b = load_m128(_b);
+
+  int32_t _c = comigt_ss(_a[0], _b[0]);
+  int32_t c = _mm_ucomigt_ss(a, b);
+
+  return _c == c ? TEST_SUCCESS : TEST_FAIL;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_ucomile_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // _mm_ucomile_ss is equal to _mm_comile_ss
-  //   return test_mm_comile_ss(impl, iter);
-  // #else
+#ifdef ENABLE_TEST_ALL
+// FIXME:
+// The GCC does not implement _mm_comile_ss correctly.
+// See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=98612 for more
+// information.
+#if defined(__GNUC__) && !defined(__clang__)
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#else
+  const float *_a = impl.test_cases_float_pointer1;
+  const float *_b = impl.test_cases_float_pointer2;
+  __m128 a = load_m128(_a);
+  __m128 b = load_m128(_b);
+
+  int32_t result = comile_ss(_a[0], _b[0]);
+  int32_t ret = _mm_ucomile_ss(a, b);
+
+  return result == ret ? TEST_SUCCESS : TEST_FAIL;
+#endif
+#else
+  return TEST_UNIMPL;
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_ucomilt_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // _mm_ucomilt_ss is equal to _mm_comilt_ss
-  //   return test_mm_comilt_ss(impl, iter);
-  // #else
+#ifdef ENABLE_TEST_ALL
+// FIXME:
+// The GCC does not implement _mm_comilt_ss correctly.
+// See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=98612 for more
+// information.
+#if defined(__GNUC__) && !defined(__clang__)
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#else
+  const float *_a = impl.test_cases_float_pointer1;
+  const float *_b = impl.test_cases_float_pointer2;
+  __m128 a = load_m128(_a);
+  __m128 b = load_m128(_b);
+
+  int32_t _c = comilt_ss(_a[0], _b[0]);
+  int32_t c = _mm_ucomilt_ss(a, b);
+
+  return _c == c ? TEST_SUCCESS : TEST_FAIL;
+#endif
+#else
+  return TEST_UNIMPL;
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_ucomineq_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // _mm_ucomineq_ss is equal to _mm_comineq_ss
-  //   return test_mm_comineq_ss(impl, iter);
-  // #else
+#ifdef ENABLE_TEST_ALL
+// FIXME:
+// The GCC does not implement _mm_comineq_ss correctly.
+// See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=98612 for more
+// information.
+#if defined(__GNUC__) && !defined(__clang__)
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#else
+  const float *_a = impl.test_cases_float_pointer1;
+  const float *_b = impl.test_cases_float_pointer2;
+  __m128 a = load_m128(_a);
+  __m128 b = load_m128(_b);
+
+  int32_t result = comineq_ss(_a[0], _b[0]);
+  int32_t ret = _mm_ucomineq_ss(a, b);
+
+  return result == ret ? TEST_SUCCESS : TEST_FAIL;
+#endif
+#else
+  return TEST_UNIMPL;
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_undefined_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
