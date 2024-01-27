@@ -1113,164 +1113,165 @@ result_t test_mm_cmpneq_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_cmpnge_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // const float *_a = impl.test_cases_float_pointer1;
-  // const float *_b = impl.test_cases_float_pointer2;
-  // __m128 a = load_m128(_a);
-  // __m128 b = load_m128(_b);
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  const float *_b = impl.test_cases_float_pointer2;
+  __m128 a = load_m128(_a);
+  __m128 b = load_m128(_b);
 
-  // float _c[4];
-  // _c[0] = !(_a[0] >= _b[0]) ? UINT32_MAX : 0;
-  // _c[1] = !(_a[1] >= _b[1]) ? UINT32_MAX : 0;
-  // _c[2] = !(_a[2] >= _b[2]) ? UINT32_MAX : 0;
-  // _c[3] = !(_a[3] >= _b[3]) ? UINT32_MAX : 0;
+  uint32_t _c[4];
+  _c[0] = !(_a[0] >= _b[0]) ? UINT32_MAX : 0;
+  _c[1] = !(_a[1] >= _b[1]) ? UINT32_MAX : 0;
+  _c[2] = !(_a[2] >= _b[2]) ? UINT32_MAX : 0;
+  _c[3] = !(_a[3] >= _b[3]) ? UINT32_MAX : 0;
 
-  // __m128 c = _mm_cmpnge_ps(a, b);
+  __m128 c = _mm_cmpnge_ps(a, b);
 
-  // return validate_float(c, _c[0], _c[1], _c[2], _c[3]);
-  // #else
+  return validate_float(c, *(float *)&_c[0], *(float *)&_c[1], *(float *)&_c[2],
+                        *(float *)&_c[3]);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_cmpnge_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = impl.test_cases_float_pointer1;
-  //   const float *_b = impl.test_cases_float_pointer2;
-  //   __m128 a = load_m128(_a);
-  //   __m128 b = load_m128(_b);
-  //
-  //   float result[4];
-  //   result[0] = !(_a[0] >= _b[0]) ? ALL_BIT_1_32 : 0;
-  //   result[1] = _a[1];
-  //   result[2] = _a[2];
-  //   result[3] = _a[3];
-  //
-  //   __m128 ret = _mm_cmpnge_ss(a, b);
-  //   return validate_float(ret, result[0], result[1], result[2], result[3]);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  const float *_b = impl.test_cases_float_pointer2;
+  __m128 a = load_m128(_a);
+  __m128 b = load_m128(_b);
+
+  float _c[4];
+  _c[0] = !(_a[0] >= _b[0]) ? ALL_BIT_1_32 : 0;
+  _c[1] = _a[1];
+  _c[2] = _a[2];
+  _c[3] = _a[3];
+
+  __m128 c = _mm_cmpnge_ss(a, b);
+  return validate_float(c, _c[0], _c[1], _c[2], _c[3]);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_cmpngt_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = impl.test_cases_float_pointer1;
-  //   const float *_b = impl.test_cases_float_pointer2;
-  //   __m128 a = load_m128(_a);
-  //   __m128 b = load_m128(_b);
-  //
-  //   float result[4];
-  //   result[0] = !(_a[0] > _b[0]) ? ALL_BIT_1_32 : 0;
-  //   result[1] = !(_a[1] > _b[1]) ? ALL_BIT_1_32 : 0;
-  //   result[2] = !(_a[2] > _b[2]) ? ALL_BIT_1_32 : 0;
-  //   result[3] = !(_a[3] > _b[3]) ? ALL_BIT_1_32 : 0;
-  //
-  //   __m128 ret = _mm_cmpngt_ps(a, b);
-  //   return validate_float(ret, result[0], result[1], result[2], result[3]);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  const float *_b = impl.test_cases_float_pointer2;
+  __m128 a = load_m128(_a);
+  __m128 b = load_m128(_b);
+
+  float _c[4];
+  _c[0] = !(_a[0] > _b[0]) ? ALL_BIT_1_32 : 0;
+  _c[1] = !(_a[1] > _b[1]) ? ALL_BIT_1_32 : 0;
+  _c[2] = !(_a[2] > _b[2]) ? ALL_BIT_1_32 : 0;
+  _c[3] = !(_a[3] > _b[3]) ? ALL_BIT_1_32 : 0;
+
+  __m128 c = _mm_cmpngt_ps(a, b);
+  return validate_float(c, _c[0], _c[1], _c[2], _c[3]);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_cmpngt_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = impl.test_cases_float_pointer1;
-  //   const float *_b = impl.test_cases_float_pointer2;
-  //   __m128 a = load_m128(_a);
-  //   __m128 b = load_m128(_b);
-  //
-  //   float result[4];
-  //   result[0] = !(_a[0] > _b[0]) ? ALL_BIT_1_32 : 0;
-  //   result[1] = _a[1];
-  //   result[2] = _a[2];
-  //   result[3] = _a[3];
-  //
-  //   __m128 ret = _mm_cmpngt_ss(a, b);
-  //   return validate_float(ret, result[0], result[1], result[2], result[3]);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  const float *_b = impl.test_cases_float_pointer2;
+  __m128 a = load_m128(_a);
+  __m128 b = load_m128(_b);
+
+  float _c[4];
+  _c[0] = !(_a[0] > _b[0]) ? ALL_BIT_1_32 : 0;
+  _c[1] = _a[1];
+  _c[2] = _a[2];
+  _c[3] = _a[3];
+
+  __m128 c = _mm_cmpngt_ss(a, b);
+  return validate_float(c, _c[0], _c[1], _c[2], _c[3]);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_cmpnle_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = impl.test_cases_float_pointer1;
-  //   const float *_b = impl.test_cases_float_pointer2;
-  //   __m128 a = load_m128(_a);
-  //   __m128 b = load_m128(_b);
-  //
-  //   float result[4];
-  //   result[0] = !(_a[0] <= _b[0]) ? ALL_BIT_1_32 : 0;
-  //   result[1] = !(_a[1] <= _b[1]) ? ALL_BIT_1_32 : 0;
-  //   result[2] = !(_a[2] <= _b[2]) ? ALL_BIT_1_32 : 0;
-  //   result[3] = !(_a[3] <= _b[3]) ? ALL_BIT_1_32 : 0;
-  //
-  //   __m128 ret = _mm_cmpnle_ps(a, b);
-  //   return validate_float(ret, result[0], result[1], result[2], result[3]);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  const float *_b = impl.test_cases_float_pointer2;
+  __m128 a = load_m128(_a);
+  __m128 b = load_m128(_b);
+
+  float _c[4];
+  _c[0] = !(_a[0] <= _b[0]) ? ALL_BIT_1_32 : 0;
+  _c[1] = !(_a[1] <= _b[1]) ? ALL_BIT_1_32 : 0;
+  _c[2] = !(_a[2] <= _b[2]) ? ALL_BIT_1_32 : 0;
+  _c[3] = !(_a[3] <= _b[3]) ? ALL_BIT_1_32 : 0;
+
+  __m128 c = _mm_cmpnle_ps(a, b);
+  return validate_float(c, _c[0], _c[1], _c[2], _c[3]);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_cmpnle_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = impl.test_cases_float_pointer1;
-  //   const float *_b = impl.test_cases_float_pointer2;
-  //   __m128 a = load_m128(_a);
-  //   __m128 b = load_m128(_b);
-  //
-  //   float result[4];
-  //   result[0] = !(_a[0] <= _b[0]) ? ALL_BIT_1_32 : 0;
-  //   result[1] = _a[1];
-  //   result[2] = _a[2];
-  //   result[3] = _a[3];
-  //
-  //   __m128 ret = _mm_cmpnle_ss(a, b);
-  //   return validate_float(ret, result[0], result[1], result[2], result[3]);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  const float *_b = impl.test_cases_float_pointer2;
+  __m128 a = load_m128(_a);
+  __m128 b = load_m128(_b);
+
+  float _c[4];
+  _c[0] = !(_a[0] <= _b[0]) ? ALL_BIT_1_32 : 0;
+  _c[1] = _a[1];
+  _c[2] = _a[2];
+  _c[3] = _a[3];
+
+  __m128 c = _mm_cmpnle_ss(a, b);
+  return validate_float(c, _c[0], _c[1], _c[2], _c[3]);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_cmpnlt_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = impl.test_cases_float_pointer1;
-  //   const float *_b = impl.test_cases_float_pointer2;
-  //   __m128 a = load_m128(_a);
-  //   __m128 b = load_m128(_b);
-  //
-  //   float result[4];
-  //   result[0] = !(_a[0] < _b[0]) ? ALL_BIT_1_32 : 0;
-  //   result[1] = !(_a[1] < _b[1]) ? ALL_BIT_1_32 : 0;
-  //   result[2] = !(_a[2] < _b[2]) ? ALL_BIT_1_32 : 0;
-  //   result[3] = !(_a[3] < _b[3]) ? ALL_BIT_1_32 : 0;
-  //
-  //   __m128 ret = _mm_cmpnlt_ps(a, b);
-  //   return validate_float(ret, result[0], result[1], result[2], result[3]);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  const float *_b = impl.test_cases_float_pointer2;
+  __m128 a = load_m128(_a);
+  __m128 b = load_m128(_b);
+
+  float _c[4];
+  _c[0] = !(_a[0] < _b[0]) ? ALL_BIT_1_32 : 0;
+  _c[1] = !(_a[1] < _b[1]) ? ALL_BIT_1_32 : 0;
+  _c[2] = !(_a[2] < _b[2]) ? ALL_BIT_1_32 : 0;
+  _c[3] = !(_a[3] < _b[3]) ? ALL_BIT_1_32 : 0;
+
+  __m128 c = _mm_cmpnlt_ps(a, b);
+  return validate_float(c, _c[0], _c[1], _c[2], _c[3]);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_cmpnlt_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = impl.test_cases_float_pointer1;
-  //   const float *_b = impl.test_cases_float_pointer2;
-  //   __m128 a = load_m128(_a);
-  //   __m128 b = load_m128(_b);
-  //
-  //   float result[4];
-  //   result[0] = !(_a[0] < _b[0]) ? ALL_BIT_1_32 : 0;
-  //   result[1] = _a[1];
-  //   result[2] = _a[2];
-  //   result[3] = _a[3];
-  //
-  //   __m128 ret = _mm_cmpnlt_ss(a, b);
-  //   return validate_float(ret, result[0], result[1], result[2], result[3]);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  const float *_b = impl.test_cases_float_pointer2;
+  __m128 a = load_m128(_a);
+  __m128 b = load_m128(_b);
+
+  float _c[4];
+  _c[0] = !(_a[0] < _b[0]) ? ALL_BIT_1_32 : 0;
+  _c[1] = _a[1];
+  _c[2] = _a[2];
+  _c[3] = _a[3];
+
+  __m128 c = _mm_cmpnlt_ss(a, b);
+  return validate_float(c, _c[0], _c[1], _c[2], _c[3]);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_cmpord_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
@@ -4444,7 +4445,7 @@ result_t test_mm_cmpeq_sd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 #ifdef ENABLE_TEST_ALL
   const double *_a = (const double *)impl.test_cases_float_pointer1;
   const double *_b = (const double *)impl.test_cases_float_pointer2;
-  const uint64_t d0 = (_a[0] == _b[0]) ? ~UINT64_C(0) : 0;
+  const uint64_t d0 = (_a[0] == _b[0]) ? UINT64_MAX : 0;
   const uint64_t d1 = ((const uint64_t *)_a)[1];
 
   __m128d a = load_m128d(_a);
@@ -4461,8 +4462,8 @@ result_t test_mm_cmpge_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 #ifdef ENABLE_TEST_ALL
   const double *_a = (const double *)impl.test_cases_float_pointer1;
   const double *_b = (const double *)impl.test_cases_float_pointer2;
-  uint64_t d0 = (_a[0] >= _b[0]) ? ~UINT64_C(0) : 0;
-  uint64_t d1 = (_a[1] >= _b[1]) ? ~UINT64_C(0) : 0;
+  uint64_t d0 = (_a[0] >= _b[0]) ? UINT64_MAX : 0;
+  uint64_t d1 = (_a[1] >= _b[1]) ? UINT64_MAX : 0;
 
   __m128d a = load_m128d(_a);
   __m128d b = load_m128d(_b);
@@ -4478,7 +4479,7 @@ result_t test_mm_cmpge_sd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 #ifdef ENABLE_TEST_ALL
   double *_a = (double *)impl.test_cases_float_pointer1;
   double *_b = (double *)impl.test_cases_float_pointer2;
-  uint64_t d0 = (_a[0] >= _b[0]) ? ~UINT64_C(0) : 0;
+  uint64_t d0 = (_a[0] >= _b[0]) ? UINT64_MAX : 0;
   uint64_t d1 = ((uint64_t *)_a)[1];
 
   __m128d a = load_m128d(_a);
@@ -4571,8 +4572,8 @@ result_t test_mm_cmpgt_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 #ifdef ENABLE_TEST_ALL
   const double *_a = (const double *)impl.test_cases_float_pointer1;
   const double *_b = (const double *)impl.test_cases_float_pointer2;
-  uint64_t d0 = (_a[0] > _b[0]) ? ~UINT64_C(0) : 0;
-  uint64_t d1 = (_a[1] > _b[1]) ? ~UINT64_C(0) : 0;
+  uint64_t d0 = (_a[0] > _b[0]) ? UINT64_MAX : 0;
+  uint64_t d1 = (_a[1] > _b[1]) ? UINT64_MAX : 0;
 
   __m128d a = load_m128d(_a);
   __m128d b = load_m128d(_b);
@@ -4588,7 +4589,7 @@ result_t test_mm_cmpgt_sd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 #ifdef ENABLE_TEST_ALL
   double *_a = (double *)impl.test_cases_float_pointer1;
   double *_b = (double *)impl.test_cases_float_pointer2;
-  uint64_t d0 = (_a[0] > _b[0]) ? ~UINT64_C(0) : 0;
+  uint64_t d0 = (_a[0] > _b[0]) ? UINT64_MAX : 0;
   uint64_t d1 = ((uint64_t *)_a)[1];
 
   __m128d a = load_m128d(_a);
@@ -4605,8 +4606,8 @@ result_t test_mm_cmple_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 #ifdef ENABLE_TEST_ALL
   const double *_a = (const double *)impl.test_cases_float_pointer1;
   const double *_b = (const double *)impl.test_cases_float_pointer2;
-  uint64_t d0 = (_a[0] <= _b[0]) ? ~UINT64_C(0) : 0;
-  uint64_t d1 = (_a[1] <= _b[1]) ? ~UINT64_C(0) : 0;
+  uint64_t d0 = (_a[0] <= _b[0]) ? UINT64_MAX : 0;
+  uint64_t d1 = (_a[1] <= _b[1]) ? UINT64_MAX : 0;
 
   __m128d a = load_m128d(_a);
   __m128d b = load_m128d(_b);
@@ -4622,7 +4623,7 @@ result_t test_mm_cmple_sd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 #ifdef ENABLE_TEST_ALL
   double *_a = (double *)impl.test_cases_float_pointer1;
   double *_b = (double *)impl.test_cases_float_pointer2;
-  uint64_t d0 = (_a[0] <= _b[0]) ? ~UINT64_C(0) : 0;
+  uint64_t d0 = (_a[0] <= _b[0]) ? UINT64_MAX : 0;
   uint64_t d1 = ((uint64_t *)_a)[1];
 
   __m128d a = load_m128d(_a);
@@ -4715,8 +4716,8 @@ result_t test_mm_cmplt_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   const double *_a = (const double *)impl.test_cases_float_pointer1;
   const double *_b = (const double *)impl.test_cases_float_pointer2;
 
-  int64_t f0 = (_a[0] < _b[0]) ? ~UINT64_C(0) : UINT64_C(0);
-  int64_t f1 = (_a[1] < _b[1]) ? ~UINT64_C(0) : UINT64_C(0);
+  int64_t f0 = (_a[0] < _b[0]) ? UINT64_MAX : UINT64_C(0);
+  int64_t f1 = (_a[1] < _b[1]) ? UINT64_MAX : UINT64_C(0);
 
   __m128d a = load_m128d(_a);
   __m128d b = load_m128d(_b);
@@ -4732,7 +4733,7 @@ result_t test_mm_cmplt_sd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 #ifdef ENABLE_TEST_ALL
   double *_a = (double *)impl.test_cases_float_pointer1;
   double *_b = (double *)impl.test_cases_float_pointer2;
-  uint64_t d0 = (_a[0] < _b[0]) ? ~UINT64_C(0) : 0;
+  uint64_t d0 = (_a[0] < _b[0]) ? UINT64_MAX : 0;
   uint64_t d1 = ((uint64_t *)_a)[1];
 
   __m128d a = load_m128d(_a);
@@ -4750,8 +4751,8 @@ result_t test_mm_cmpneq_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   const double *_a = (const double *)impl.test_cases_float_pointer1;
   const double *_b = (const double *)impl.test_cases_float_pointer2;
 
-  int64_t f0 = (_a[0] != _b[0]) ? ~UINT64_C(0) : UINT64_C(0);
-  int64_t f1 = (_a[1] != _b[1]) ? ~UINT64_C(0) : UINT64_C(0);
+  int64_t f0 = (_a[0] != _b[0]) ? UINT64_MAX : UINT64_C(0);
+  int64_t f1 = (_a[1] != _b[1]) ? UINT64_MAX : UINT64_C(0);
 
   __m128d a = load_m128d(_a);
   __m128d b = load_m128d(_b);
@@ -4768,7 +4769,7 @@ result_t test_mm_cmpneq_sd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
   double *_a = (double *)impl.test_cases_float_pointer1;
   double *_b = (double *)impl.test_cases_float_pointer2;
 
-  int64_t f0 = (_a[0] != _b[0]) ? ~UINT64_C(0) : UINT64_C(0);
+  int64_t f0 = (_a[0] != _b[0]) ? UINT64_MAX : UINT64_C(0);
   int64_t f1 = ((int64_t *)_a)[1];
 
   __m128d a = load_m128d(_a);
@@ -4782,139 +4783,139 @@ result_t test_mm_cmpneq_sd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_cmpnge_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // const double *_a = (const double *)impl.test_cases_float_pointer1;
-  // const double *_b = (const double *)impl.test_cases_float_pointer2;
-  // uint64_t d0 = !(_a[0] >= _b[0]) ? ~UINT64_C(0) : 0;
-  // uint64_t d1 = !(_a[1] >= _b[1]) ? ~UINT64_C(0) : 0;
+#ifdef ENABLE_TEST_ALL
+  const double *_a = (const double *)impl.test_cases_float_pointer1;
+  const double *_b = (const double *)impl.test_cases_float_pointer2;
+  uint64_t d0 = !(_a[0] >= _b[0]) ? UINT64_MAX : 0;
+  uint64_t d1 = !(_a[1] >= _b[1]) ? UINT64_MAX : 0;
 
-  // __m128d a = load_m128d(_a);
-  // __m128d b = load_m128d(_b);
-  // __m128d c = _mm_cmpnge_pd(a, b);
+  __m128d a = load_m128d(_a);
+  __m128d b = load_m128d(_b);
+  __m128d c = _mm_cmpnge_pd(a, b);
 
-  // return validate_double(c, *(double *)&d0, *(double *)&d1);
-  // #else
+  return validate_double(c, *(double *)&d0, *(double *)&d1);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_cmpnge_sd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // double *_a = (double *)impl.test_cases_float_pointer1;
-  // double *_b = (double *)impl.test_cases_float_pointer2;
-  // uint64_t d0 = !(_a[0] >= _b[0]) ? ~UINT64_C(0) : 0;
-  // uint64_t d1 = ((uint64_t *)_a)[1];
+#ifdef ENABLE_TEST_ALL
+  double *_a = (double *)impl.test_cases_float_pointer1;
+  double *_b = (double *)impl.test_cases_float_pointer2;
+  uint64_t d0 = !(_a[0] >= _b[0]) ? UINT64_MAX : 0;
+  uint64_t d1 = ((uint64_t *)_a)[1];
 
-  // __m128d a = load_m128d(_a);
-  // __m128d b = load_m128d(_b);
-  // __m128d c = _mm_cmpnge_sd(a, b);
+  __m128d a = load_m128d(_a);
+  __m128d b = load_m128d(_b);
+  __m128d c = _mm_cmpnge_sd(a, b);
 
-  // return validate_double(c, *(double *)&d0, *(double *)&d1);
-  // #else
+  return validate_double(c, *(double *)&d0, *(double *)&d1);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_cmpngt_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // const double *_a = (const double *)impl.test_cases_float_pointer1;
-  // const double *_b = (const double *)impl.test_cases_float_pointer2;
-  // uint64_t d0 = !(_a[0] > _b[0]) ? ~UINT64_C(0) : 0;
-  // uint64_t d1 = !(_a[1] > _b[1]) ? ~UINT64_C(0) : 0;
+#ifdef ENABLE_TEST_ALL
+  const double *_a = (const double *)impl.test_cases_float_pointer1;
+  const double *_b = (const double *)impl.test_cases_float_pointer2;
+  uint64_t d0 = !(_a[0] > _b[0]) ? UINT64_MAX : 0;
+  uint64_t d1 = !(_a[1] > _b[1]) ? UINT64_MAX : 0;
 
-  // __m128d a = load_m128d(_a);
-  // __m128d b = load_m128d(_b);
-  // __m128d c = _mm_cmpngt_pd(a, b);
+  __m128d a = load_m128d(_a);
+  __m128d b = load_m128d(_b);
+  __m128d c = _mm_cmpngt_pd(a, b);
 
-  // return validate_double(c, *(double *)&d0, *(double *)&d1);
-  // #else
+  return validate_double(c, *(double *)&d0, *(double *)&d1);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_cmpngt_sd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // double *_a = (double *)impl.test_cases_float_pointer1;
-  // double *_b = (double *)impl.test_cases_float_pointer2;
-  // uint64_t d0 = !(_a[0] > _b[0]) ? ~UINT64_C(0) : 0;
-  // uint64_t d1 = ((uint64_t *)_a)[1];
+#ifdef ENABLE_TEST_ALL
+  double *_a = (double *)impl.test_cases_float_pointer1;
+  double *_b = (double *)impl.test_cases_float_pointer2;
+  uint64_t d0 = !(_a[0] > _b[0]) ? UINT64_MAX : 0;
+  uint64_t d1 = ((uint64_t *)_a)[1];
 
-  // __m128d a = load_m128d(_a);
-  // __m128d b = load_m128d(_b);
-  // __m128d c = _mm_cmpngt_sd(a, b);
+  __m128d a = load_m128d(_a);
+  __m128d b = load_m128d(_b);
+  __m128d c = _mm_cmpngt_sd(a, b);
 
-  // return validate_double(c, *(double *)&d0, *(double *)&d1);
-  // #else
+  return validate_double(c, *(double *)&d0, *(double *)&d1);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_cmpnle_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // const double *_a = (const double *)impl.test_cases_float_pointer1;
-  // const double *_b = (const double *)impl.test_cases_float_pointer2;
-  // uint64_t d0 = !(_a[0] <= _b[0]) ? ~UINT64_C(0) : 0;
-  // uint64_t d1 = !(_a[1] <= _b[1]) ? ~UINT64_C(0) : 0;
+#ifdef ENABLE_TEST_ALL
+  const double *_a = (const double *)impl.test_cases_float_pointer1;
+  const double *_b = (const double *)impl.test_cases_float_pointer2;
+  uint64_t d0 = !(_a[0] <= _b[0]) ? UINT64_MAX : 0;
+  uint64_t d1 = !(_a[1] <= _b[1]) ? UINT64_MAX : 0;
 
-  // __m128d a = load_m128d(_a);
-  // __m128d b = load_m128d(_b);
-  // __m128d c = _mm_cmpnle_pd(a, b);
+  __m128d a = load_m128d(_a);
+  __m128d b = load_m128d(_b);
+  __m128d c = _mm_cmpnle_pd(a, b);
 
-  // return validate_double(c, *(double *)&d0, *(double *)&d1);
-  // #else
+  return validate_double(c, *(double *)&d0, *(double *)&d1);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_cmpnle_sd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // double *_a = (double *)impl.test_cases_float_pointer1;
-  // double *_b = (double *)impl.test_cases_float_pointer2;
-  // uint64_t d0 = !(_a[0] <= _b[0]) ? ~UINT64_C(0) : 0;
-  // uint64_t d1 = ((uint64_t *)_a)[1];
+#ifdef ENABLE_TEST_ALL
+  double *_a = (double *)impl.test_cases_float_pointer1;
+  double *_b = (double *)impl.test_cases_float_pointer2;
+  uint64_t d0 = !(_a[0] <= _b[0]) ? UINT64_MAX : 0;
+  uint64_t d1 = ((uint64_t *)_a)[1];
 
-  // __m128d a = load_m128d(_a);
-  // __m128d b = load_m128d(_b);
-  // __m128d c = _mm_cmpnle_sd(a, b);
+  __m128d a = load_m128d(_a);
+  __m128d b = load_m128d(_b);
+  __m128d c = _mm_cmpnle_sd(a, b);
 
-  // return validate_double(c, *(double *)&d0, *(double *)&d1);
-  // #else
+  return validate_double(c, *(double *)&d0, *(double *)&d1);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_cmpnlt_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // const double *_a = (const double *)impl.test_cases_float_pointer1;
-  // const double *_b = (const double *)impl.test_cases_float_pointer2;
-  // uint64_t d0 = !(_a[0] < _b[0]) ? ~UINT64_C(0) : 0;
-  // uint64_t d1 = !(_a[1] < _b[1]) ? ~UINT64_C(0) : 0;
+#ifdef ENABLE_TEST_ALL
+  const double *_a = (const double *)impl.test_cases_float_pointer1;
+  const double *_b = (const double *)impl.test_cases_float_pointer2;
+  uint64_t d0 = !(_a[0] < _b[0]) ? UINT64_MAX : 0;
+  uint64_t d1 = !(_a[1] < _b[1]) ? UINT64_MAX : 0;
 
-  // __m128d a = load_m128d(_a);
-  // __m128d b = load_m128d(_b);
-  // __m128d c = _mm_cmpnlt_pd(a, b);
+  __m128d a = load_m128d(_a);
+  __m128d b = load_m128d(_b);
+  __m128d c = _mm_cmpnlt_pd(a, b);
 
-  // return validate_double(c, *(double *)&d0, *(double *)&d1);
-  // #else
+  return validate_double(c, *(double *)&d0, *(double *)&d1);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_cmpnlt_sd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // double *_a = (double *)impl.test_cases_float_pointer1;
-  // double *_b = (double *)impl.test_cases_float_pointer2;
-  // uint64_t d0 = !(_a[0] < _b[0]) ? ~UINT64_C(0) : 0;
-  // uint64_t d1 = ((uint64_t *)_a)[1];
+#ifdef ENABLE_TEST_ALL
+  double *_a = (double *)impl.test_cases_float_pointer1;
+  double *_b = (double *)impl.test_cases_float_pointer2;
+  uint64_t d0 = !(_a[0] < _b[0]) ? UINT64_MAX : 0;
+  uint64_t d1 = ((uint64_t *)_a)[1];
 
-  // __m128d a = load_m128d(_a);
-  // __m128d b = load_m128d(_b);
-  // __m128d c = _mm_cmpnlt_sd(a, b);
+  __m128d a = load_m128d(_a);
+  __m128d b = load_m128d(_b);
+  __m128d c = _mm_cmpnlt_sd(a, b);
 
-  // return validate_double(c, *(double *)&d0, *(double *)&d1);
-  // #else
+  return validate_double(c, *(double *)&d0, *(double *)&d1);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_cmpord_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
