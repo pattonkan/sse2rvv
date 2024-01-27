@@ -2572,9 +2572,18 @@ FORCE_INLINE __m64 _m_pshufw(__m64 a, int imm8) {
   return _mm_shuffle_pi16(a, imm8);
 }
 
-// FORCE_INLINE __m128 _mm_rcp_ps (__m128 a) {}
+FORCE_INLINE __m128 _mm_rcp_ps(__m128 a) {
+  // TODO add high precision mode
+  vfloat32m1_t _a = vreinterpretq_m128_f32(a);
+  return vreinterpretq_f32_m128(__riscv_vfrec7_v_f32m1(_a, 4));
+}
 
-// FORCE_INLINE __m128 _mm_rcp_ss (__m128 a) {}
+FORCE_INLINE __m128 _mm_rcp_ss(__m128 a) {
+  // TODO add high precision mode
+  vfloat32m1_t _a = vreinterpretq_m128_f32(a);
+  vfloat32m1_t recip = __riscv_vfrec7_v_f32m1(_a, 4);
+  return vreinterpretq_f32_m128(__riscv_vslideup_vx_f32m1(_a, recip, 0, 1));
+}
 
 // FORCE_INLINE __m128d _mm_round_pd (__m128d a, int rounding) {}
 

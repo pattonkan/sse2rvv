@@ -3017,35 +3017,35 @@ result_t test_m_pshufw(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_rcp_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = impl.test_cases_float_pointer1;
-  //   float dx = 1.0f / _a[0];
-  //   float dy = 1.0f / _a[1];
-  //   float dz = 1.0f / _a[2];
-  //   float dw = 1.0f / _a[3];
-  //
-  //   __m128 a = load_m128(_a);
-  //   __m128 c = _mm_rcp_ps(a);
-  //   return validate_float_error(c, dx, dy, dz, dw, 0.001f);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  float _c[4];
+  for (int i = 0; i < 4; i++) {
+    _c[i] = 1.0f / _a[i];
+  }
+
+  __m128 a = load_m128(_a);
+  __m128 c = _mm_rcp_ps(a);
+  return validate_float_error(c, _c[0], _c[1], _c[2], _c[3], 0.01f);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_rcp_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = impl.test_cases_float_pointer1;
-  //
-  //   float dx = 1.0f / _a[0];
-  //   float dy = _a[1];
-  //   float dz = _a[2];
-  //   float dw = _a[3];
-  //   __m128 a = load_m128(_a);
-  //   __m128 c = _mm_rcp_ss(a);
-  //   return validate_float_error(c, dx, dy, dz, dw, 0.001f);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  float _c[4];
+  _c[0] = 1.0f / _a[0];
+  _c[1] = _a[1];
+  _c[2] = _a[2];
+  _c[3] = _a[3];
+  __m128 a = load_m128(_a);
+  __m128 c = _mm_rcp_ss(a);
+  return validate_float_error(c, _c[0], _c[1], _c[2], _c[3], 0.01f);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_rsqrt_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
