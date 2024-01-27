@@ -1911,11 +1911,39 @@ FORCE_INLINE __m128i _mm_loadu_si64(void const *mem_addr) {
   return vreinterpretq_i64_m128i(__riscv_vslideup_vx_i64m1(zeros, ld, 0, 1));
 }
 
-// FORCE_INLINE __m128i _mm_madd_epi16 (__m128i a, __m128i b) {}
+FORCE_INLINE __m128i _mm_madd_epi16(__m128i a, __m128i b) {
+  vint16m1_t _a = vreinterpretq_m128i_i16(a);
+  vint16m1_t _b = vreinterpretq_m128i_i16(b);
+  vint32m2_t wmul = __riscv_vwmul_vv_i32m2(_a, _b, 8);
+  vint32m2_t wmul_s = __riscv_vslidedown_vx_i32m2(wmul, 1, 8);
+  vint32m2_t wmul_add = __riscv_vadd_vv_i32m2(wmul, wmul_s, 8);
+  return vreinterpretq_i32_m128i(__riscv_vnsra_wx_i32m1(
+      __riscv_vreinterpret_v_i32m2_i64m2(wmul_add), 0, 4));
+}
 
-// FORCE_INLINE __m128i _mm_maddubs_epi16 (__m128i a, __m128i b) {}
+FORCE_INLINE __m128i _mm_maddubs_epi16(__m128i a, __m128i b) {
+  vint16m2_t _a = __riscv_vreinterpret_v_u16m2_i16m2(
+      __riscv_vzext_vf2_u16m2(vreinterpretq_m128i_u8(a), 16));
+  vint16m2_t _b = __riscv_vsext_vf2_i16m2(vreinterpretq_m128i_i8(b), 16);
+  vint16m2_t mul = __riscv_vmul_vv_i16m2(_a, _b, 16);
+  vint16m2_t mul_s = __riscv_vslidedown_vx_i16m2(mul, 1, 16);
+  vint32m4_t mul_add = __riscv_vwadd_vv_i32m4(mul, mul_s, 16);
+  vint16m2_t sat = __riscv_vnclip_wx_i16m2(mul_add, 0, __RISCV_VXRM_RDN, 16);
+  return vreinterpretq_i16_m128i(
+      __riscv_vnsra_wx_i16m1(__riscv_vreinterpret_v_i16m2_i32m2(sat), 0, 16));
+}
 
-// FORCE_INLINE __m64 _mm_maddubs_pi16 (__m64 a, __m64 b) {}
+FORCE_INLINE __m64 _mm_maddubs_pi16(__m64 a, __m64 b) {
+  vint16m2_t _a = __riscv_vreinterpret_v_u16m2_i16m2(
+      __riscv_vzext_vf2_u16m2(vreinterpretq_m128i_u8(a), 8));
+  vint16m2_t _b = __riscv_vsext_vf2_i16m2(vreinterpretq_m128i_i8(b), 8);
+  vint16m2_t mul = __riscv_vmul_vv_i16m2(_a, _b, 8);
+  vint16m2_t mul_s = __riscv_vslidedown_vx_i16m2(mul, 1, 8);
+  vint32m4_t mul_add = __riscv_vwadd_vv_i32m4(mul, mul_s, 8);
+  vint16m2_t sat = __riscv_vnclip_wx_i16m2(mul_add, 0, __RISCV_VXRM_RDN, 8);
+  return vreinterpretq_i16_m128i(
+      __riscv_vnsra_wx_i16m1(__riscv_vreinterpret_v_i16m2_i32m2(sat), 0, 8));
+}
 
 FORCE_INLINE void *_mm_malloc(size_t size, size_t align) {
   void *ptr;
