@@ -2667,10 +2667,6 @@ FORCE_INLINE __m128i _mm_set_epi8(char e15, char e14, char e13, char e12,
       __riscv_vle8_v_i8m1((const signed char *)arr, 16));
 }
 
-// FORCE_INLINE void _MM_SET_EXCEPTION_MASK (unsigned int a) {}
-
-// FORCE_INLINE void _MM_SET_EXCEPTION_STATE (unsigned int a) {}
-
 // FORCE_INLINE void _MM_SET_FLUSH_ZERO_MODE (unsigned int a) {}
 
 FORCE_INLINE __m128d _mm_set_pd(double e1, double e0) {
