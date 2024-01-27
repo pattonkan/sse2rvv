@@ -242,6 +242,11 @@ typedef union ALIGN_STRUCT(16) SIMDVec {
 #endif
 #endif
 
+// forward declaration
+FORCE_INLINE int _mm_extract_pi16(__m64 a, int imm8);
+FORCE_INLINE __m64 _mm_sad_pu8(__m64 a, __m64 b);
+FORCE_INLINE __m64 _mm_shuffle_pi16(__m64 a, int imm8);
+
 /* SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2 */
 
 FORCE_INLINE __m128i _mm_abs_epi16(__m128i a) {
@@ -2384,7 +2389,9 @@ FORCE_INLINE __m64 _m_pavgb(__m64 a, __m64 b) { return _mm_avg_pu8(a, b); }
 
 FORCE_INLINE __m64 _m_pavgw(__m64 a, __m64 b) { return _mm_avg_pu16(a, b); }
 
-// FORCE_INLINE int _m_pextrw (__m64 a, int imm8) {}
+FORCE_INLINE int _m_pextrw(__m64 a, int imm8) {
+  return _mm_extract_pi16(a, imm8);
+}
 
 FORCE_INLINE __m64 _m_pinsrw(__m64 a, int i, int imm8) {
   return _mm_insert_pi16(a, i, imm8);
@@ -2400,13 +2407,15 @@ FORCE_INLINE __m64 _m_pminub(__m64 a, __m64 b) { return _mm_min_pu8(a, b); }
 
 FORCE_INLINE int _m_pmovmskb(__m64 a) { return _mm_movemask_pi8(a); }
 
-// FORCE_INLINE __m64 _m_pmulhuw (__m64 a, __m64 b) {}
+FORCE_INLINE __m64 _m_pmulhuw(__m64 a, __m64 b) { return _mm_mulhi_pu16(a, b); }
 
 // FORCE_INLINE void _mm_prefetch (char const* p, int i) {}
 
-// FORCE_INLINE __m64 _m_psadbw (__m64 a, __m64 b) {}
+FORCE_INLINE __m64 _m_psadbw(__m64 a, __m64 b) { return _mm_sad_pu8(a, b); }
 
-// FORCE_INLINE __m64 _m_pshufw (__m64 a, int imm8) {}
+FORCE_INLINE __m64 _m_pshufw(__m64 a, int imm8) {
+  return _mm_shuffle_pi16(a, imm8);
+}
 
 // FORCE_INLINE __m128 _mm_rcp_ps (__m128 a) {}
 

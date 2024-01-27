@@ -2725,11 +2725,41 @@ result_t test_m_pavgw(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_m_pextrw(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // return test_mm_extract_pi16(impl, iter);
-  // #else
+#ifdef ENABLE_TEST_ALL
+// FIXME GCC has bug on "_mm_extract_pi16" intrinsics. We will enable this
+// test when GCC fix this bug.
+// see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=98495 for more
+// information
+#if defined(__clang__) || defined(_MSC_VER)
+  uint64_t *_a = (uint64_t *)impl.test_cases_int_pointer1;
+  const int idx = iter & 0x3;
+
+  __m64 a = load_m64(_a);
+  int c;
+  switch (idx) {
+  case 0:
+    c = _m_pextrw(a, 0);
+    break;
+  case 1:
+    c = _m_pextrw(a, 1);
+    break;
+  case 2:
+    c = _m_pextrw(a, 2);
+    break;
+  case 3:
+    c = _m_pextrw(a, 3);
+    break;
+  }
+
+  ASSERT_RETURN((uint64_t)c == ((*_a >> (idx * 16)) & 0xFFFF));
+  ASSERT_RETURN(0 == ((uint64_t)c & 0xFFFF0000));
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif
+#else
+  return TEST_UNIMPL;
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_m_pinsrw(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
@@ -2867,11 +2897,22 @@ result_t test_m_pmovmskb(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_m_pmulhuw(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // return test_mm_mulhi_pu16(impl, iter);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const uint16_t *_a = (const uint16_t *)impl.test_cases_int_pointer1;
+  const uint16_t *_b = (const uint16_t *)impl.test_cases_int_pointer2;
+  uint16_t d[4];
+  for (uint32_t i = 0; i < 4; i++) {
+    uint32_t m = (uint32_t)_a[i] * (uint32_t)_b[i];
+    d[i] = (uint16_t)(m >> 16);
+  }
+
+  __m64 a = load_m64(_a);
+  __m64 b = load_m64(_b);
+  __m64 c = _m_pmulhuw(a, b);
+  return VALIDATE_UINT16_M64(c, d);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_prefetch(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
@@ -2929,29 +2970,49 @@ result_t test_mm_prefetch(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_m_psadbw(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // const uint8_t *_a = (const uint8_t *)impl.test_cases_int_pointer1;
-  // const uint8_t *_b = (const uint8_t *)impl.test_cases_int_pointer2;
-  // uint16_t d = 0;
-  // for (int i = 0; i < 8; i++) {
-  //   d += abs(_a[i] - _b[i]);
-  // }
+#ifdef ENABLE_TEST_ALL
+  const uint8_t *_a = (const uint8_t *)impl.test_cases_int_pointer1;
+  const uint8_t *_b = (const uint8_t *)impl.test_cases_int_pointer2;
+  uint16_t _c = 0;
+  for (int i = 0; i < 8; i++) {
+    _c += abs(_a[i] - _b[i]);
+  }
 
-  // __m64 a = load_m64(_a);
-  // __m64 b = load_m64(_b);
-  // __m64 c = _m_psadbw(a, b);
-  // return validate_uint16(c, d, 0, 0, 0);
-  // #else
+  __m64 a = load_m64(_a);
+  __m64 b = load_m64(_b);
+  __m64 c = _m_psadbw(a, b);
+  return validate_uint16(c, _c, 0, 0, 0);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_m_pshufw(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  // return test_mm_shuffle_pi16(impl, iter);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const int16_t *_a = (const int16_t *)impl.test_cases_int_pointer1;
+  __m64 a;
+  __m64 d;
+
+#define TEST_IMPL(IDX)                                                         \
+  a = load_m64(_a);                                                            \
+  d = _m_pshufw(a, IDX);                                                       \
+                                                                               \
+  int16_t _d##IDX[4];                                                          \
+  _d##IDX[0] = _a[IDX & 0x3];                                                  \
+  _d##IDX[1] = _a[(IDX >> 2) & 0x3];                                           \
+  _d##IDX[2] = _a[(IDX >> 4) & 0x3];                                           \
+  _d##IDX[3] = _a[(IDX >> 6) & 0x3];                                           \
+  if (VALIDATE_INT16_M64(d, _d##IDX) != TEST_SUCCESS) {                        \
+    return TEST_FAIL;                                                          \
+  }
+
+  IMM_256_ITER
+#undef TEST_IMPL
+
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_rcp_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
