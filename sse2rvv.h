@@ -1687,10 +1687,6 @@ FORCE_INLINE __m128 _mm_floor_ss(__m128 a, __m128 b) {
 
 FORCE_INLINE void _mm_free(void *mem_addr) { free(mem_addr); }
 
-// FORCE_INLINE unsigned int _MM_GET_EXCEPTION_MASK () {}
-
-// FORCE_INLINE unsigned int _MM_GET_EXCEPTION_STATE () {}
-
 // FORCE_INLINE unsigned int _MM_GET_FLUSH_ZERO_MODE () {}
 
 // FORCE_INLINE unsigned int _MM_GET_ROUNDING_MODE () {}
