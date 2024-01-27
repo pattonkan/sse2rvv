@@ -3027,32 +3027,29 @@ result_t test_mm_rsqrt_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_sad_pu8(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const uint8_t *_a = (const uint8_t *)impl.test_cases_int_pointer1;
-  //   const uint8_t *_b = (const uint8_t *)impl.test_cases_int_pointer2;
-  //   uint16_t d = 0;
-  //   for (int i = 0; i < 8; i++) {
-  //     d += abs(_a[i] - _b[i]);
-  //   }
-  //
-  //   __m64 a = load_m64(_a);
-  //   __m64 b = load_m64(_b);
-  //   __m64 c = _mm_sad_pu8(a, b);
-  //   return validate_uint16(c, d, 0, 0, 0);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const uint8_t *_a = (const uint8_t *)impl.test_cases_int_pointer1;
+  const uint8_t *_b = (const uint8_t *)impl.test_cases_int_pointer2;
+  uint16_t _c = 0;
+  for (int i = 0; i < 8; i++) {
+    _c += abs(_a[i] - _b[i]);
+  }
+
+  __m64 a = load_m64(_a);
+  __m64 b = load_m64(_b);
+  __m64 c = _mm_sad_pu8(a, b);
+  return validate_uint16(c, _c, 0, 0, 0);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_set_flush_zero_mode(const SSE2RVV_TEST_IMPL &impl,
-                                     // #ifdef ENABLE_TEST_ALL
                                      uint32_t iter) {
+  // #ifdef ENABLE_TEST_ALL
   // TODO:
   // After the behavior of denormal number and flush zero mode is fully
   // investigated, the testing would be added.
-  // #else
-  return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
   // #else
   return TEST_UNIMPL;
   // #endif  // ENABLE_TEST_ALL
@@ -3084,8 +3081,8 @@ result_t test_mm_set_ps1(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_set_rounding_mode(const SSE2RVV_TEST_IMPL &impl,
-                                   // #ifdef ENABLE_TEST_ALL
                                    uint32_t iter) {
+  // #ifdef ENABLE_TEST_ALL
   //   const float *_a = impl.test_cases_float_pointer1;
   //   result_t res_toward_zero, res_to_neg_inf, res_to_pos_inf, res_nearest;
   //
@@ -6483,25 +6480,22 @@ result_t test_mm_pause(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_sad_epu8(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const uint8_t *_a = (const uint8_t *)impl.test_cases_int_pointer1;
-  //   const uint8_t *_b = (const uint8_t *)impl.test_cases_int_pointer2;
-  //   uint16_t d0 = 0;
-  //   uint16_t d1 = 0;
-  //   for (int i = 0; i < 8; i++) {
-  //     d0 += abs(_a[i] - _b[i]);
-  //   }
-  //   for (int i = 8; i < 16; i++) {
-  //     d1 += abs(_a[i] - _b[i]);
-  //   }
-  //
-  //   const __m128i a = load_m128i(_a);
-  //   const __m128i b = load_m128i(_b);
-  //   __m128i c = _mm_sad_epu8(a, b);
-  //   return validate_uint16(c, d0, 0, 0, 0, d1, 0, 0, 0);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const uint8_t *_a = (const uint8_t *)impl.test_cases_int_pointer1;
+  const uint8_t *_b = (const uint8_t *)impl.test_cases_int_pointer2;
+  uint16_t _c[2] = {};
+  for (int i = 0; i < 8; i++) {
+    _c[0] += abs(_a[i] - _b[i]);
+    _c[1] += abs(_a[i + 8] - _b[i + 8]);
+  }
+
+  __m128i a = load_m128i(_a);
+  __m128i b = load_m128i(_b);
+  __m128i c = _mm_sad_epu8(a, b);
+  return validate_uint16(c, _c[0], 0, 0, 0, _c[1], 0, 0, 0);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_set_epi16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
