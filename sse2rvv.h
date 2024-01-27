@@ -2593,9 +2593,18 @@ FORCE_INLINE __m128 _mm_rcp_ss(__m128 a) {
 
 // FORCE_INLINE __m128 _mm_round_ss (__m128 a, __m128 b, int rounding) {}
 
-// FORCE_INLINE __m128 _mm_rsqrt_ps (__m128 a) {}
+FORCE_INLINE __m128 _mm_rsqrt_ps(__m128 a) {
+  // TODO add high precision mode
+  vfloat32m1_t _a = vreinterpretq_m128_f32(a);
+  return vreinterpretq_f32_m128(__riscv_vfrsqrt7_v_f32m1(_a, 4));
+}
 
-// FORCE_INLINE __m128 _mm_rsqrt_ss (__m128 a) {}
+FORCE_INLINE __m128 _mm_rsqrt_ss(__m128 a) {
+  // TODO add high precision mode
+  vfloat32m1_t _a = vreinterpretq_m128_f32(a);
+  vfloat32m1_t sqrt = __riscv_vfrsqrt7_v_f32m1(_a, 4);
+  return vreinterpretq_f32_m128(__riscv_vslideup_vx_f32m1(_a, sqrt, 0, 1));
+}
 
 FORCE_INLINE __m128i _mm_sad_epu8(__m128i a, __m128i b) {
   vuint8m1_t _a = vreinterpretq_m128i_u8(a);
