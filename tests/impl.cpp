@@ -3049,43 +3049,44 @@ result_t test_mm_rcp_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_rsqrt_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = (const float *)impl.test_cases_float_pointer1;
-  //
-  //   float f0 = 1 / sqrt(_a[0]);
-  //   float f1 = 1 / sqrt(_a[1]);
-  //   float f2 = 1 / sqrt(_a[2]);
-  //   float f3 = 1 / sqrt(_a[3]);
-  //
-  //   __m128 a = load_m128(_a);
-  //   __m128 c = _mm_rsqrt_ps(a);
-  //
-  // Here, we ensure the error rate of "_mm_rsqrt_ps()" is under 0.1% compared
+#ifdef ENABLE_TEST_ALL
+  const float *_a = (const float *)impl.test_cases_float_pointer1;
+  float f[4];
+  f[0] = 1 / sqrt(_a[0]);
+  f[1] = 1 / sqrt(_a[1]);
+  f[2] = 1 / sqrt(_a[2]);
+  f[3] = 1 / sqrt(_a[3]);
+
+  __m128 a = load_m128(_a);
+  __m128 c = _mm_rsqrt_ps(a);
+
+  // Here, we ensure the error rate of "_mm_rsqrt_ps()" is under 1% compared
   // to the C implementation.
-  //   return validate_float_error(c, f0, f1, f2, f3, 0.001f);
-  // #else
+  return validate_float_error(c, f[0], f[1], f[2], f[3], 0.01f);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_rsqrt_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = (const float *)impl.test_cases_float_pointer1;
-  //
-  //   float f0 = 1 / sqrt(_a[0]);
-  //   float f1 = _a[1];
-  //   float f2 = _a[2];
-  //   float f3 = _a[3];
-  //
-  //   __m128 a = load_m128(_a);
-  //   __m128 c = _mm_rsqrt_ss(a);
-  //
-  // Here, we ensure the error rate of "_mm_rsqrt_ps()" is under 0.1% compared
+#ifdef ENABLE_TEST_ALL
+  const float *_a = (const float *)impl.test_cases_float_pointer1;
+
+  float f[4];
+  f[0] = 1 / sqrt(_a[0]);
+  f[1] = _a[1];
+  f[2] = _a[2];
+  f[3] = _a[3];
+
+  __m128 a = load_m128(_a);
+  __m128 c = _mm_rsqrt_ss(a);
+
+  // Here, we ensure the error rate of "_mm_rsqrt_ps()" is under 1% compared
   // to the C implementation.
-  //   return validate_float_error(c, f0, f1, f2, f3, 0.001f);
-  // #else
+  return validate_float_error(c, f[0], f[1], f[2], f[3], 0.01f);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_sad_pu8(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
