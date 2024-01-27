@@ -10877,51 +10877,51 @@ result_t test_mm_cmpistrz(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_crc32_u16(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   uint32_t crc = *(const uint32_t *)impl.test_cases_int_pointer1;
-  //   uint16_t v = iter;
-  //   uint32_t result = _mm_crc32_u16(crc, v);
-  //   ASSERT_RETURN(result == canonical_crc32_u16(crc, v));
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  uint32_t crc = *(const uint32_t *)impl.test_cases_int_pointer1;
+  uint16_t v = iter;
+  uint32_t result = _mm_crc32_u16(crc, v);
+  ASSERT_RETURN(result == canonical_crc32_u16(crc, v));
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_crc32_u32(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   uint32_t crc = *(const uint32_t *)impl.test_cases_int_pointer1;
-  //   uint32_t v = *(const uint32_t *)impl.test_cases_int_pointer2;
-  //   uint32_t result = _mm_crc32_u32(crc, v);
-  //   ASSERT_RETURN(result == canonical_crc32_u32(crc, v));
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  uint32_t crc = *(const uint32_t *)impl.test_cases_int_pointer1;
+  uint32_t v = *(const uint32_t *)impl.test_cases_int_pointer2;
+  uint32_t result = _mm_crc32_u32(crc, v);
+  ASSERT_RETURN(result == canonical_crc32_u32(crc, v));
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_crc32_u64(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   uint64_t crc = *(const uint64_t *)impl.test_cases_int_pointer1;
-  //   uint64_t v = *(const uint64_t *)impl.test_cases_int_pointer2;
-  //   uint64_t result = _mm_crc32_u64(crc, v);
-  //   ASSERT_RETURN(result == canonical_crc32_u64(crc, v));
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  uint64_t crc = *(const uint64_t *)impl.test_cases_int_pointer1;
+  uint64_t v = *(const uint64_t *)impl.test_cases_int_pointer2;
+  uint64_t result = _mm_crc32_u64(crc, v);
+  ASSERT_RETURN(result == canonical_crc32_u64(crc, v));
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_crc32_u8(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   uint32_t crc = *(const uint32_t *)impl.test_cases_int_pointer1;
-  //   uint8_t v = iter;
-  //   uint32_t result = _mm_crc32_u8(crc, v);
-  //   ASSERT_RETURN(result == canonical_crc32_u8(crc, v));
-  //   return TEST_SUCCESS;
-  // #else
+#ifdef ENABLE_TEST_ALL
+  uint32_t crc = *(const uint32_t *)impl.test_cases_int_pointer1;
+  uint8_t v = iter;
+  uint32_t result = _mm_crc32_u8(crc, v);
+  ASSERT_RETURN(result == canonical_crc32_u8(crc, v));
+  return TEST_SUCCESS;
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 /* AES */

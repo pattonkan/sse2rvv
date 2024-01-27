@@ -1326,15 +1326,34 @@ FORCE_INLINE int _mm_comineq_ss(__m128 a, __m128 b) {
          0x1;
 }
 
-// FORCE_INLINE unsigned int _mm_crc32_u16 (unsigned int crc, unsigned short v)
-// {}
+FORCE_INLINE unsigned int _mm_crc32_u8(unsigned int crc, unsigned char v) {
+  crc ^= v;
+  for (int bit = 0; bit < 8; bit++) {
+    if (crc & 1)
+      crc = (crc >> 1) ^ UINT32_C(0x82f63b78);
+    else
+      crc = (crc >> 1);
+  }
+  return crc;
+}
 
-// FORCE_INLINE unsigned int _mm_crc32_u32 (unsigned int crc, unsigned int v) {}
+FORCE_INLINE unsigned int _mm_crc32_u16(unsigned int crc, unsigned short v) {
+  crc = _mm_crc32_u8(crc, v & UINT8_MAX);
+  crc = _mm_crc32_u8(crc, (v >> 8) & UINT8_MAX);
+  return crc;
+}
 
-// FORCE_INLINE unsigned __int64 _mm_crc32_u64 (unsigned __int64 crc, unsigned
-// __int64 v) {}
+FORCE_INLINE unsigned int _mm_crc32_u32(unsigned int crc, unsigned int v) {
+  crc = _mm_crc32_u16(crc, v & UINT16_MAX);
+  crc = _mm_crc32_u16(crc, (v >> 16) & UINT16_MAX);
+  return crc;
+}
 
-// FORCE_INLINE unsigned int _mm_crc32_u8 (unsigned int crc, unsigned char v) {}
+FORCE_INLINE __int64 _mm_crc32_u64(__int64 crc, __int64 v) {
+  crc = _mm_crc32_u32((uint32_t)(crc), v & UINT32_MAX);
+  crc = _mm_crc32_u32((uint32_t)(crc), (v >> 32) & UINT32_MAX);
+  return crc;
+}
 
 FORCE_INLINE __m128 _mm_cvt_pi2ps(__m128 a, __m64 b) {
   vfloat32m1_t _a = vreinterpretq_m128_f32(a);

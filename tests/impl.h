@@ -519,10 +519,10 @@
   /*_(mm_cmpistro) */                                                          \
   /*_(mm_cmpistrs) */                                                          \
   /*_(mm_cmpistrz) */                                                          \
-  /*_(mm_crc32_u16) */                                                         \
-  /*_(mm_crc32_u32) */                                                         \
-  /*_(mm_crc32_u64) */                                                         \
-  /*_(mm_crc32_u8) */                                                          \
+  _(mm_crc32_u16)                                                              \
+  _(mm_crc32_u32)                                                              \
+  _(mm_crc32_u64)                                                              \
+  _(mm_crc32_u8)                                                               \
   /* AES */                                                                    \
   _(mm_aesenc_si128)                                                           \
   _(mm_aesdec_si128)                                                           \
