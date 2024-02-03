@@ -31,10 +31,10 @@ Header file | Extension |
 
 In order to deliver RVV-equivalent intrinsics for all SSE intrinsics used widely,
 please be aware that some SSE intrinsics exist a direct mapping with a concrete
-NEON-equivalent intrinsic. Others, unfortunately, lack a 1:1 mapping, meaning that
-their equivalents are built utilizing a number of NEON intrinsics.
+RVV-equivalent intrinsic. Others, unfortunately, lack a 1:1 mapping, meaning that
+their equivalents are built utilizing a number of RVV intrinsics.
 
-For example, SSE intrinsic `_mm_loadu_si128` has a direct RVV mapping (`vld1q_s32`),
+For example, SSE intrinsic `_mm_add_epi16` has a direct RVV mapping (`__riscv_vadd_vv_i16m1`),
 but SSE intrinsic `_mm_maddubs_epi16` has to be implemented with multiple RVV instructions.
 
 ### Floating-point compatibility
@@ -74,20 +74,14 @@ $ make test
 ```
 
 ## Reference
+
 * [sse2neon](https://github.com/DLTcollab/sse2neon)
+* [neon2rvv](https://github.com/howjmay/neon2rvv)
 * [Intel Intrinsics Guide](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html)
 * [Microsoft: x86 intrinsics list](https://learn.microsoft.com/en-us/cpp/intrinsics/x86-intrinsics-list)
-* [Arm Neon Intrinsics Reference](https://developer.arm.com/architectures/instruction-sets/simd-isas/neon/intrinsics)
-* [Neon Programmer's Guide for Armv8-A](https://developer.arm.com/architectures/instruction-sets/simd-isas/neon/neon-programmers-guide-for-armv8-a)
-* [NEON Programmer's Guide](https://static.docs.arm.com/den0018/a/DEN0018A_neon_programmers_guide_en.pdf)
-* [qemu/target/i386/ops_sse.h](https://github.com/qemu/qemu/blob/master/target/i386/ops_sse.h): Comprehensive SSE instruction emulation in C. Ideal for semantic checks.
-* [Porting Takua Renderer to 64-bit ARM- Part 1](https://blog.yiningkarlli.com/2021/05/porting-takua-to-arm-pt1.html)
-* [Porting Takua Renderer to 64-bit ARM- Part 2](https://blog.yiningkarlli.com/2021/07/porting-takua-to-arm-pt2.html)
-* [Comparing SIMD on x86-64 and arm64](https://blog.yiningkarlli.com/2021/09/neon-vs-sse.html)
-* [Port with SSE2Neon and SIMDe](https://developer.arm.com/documentation/102581/0200/Port-with-SSE2Neon-and-SIMDe)
-* [Genomics: Optimizing the BWA aligner for Arm Servers](https://community.arm.com/arm-community-blogs/b/high-performance-computing-blog/posts/optimizing-genomics-and-the-bwa-aligner-for-arm-servers)
-* [Bit twiddling with Arm Neon: beating SSE movemasks, counting bits and more](https://community.arm.com/arm-community-blogs/b/infrastructure-solutions-blog/posts/porting-x86-vector-bitmask-optimizations-to-arm-neon)
-* [C/C++ on Graviton](https://github.com/aws/aws-graviton-getting-started/blob/main/c-c%2B%2B.md)
+* [riscv-v-spec](https://github.com/riscv/riscv-v-spec)
+* [rvv-intrinsic-doc](https://github.com/riscv-non-isa/rvv-intrinsic-doc)
+* [riscv-c-api](https://github.com/riscv-non-isa/riscv-c-api-doc/blob/master/riscv-c-api.md)
 
 ## Licensing
 
