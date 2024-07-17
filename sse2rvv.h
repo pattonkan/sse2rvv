@@ -7,6 +7,12 @@
 /*
  * sse2rvv is freely redistributable under the MIT License.
  *
+ * Copyright (c) 2023-2024 SSE2RVV Contributors.
+ *
+ * Contributors to this work are:
+ *    Yang Hau <yuanyanghau@gmail.com>
+ *    Cheng-Hao <chahsiao@gmail.com>
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
