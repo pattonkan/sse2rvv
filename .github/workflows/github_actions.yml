@@ -1,10 +1,7 @@
 name: Github Actions
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+  [push, pull_request]
 
 jobs:
   cross_compile_tests:
@@ -25,6 +22,26 @@ jobs:
           export SIMULATOR_TYPE=qemu
           export ENABLE_TEST_ALL=true
           sh scripts/cross-test.sh
+
+  host_riscv:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v3.2.0
+      - name: build artifact
+        uses: uraimo/run-on-arch-action@v2.5.0
+        with:
+          arch: riscv64
+          distro: ubuntu_devel
+          env: |
+            CXX: clang++
+            CC: clang
+          install: |
+            apt-get update -q -y
+            apt-get install -q -y make clang
+            apt-get install -q -y clang++
+          run: |
+            make test
 
   check_test_cases:
     runs-on: ubuntu-22.04
