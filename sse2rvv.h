@@ -1485,7 +1485,10 @@ FORCE_INLINE __m128i _mm_cvtepu8_epi64(__m128i a) {
 
 // FORCE_INLINE __m128 _mm_cvtpi8_ps (__m64 a) {}
 
-// FORCE_INLINE __m128i _mm_cvtps_epi32 (__m128 a) {}
+FORCE_INLINE __m128i _mm_cvtps_epi32(__m128 a) {
+  vfloat32m1_t _a = vreinterpretq_m128_f32(a);
+  return vreinterpretq_i32_m128i(__riscv_vfcvt_x_f_v_i32m1(_a, 4));
+}
 
 // FORCE_INLINE __m128d _mm_cvtps_pd (__m128 a) {}
 
@@ -1531,7 +1534,10 @@ FORCE_INLINE __m128i _mm_cvtepu8_epi64(__m128i a) {
 
 // FORCE_INLINE __m128i _mm_cvtsi64x_si128 (__int64 a) {}
 
-// FORCE_INLINE float _mm_cvtss_f32 (__m128 a) {}
+FORCE_INLINE float _mm_cvtss_f32(__m128 a) {
+  vfloat32m1_t _a = vreinterpretq_m128_f32(a);
+  return (float)__riscv_vfmv_f_s_f32m1_f32(_a);
+}
 
 // FORCE_INLINE __m128d _mm_cvtss_sd (__m128d a, __m128 b) {}
 
