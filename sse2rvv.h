@@ -12,7 +12,7 @@
  * Contributors to this work are:
  *    Yang Hau <yuanyanghau@gmail.com>
  *    Cheng-Hao <chahsiao@gmail.com>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
@@ -247,6 +247,49 @@ typedef union ALIGN_STRUCT(16) SIMDVec {
 #define __int64 int64_t
 #endif
 #endif
+
+// XRM
+// #define __RISCV_VXRM_RNU 0  // round-to-nearest-up (add +0.5 LSB)
+// #define __RISCV_VXRM_RNE 1  // round-to-nearest-even
+// #define __RISCV_VXRM_RDN 2  // round-down (truncate)
+// #define __RISCV_VXRM_ROD 3  // round-to-odd (OR bits into LSB, aka "jam")
+// FRM
+// #define __RISCV_FRM_RNE 0  // round to nearest, ties to even
+// #define __RISCV_FRM_RTZ 1  // round towards zero
+// #define __RISCV_FRM_RDN 2  // round down (towards -infinity)
+// #define __RISCV_FRM_RUP 3  // round up (towards +infinity)
+// #define __RISCV_FRM_RMM 4  // round to nearest, ties to max magnitude
+
+// The bit field mapping to the FCSR (floating-point control and status
+// register)
+typedef struct {
+  uint8_t nx : 1;
+  uint8_t uf : 1;
+  uint8_t of : 1;
+  uint8_t dz : 1;
+  uint8_t nv : 1;
+  uint8_t frm : 3;
+  uint32_t reserved : 24;
+} fcsr_bitfield;
+
+/* Rounding mode macros. */
+#define _MM_FROUND_TO_NEAREST_INT 0x00
+#define _MM_FROUND_TO_NEG_INF 0x01
+#define _MM_FROUND_TO_POS_INF 0x02
+#define _MM_FROUND_TO_ZERO 0x03
+#define _MM_FROUND_CUR_DIRECTION 0x04
+#define _MM_FROUND_NO_EXC 0x08
+#define _MM_FROUND_RAISE_EXC 0x00
+#define _MM_FROUND_NINT (_MM_FROUND_TO_NEAREST_INT | _MM_FROUND_RAISE_EXC)
+#define _MM_FROUND_FLOOR (_MM_FROUND_TO_NEG_INF | _MM_FROUND_RAISE_EXC)
+#define _MM_FROUND_CEIL (_MM_FROUND_TO_POS_INF | _MM_FROUND_RAISE_EXC)
+#define _MM_FROUND_TRUNC (_MM_FROUND_TO_ZERO | _MM_FROUND_RAISE_EXC)
+#define _MM_FROUND_RINT (_MM_FROUND_CUR_DIRECTION | _MM_FROUND_RAISE_EXC)
+#define _MM_FROUND_NEARBYINT (_MM_FROUND_CUR_DIRECTION | _MM_FROUND_NO_EXC)
+#define _MM_ROUND_NEAREST 0x0000
+#define _MM_ROUND_DOWN 0x2000
+#define _MM_ROUND_UP 0x4000
+#define _MM_ROUND_TOWARD_ZERO 0x6000
 
 // forward declaration
 FORCE_INLINE int _mm_extract_pi16(__m64 a, int imm8);
@@ -2537,7 +2580,26 @@ FORCE_INLINE __m128 _mm_rcp_ss(__m128 a) {
 
 // FORCE_INLINE __m128d _mm_round_pd (__m128d a, int rounding) {}
 
-// FORCE_INLINE __m128 _mm_round_ps (__m128 a, int rounding) {}
+FORCE_INLINE __m128 _mm_round_ps(__m128 a, int rounding) {
+  vfloat32m1_t _a = vreinterpretq_m128_f32(a);
+  switch (rounding) {
+  case (_MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC):
+    return vreinterpretq_f32_m128(__riscv_vfcvt_f_x_v_f32m1(
+        __riscv_vfcvt_x_f_v_i32m1_rm(_a, __RISCV_FRM_RNE, 4), 4));
+  case (_MM_FROUND_TO_NEG_INF | _MM_FROUND_NO_EXC):
+    return vreinterpretq_f32_m128(__riscv_vfcvt_f_x_v_f32m1(
+        __riscv_vfcvt_x_f_v_i32m1_rm(_a, __RISCV_FRM_RDN, 4), 4));
+  case (_MM_FROUND_TO_POS_INF | _MM_FROUND_NO_EXC):
+    return vreinterpretq_f32_m128(__riscv_vfcvt_f_x_v_f32m1(
+        __riscv_vfcvt_x_f_v_i32m1_rm(_a, __RISCV_FRM_RUP, 4), 4));
+  case (_MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC):
+    return vreinterpretq_f32_m128(__riscv_vfcvt_f_x_v_f32m1(
+        __riscv_vfcvt_x_f_v_i32m1_rm(_a, __RISCV_FRM_RTZ, 4), 4));
+  default: //_MM_FROUND_CUR_DIRECTION
+    return vreinterpretq_f32_m128(
+        __riscv_vfcvt_f_x_v_f32m1(__riscv_vfcvt_x_f_v_i32m1(_a, 4), 4));
+  }
+}
 
 // FORCE_INLINE __m128d _mm_round_sd (__m128d a, __m128d b, int rounding) {}
 
@@ -2637,7 +2699,30 @@ FORCE_INLINE __m128 _mm_set_ps1(float a) {
   return vreinterpretq_f32_m128(__riscv_vfmv_v_f_f32m1(a, 4));
 }
 
-// FORCE_INLINE void _MM_SET_ROUNDING_MODE (unsigned int a) {}
+FORCE_INLINE void _MM_SET_ROUNDING_MODE(unsigned int a) {
+  union {
+    fcsr_bitfield field;
+    uint32_t value;
+  } r;
+
+  __asm__ volatile("csrr %0, fcsr" : "=r"(r));
+
+  switch (a) {
+  case _MM_ROUND_TOWARD_ZERO:
+    r.field.frm = __RISCV_FRM_RTZ;
+    break;
+  case _MM_ROUND_DOWN:
+    r.field.frm = __RISCV_FRM_RDN;
+    break;
+  case _MM_ROUND_UP:
+    r.field.frm = __RISCV_FRM_RUP;
+    break;
+  default: //_MM_ROUND_NEAREST
+    r.field.frm = __RISCV_FRM_RNE;
+  }
+
+  __asm__ volatile("csrw fcsr, %0" : : "r"(r));
+}
 
 FORCE_INLINE __m128d _mm_set_sd(double a) {
   double arr[2] = {a, 0};
