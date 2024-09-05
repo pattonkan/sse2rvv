@@ -3098,42 +3098,42 @@ result_t test_mm_set_ps1(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 
 result_t test_mm_set_rounding_mode(const SSE2RVV_TEST_IMPL &impl,
                                    uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = impl.test_cases_float_pointer1;
-  //   result_t res_toward_zero, res_to_neg_inf, res_to_pos_inf, res_nearest;
-  //
-  //   __m128 a = load_m128(_a);
-  //   __m128 b, c;
-  //
-  //   _MM_SET_ROUNDING_MODE(_MM_ROUND_TOWARD_ZERO);
-  //   b = _mm_round_ps(a, _MM_FROUND_CUR_DIRECTION);
-  //   c = _mm_round_ps(a, _MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC);
-  //   res_toward_zero = validate_128bits(c, b);
-  //
-  //   _MM_SET_ROUNDING_MODE(_MM_ROUND_DOWN);
-  //   b = _mm_round_ps(a, _MM_FROUND_CUR_DIRECTION);
-  //   c = _mm_round_ps(a, _MM_FROUND_TO_NEG_INF | _MM_FROUND_NO_EXC);
-  //   res_to_neg_inf = validate_128bits(c, b);
-  //
-  //   _MM_SET_ROUNDING_MODE(_MM_ROUND_UP);
-  //   b = _mm_round_ps(a, _MM_FROUND_CUR_DIRECTION);
-  //   c = _mm_round_ps(a, _MM_FROUND_TO_POS_INF | _MM_FROUND_NO_EXC);
-  //   res_to_pos_inf = validate_128bits(c, b);
-  //
-  //   _MM_SET_ROUNDING_MODE(_MM_ROUND_NEAREST);
-  //   b = _mm_round_ps(a, _MM_FROUND_CUR_DIRECTION);
-  //   c = _mm_round_ps(a, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC);
-  //   res_nearest = validate_128bits(c, b);
-  //
-  //   if (res_toward_zero == TEST_SUCCESS && res_to_neg_inf == TEST_SUCCESS &&
-  //       res_to_pos_inf == TEST_SUCCESS && res_nearest == TEST_SUCCESS) {
-  //     return TEST_SUCCESS;
-  //   } else {
-  //     return TEST_FAIL;
-  //   }
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  result_t res_toward_zero, res_to_neg_inf, res_to_pos_inf, res_nearest;
+
+  __m128 a = load_m128(_a);
+  __m128 b, c;
+
+  _MM_SET_ROUNDING_MODE(_MM_ROUND_TOWARD_ZERO);
+  b = _mm_round_ps(a, _MM_FROUND_CUR_DIRECTION);
+  c = _mm_round_ps(a, _MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC);
+  res_toward_zero = validate_128bits(c, b);
+
+  _MM_SET_ROUNDING_MODE(_MM_ROUND_DOWN);
+  b = _mm_round_ps(a, _MM_FROUND_CUR_DIRECTION);
+  c = _mm_round_ps(a, _MM_FROUND_TO_NEG_INF | _MM_FROUND_NO_EXC);
+  res_to_neg_inf = validate_128bits(c, b);
+
+  _MM_SET_ROUNDING_MODE(_MM_ROUND_UP);
+  b = _mm_round_ps(a, _MM_FROUND_CUR_DIRECTION);
+  c = _mm_round_ps(a, _MM_FROUND_TO_POS_INF | _MM_FROUND_NO_EXC);
+  res_to_pos_inf = validate_128bits(c, b);
+
+  _MM_SET_ROUNDING_MODE(_MM_ROUND_NEAREST);
+  b = _mm_round_ps(a, _MM_FROUND_CUR_DIRECTION);
+  c = _mm_round_ps(a, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC);
+  res_nearest = validate_128bits(c, b);
+
+  if (res_toward_zero == TEST_SUCCESS && res_to_neg_inf == TEST_SUCCESS &&
+      res_to_pos_inf == TEST_SUCCESS && res_nearest == TEST_SUCCESS) {
+    return TEST_SUCCESS;
+  } else {
+    return TEST_FAIL;
+  }
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_set_ss(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
@@ -10074,87 +10074,87 @@ result_t test_mm_round_pd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
 }
 
 result_t test_mm_round_ps(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
-  // #ifdef ENABLE_TEST_ALL
-  //   const float *_a = impl.test_cases_float_pointer1;
-  //   float f[4];
-  //   __m128 ret;
-  //
-  //   __m128 a = load_m128(_a);
-  //   switch (iter & 0x7) {
-  //   case 0:
-  //     f[0] = bankers_rounding(_a[0]);
-  //     f[1] = bankers_rounding(_a[1]);
-  //     f[2] = bankers_rounding(_a[2]);
-  //     f[3] = bankers_rounding(_a[3]);
-  //
-  //     ret = _mm_round_ps(a, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC);
-  //     break;
-  //   case 1:
-  //     f[0] = floorf(_a[0]);
-  //     f[1] = floorf(_a[1]);
-  //     f[2] = floorf(_a[2]);
-  //     f[3] = floorf(_a[3]);
-  //
-  //     ret = _mm_round_ps(a, _MM_FROUND_TO_NEG_INF | _MM_FROUND_NO_EXC);
-  //     break;
-  //   case 2:
-  //     f[0] = ceilf(_a[0]);
-  //     f[1] = ceilf(_a[1]);
-  //     f[2] = ceilf(_a[2]);
-  //     f[3] = ceilf(_a[3]);
-  //
-  //     ret = _mm_round_ps(a, _MM_FROUND_TO_POS_INF | _MM_FROUND_NO_EXC);
-  //     break;
-  //   case 3:
-  //     f[0] = _a[0] > 0 ? floorf(_a[0]) : ceilf(_a[0]);
-  //     f[1] = _a[1] > 0 ? floorf(_a[1]) : ceilf(_a[1]);
-  //     f[2] = _a[2] > 0 ? floorf(_a[2]) : ceilf(_a[2]);
-  //     f[3] = _a[3] > 0 ? floorf(_a[3]) : ceilf(_a[3]);
-  //
-  //     ret = _mm_round_ps(a, _MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC);
-  //     break;
-  //   case 4:
-  //     f[0] = bankers_rounding(_a[0]);
-  //     f[1] = bankers_rounding(_a[1]);
-  //     f[2] = bankers_rounding(_a[2]);
-  //     f[3] = bankers_rounding(_a[3]);
-  //
-  //     _MM_SET_ROUNDING_MODE(_MM_ROUND_NEAREST);
-  //     ret = _mm_round_ps(a, _MM_FROUND_CUR_DIRECTION);
-  //     break;
-  //   case 5:
-  //     f[0] = floorf(_a[0]);
-  //     f[1] = floorf(_a[1]);
-  //     f[2] = floorf(_a[2]);
-  //     f[3] = floorf(_a[3]);
-  //
-  //     _MM_SET_ROUNDING_MODE(_MM_ROUND_DOWN);
-  //     ret = _mm_round_ps(a, _MM_FROUND_CUR_DIRECTION);
-  //     break;
-  //   case 6:
-  //     f[0] = ceilf(_a[0]);
-  //     f[1] = ceilf(_a[1]);
-  //     f[2] = ceilf(_a[2]);
-  //     f[3] = ceilf(_a[3]);
-  //
-  //     _MM_SET_ROUNDING_MODE(_MM_ROUND_UP);
-  //     ret = _mm_round_ps(a, _MM_FROUND_CUR_DIRECTION);
-  //     break;
-  //   case 7:
-  //     f[0] = _a[0] > 0 ? floorf(_a[0]) : ceilf(_a[0]);
-  //     f[1] = _a[1] > 0 ? floorf(_a[1]) : ceilf(_a[1]);
-  //     f[2] = _a[2] > 0 ? floorf(_a[2]) : ceilf(_a[2]);
-  //     f[3] = _a[3] > 0 ? floorf(_a[3]) : ceilf(_a[3]);
-  //
-  //     _MM_SET_ROUNDING_MODE(_MM_ROUND_TOWARD_ZERO);
-  //     ret = _mm_round_ps(a, _MM_FROUND_CUR_DIRECTION);
-  //     break;
-  //   }
-  //
-  //   return validate_float(ret, f[0], f[1], f[2], f[3]);
-  // #else
+#ifdef ENABLE_TEST_ALL
+  const float *_a = impl.test_cases_float_pointer1;
+  float f[4];
+  __m128 ret;
+
+  __m128 a = load_m128(_a);
+  switch (iter & 0x7) {
+  case 0:
+    f[0] = bankers_rounding(_a[0]);
+    f[1] = bankers_rounding(_a[1]);
+    f[2] = bankers_rounding(_a[2]);
+    f[3] = bankers_rounding(_a[3]);
+
+    ret = _mm_round_ps(a, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC);
+    break;
+  case 1:
+    f[0] = floorf(_a[0]);
+    f[1] = floorf(_a[1]);
+    f[2] = floorf(_a[2]);
+    f[3] = floorf(_a[3]);
+
+    ret = _mm_round_ps(a, _MM_FROUND_TO_NEG_INF | _MM_FROUND_NO_EXC);
+    break;
+  case 2:
+    f[0] = ceilf(_a[0]);
+    f[1] = ceilf(_a[1]);
+    f[2] = ceilf(_a[2]);
+    f[3] = ceilf(_a[3]);
+
+    ret = _mm_round_ps(a, _MM_FROUND_TO_POS_INF | _MM_FROUND_NO_EXC);
+    break;
+  case 3:
+    f[0] = _a[0] > 0 ? floorf(_a[0]) : ceilf(_a[0]);
+    f[1] = _a[1] > 0 ? floorf(_a[1]) : ceilf(_a[1]);
+    f[2] = _a[2] > 0 ? floorf(_a[2]) : ceilf(_a[2]);
+    f[3] = _a[3] > 0 ? floorf(_a[3]) : ceilf(_a[3]);
+
+    ret = _mm_round_ps(a, _MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC);
+    break;
+  case 4:
+    f[0] = bankers_rounding(_a[0]);
+    f[1] = bankers_rounding(_a[1]);
+    f[2] = bankers_rounding(_a[2]);
+    f[3] = bankers_rounding(_a[3]);
+
+    _MM_SET_ROUNDING_MODE(_MM_ROUND_NEAREST);
+    ret = _mm_round_ps(a, _MM_FROUND_CUR_DIRECTION);
+    break;
+  case 5:
+    f[0] = floorf(_a[0]);
+    f[1] = floorf(_a[1]);
+    f[2] = floorf(_a[2]);
+    f[3] = floorf(_a[3]);
+
+    _MM_SET_ROUNDING_MODE(_MM_ROUND_DOWN);
+    ret = _mm_round_ps(a, _MM_FROUND_CUR_DIRECTION);
+    break;
+  case 6:
+    f[0] = ceilf(_a[0]);
+    f[1] = ceilf(_a[1]);
+    f[2] = ceilf(_a[2]);
+    f[3] = ceilf(_a[3]);
+
+    _MM_SET_ROUNDING_MODE(_MM_ROUND_UP);
+    ret = _mm_round_ps(a, _MM_FROUND_CUR_DIRECTION);
+    break;
+  case 7:
+    f[0] = _a[0] > 0 ? floorf(_a[0]) : ceilf(_a[0]);
+    f[1] = _a[1] > 0 ? floorf(_a[1]) : ceilf(_a[1]);
+    f[2] = _a[2] > 0 ? floorf(_a[2]) : ceilf(_a[2]);
+    f[3] = _a[3] > 0 ? floorf(_a[3]) : ceilf(_a[3]);
+
+    _MM_SET_ROUNDING_MODE(_MM_ROUND_TOWARD_ZERO);
+    ret = _mm_round_ps(a, _MM_FROUND_CUR_DIRECTION);
+    break;
+  }
+
+  return validate_float(ret, f[0], f[1], f[2], f[3]);
+#else
   return TEST_UNIMPL;
-  // #endif  // ENABLE_TEST_ALL
+#endif // ENABLE_TEST_ALL
 }
 
 result_t test_mm_round_sd(const SSE2RVV_TEST_IMPL &impl, uint32_t iter) {
