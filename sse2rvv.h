@@ -248,17 +248,69 @@ typedef union ALIGN_STRUCT(16) SIMDVec {
 #endif
 #endif
 
-// XRM
-// #define __RISCV_VXRM_RNU 0  // round-to-nearest-up (add +0.5 LSB)
-// #define __RISCV_VXRM_RNE 1  // round-to-nearest-even
-// #define __RISCV_VXRM_RDN 2  // round-down (truncate)
-// #define __RISCV_VXRM_ROD 3  // round-to-odd (OR bits into LSB, aka "jam")
-// FRM
-// #define __RISCV_FRM_RNE 0  // round to nearest, ties to even
-// #define __RISCV_FRM_RTZ 1  // round towards zero
-// #define __RISCV_FRM_RDN 2  // round down (towards -infinity)
-// #define __RISCV_FRM_RUP 3  // round up (towards +infinity)
-// #define __RISCV_FRM_RMM 4  // round to nearest, ties to max magnitude
+// XRM rounding mode constants (defined in RVV intrinsics v0.12+)
+#ifndef __RISCV_VXRM_RNU
+#define __RISCV_VXRM_RNU 0  // round-to-nearest-up (add +0.5 LSB)
+#define __RISCV_VXRM_RNE 1  // round-to-nearest-even
+#define __RISCV_VXRM_RDN 2  // round-down (truncate)
+#define __RISCV_VXRM_ROD 3  // round-to-odd (OR bits into LSB, aka "jam")
+// GCC >= 14 uses pragma-based intrinsics that require the vxrm argument but
+// don't define __RISCV_VXRM_RNU as a preprocessor macro.
+#if !(defined(__GNUC__) && !defined(__clang__) && __GNUC__ >= 14)
+#define SSE2RVV_MISSING_VXRM
+#endif
+#endif
+// FRM rounding mode constants (defined in RVV intrinsics v0.12+)
+#ifndef __RISCV_FRM_RNE
+#define __RISCV_FRM_RNE 0  // round to nearest, ties to even
+#define __RISCV_FRM_RTZ 1  // round towards zero
+#define __RISCV_FRM_RDN 2  // round down (towards -infinity)
+#define __RISCV_FRM_RUP 3  // round up (towards +infinity)
+#define __RISCV_FRM_RMM 4  // round to nearest, ties to max magnitude
+#define SSE2RVV_MISSING_FRM
+#endif
+
+// Compatibility wrappers for fixed-point/fp intrinsics whose signatures changed
+// in RVV intrinsics v0.12 (added explicit rounding-mode parameter).
+#ifdef SSE2RVV_MISSING_VXRM
+#define sse2rvv_vaaddu_vv_u16m1(a, b, vxrm, vl) \
+  __riscv_vaaddu_vv_u16m1((a), (b), (vl))
+#define sse2rvv_vaaddu_vv_u8m1(a, b, vxrm, vl) \
+  __riscv_vaaddu_vv_u8m1((a), (b), (vl))
+#define sse2rvv_vnclip_wx_i16m1(a, b, vxrm, vl) \
+  __riscv_vnclip_wx_i16m1((a), (b), (vl))
+#define sse2rvv_vnclip_wx_i16m2(a, b, vxrm, vl) \
+  __riscv_vnclip_wx_i16m2((a), (b), (vl))
+#define sse2rvv_vnclip_wx_i8mf2(a, b, vxrm, vl) \
+  __riscv_vnclip_wx_i8mf2((a), (b), (vl))
+#define sse2rvv_vnclip_wx_i16mf2(a, b, vxrm, vl) \
+  __riscv_vnclip_wx_i16mf2((a), (b), (vl))
+#else
+#define sse2rvv_vaaddu_vv_u16m1 __riscv_vaaddu_vv_u16m1
+#define sse2rvv_vaaddu_vv_u8m1 __riscv_vaaddu_vv_u8m1
+#define sse2rvv_vnclip_wx_i16m1 __riscv_vnclip_wx_i16m1
+#define sse2rvv_vnclip_wx_i16m2 __riscv_vnclip_wx_i16m2
+#define sse2rvv_vnclip_wx_i8mf2 __riscv_vnclip_wx_i8mf2
+#define sse2rvv_vnclip_wx_i16mf2 __riscv_vnclip_wx_i16mf2
+#endif
+#ifdef SSE2RVV_MISSING_FRM
+#define sse2rvv_vfcvt_x_f_v_i32m1_rm(a, frm, vl) \
+  __riscv_vfcvt_x_f_v_i32m1((a), (vl))
+#else
+#define sse2rvv_vfcvt_x_f_v_i32m1_rm __riscv_vfcvt_x_f_v_i32m1_rm
+#endif
+// vsm argument order changed in GCC 14: old=(mask, ptr, vl), new=(ptr, mask, vl)
+#if defined(__GNUC__) && !defined(__clang__) && __GNUC__ >= 14
+#define sse2rvv_vsm_v_b8(mask, ptr, vl) __riscv_vsm_v_b8((ptr), (mask), (vl))
+#define sse2rvv_vsm_v_b32(mask, ptr, vl) \
+  __riscv_vsm_v_b32((ptr), (mask), (vl))
+#define sse2rvv_vsm_v_b64(mask, ptr, vl) \
+  __riscv_vsm_v_b64((ptr), (mask), (vl))
+#else
+#define sse2rvv_vsm_v_b8 __riscv_vsm_v_b8
+#define sse2rvv_vsm_v_b32 __riscv_vsm_v_b32
+#define sse2rvv_vsm_v_b64 __riscv_vsm_v_b64
+#endif
 
 // The bit field mapping to the FCSR (floating-point control and status
 // register)
@@ -433,8 +485,8 @@ FORCE_INLINE __m128 _mm_addsub_ps(__m128 a, __m128 b) {
   vfloat32m1_t _b = vreinterpretq_m128_f32(b);
   vfloat32m1_t add = __riscv_vfadd_vv_f32m1(_a, _b, 4);
   vfloat32m1_t sub = __riscv_vfsub_vv_f32m1(_a, _b, 4);
-  vbool32_t mask =
-      __riscv_vreinterpret_v_i32m1_b32(__riscv_vmv_s_x_i32m1(0xa, 4));
+  uint8_t _mask_u8 = 0xa;
+  vbool32_t mask = __riscv_vlm_v_b32(&_mask_u8, 4);
   return vreinterpretq_f32_m128(__riscv_vmerge_vvm_f32m1(sub, add, mask, 4));
 }
 
@@ -496,14 +548,14 @@ FORCE_INLINE __m128i _mm_avg_epu16(__m128i a, __m128i b) {
   vuint16m1_t _a = vreinterpretq_m128i_u16(a);
   vuint16m1_t _b = vreinterpretq_m128i_u16(b);
   return vreinterpretq_u16_m128i(
-      __riscv_vaaddu_vv_u16m1(_a, _b, __RISCV_VXRM_RNU, 8));
+      sse2rvv_vaaddu_vv_u16m1(_a, _b, __RISCV_VXRM_RNU, 8));
 }
 
 FORCE_INLINE __m128i _mm_avg_epu8(__m128i a, __m128i b) {
   vuint8m1_t _a = vreinterpretq_m128i_u8(a);
   vuint8m1_t _b = vreinterpretq_m128i_u8(b);
   return vreinterpretq_u8_m128i(
-      __riscv_vaaddu_vv_u8m1(_a, _b, __RISCV_VXRM_RNU, 16));
+      sse2rvv_vaaddu_vv_u8m1(_a, _b, __RISCV_VXRM_RNU, 16));
 }
 
 FORCE_INLINE __m64 _mm_avg_pu16(__m64 a, __m64 b) {
@@ -513,37 +565,37 @@ FORCE_INLINE __m64 _mm_avg_pu16(__m64 a, __m64 b) {
   vint16m1_t __b = __riscv_vreinterpret_v_i32m1_i16m1(b);
   vuint16m1_t _b = __riscv_vreinterpret_v_i16m1_u16m1(__b);
   return vreinterpretq_u16_m64(
-      __riscv_vaaddu_vv_u16m1(_a, _b, __RISCV_VXRM_RNU, 4));
+      sse2rvv_vaaddu_vv_u16m1(_a, _b, __RISCV_VXRM_RNU, 4));
 }
 
 FORCE_INLINE __m64 _mm_avg_pu8(__m64 a, __m64 b) {
   vuint8m1_t _a = vreinterpretq_m64_u8(a);
   vuint8m1_t _b = vreinterpretq_m64_u8(b);
   return vreinterpretq_u8_m64(
-      __riscv_vaaddu_vv_u8m1(_a, _b, __RISCV_VXRM_RNU, 8));
+      sse2rvv_vaaddu_vv_u8m1(_a, _b, __RISCV_VXRM_RNU, 8));
 }
 
 FORCE_INLINE __m128i _mm_blend_epi16(__m128i a, __m128i b, const int imm8) {
   vint16m1_t _a = vreinterpretq_m128i_i16(a);
   vint16m1_t _b = vreinterpretq_m128i_i16(b);
-  vbool16_t _imm8 =
-      __riscv_vreinterpret_v_i8m1_b16(__riscv_vmv_s_x_i8m1(imm8, 8));
+  uint8_t _imm8_b = (uint8_t)imm8;
+  vbool16_t _imm8 = __riscv_vlm_v_b16(&_imm8_b, 8);
   return vreinterpretq_i16_m128i(__riscv_vmerge_vvm_i16m1(_a, _b, _imm8, 8));
 }
 
 FORCE_INLINE __m128d _mm_blend_pd(__m128d a, __m128d b, const int imm8) {
   vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
   vfloat64m1_t _b = vreinterpretq_m128d_f64(b);
-  vbool64_t _imm8 =
-      __riscv_vreinterpret_v_i8m1_b64(__riscv_vmv_s_x_i8m1(imm8, 2));
+  uint8_t _imm8_b = (uint8_t)imm8;
+  vbool64_t _imm8 = __riscv_vlm_v_b64(&_imm8_b, 2);
   return vreinterpretq_f64_m128d(__riscv_vmerge_vvm_f64m1(_a, _b, _imm8, 2));
 }
 
 FORCE_INLINE __m128 _mm_blend_ps(__m128 a, __m128 b, const int imm8) {
   vfloat32m1_t _a = vreinterpretq_m128_f32(a);
   vfloat32m1_t _b = vreinterpretq_m128_f32(b);
-  vbool32_t _imm8 =
-      __riscv_vreinterpret_v_i8m1_b32(__riscv_vmv_s_x_i8m1(imm8, 4));
+  uint8_t _imm8_b = (uint8_t)imm8;
+  vbool32_t _imm8 = __riscv_vlm_v_b32(&_imm8_b, 4);
   return vreinterpretq_f32_m128(__riscv_vmerge_vvm_f32m1(_a, _b, _imm8, 4));
 }
 
@@ -1381,7 +1433,7 @@ FORCE_INLINE __m128 _mm_cvt_si2ss(__m128 a, int b) {
 
 FORCE_INLINE int _mm_cvt_ss2si(__m128 a) {
   vfloat32m1_t _a = vreinterpretq_m128_f32(a);
-  vint32m1_t a_i32 = __riscv_vfcvt_x_f_v_i32m1_rm(_a, __RISCV_FRM_RNE, 1);
+  vint32m1_t a_i32 = sse2rvv_vfcvt_x_f_v_i32m1_rm(_a, __RISCV_FRM_RNE, 1);
   return (int)(__riscv_vmv_x_s_i32m1_i32(a_i32));
 }
 
@@ -1715,7 +1767,8 @@ FORCE_INLINE __m128d _mm_hadd_pd(__m128d a, __m128d b) {
   vfloat64m2_t ab = __riscv_vslideup_vx_f64m2_tu(_a, _b, 2, 4);
   vfloat64m2_t ab_s = __riscv_vslidedown_vx_f64m2(ab, 1, 4);
   vfloat64m2_t ab_add = __riscv_vfadd_vv_f64m2(ab, ab_s, 4);
-  vbool32_t mask = __riscv_vreinterpret_v_u8m1_b32(__riscv_vmv_s_x_u8m1(85, 2));
+  uint8_t _mask_val = 85;
+  vbool32_t mask = __riscv_vlm_v_b32(&_mask_val, 4);
   return vreinterpretq_f64_m128d(__riscv_vlmul_trunc_v_f64m2_f64m1(
       __riscv_vcompress_vm_f64m2(ab_add, mask, 4)));
 }
@@ -1799,7 +1852,8 @@ FORCE_INLINE __m128d _mm_hsub_pd(__m128d a, __m128d b) {
   vfloat64m2_t ab = __riscv_vslideup_vx_f64m2_tu(_a, _b, 2, 4);
   vfloat64m2_t ab_s = __riscv_vslidedown_vx_f64m2(ab, 1, 4);
   vfloat64m2_t ab_sub = __riscv_vfsub_vv_f64m2(ab, ab_s, 4);
-  vbool32_t mask = __riscv_vreinterpret_v_u8m1_b32(__riscv_vmv_s_x_u8m1(85, 2));
+  uint8_t _mask_val = 85;
+  vbool32_t mask = __riscv_vlm_v_b32(&_mask_val, 4);
   return vreinterpretq_f64_m128d(__riscv_vlmul_trunc_v_f64m2_f64m1(
       __riscv_vcompress_vm_f64m2(ab_sub, mask, 4)));
 }
@@ -1859,36 +1913,36 @@ FORCE_INLINE __m64 _mm_hsubs_pi16(__m64 a, __m64 b) {
 
 FORCE_INLINE __m128i _mm_insert_epi16(__m128i a, int i, int imm8) {
   vint16m1_t _a = vreinterpretq_m128i_i16(a);
-  vbool16_t mask = __riscv_vreinterpret_v_u8m1_b16(
-      __riscv_vmv_s_x_u8m1(((uint8_t)(1 << (imm8 & 0x7))), 8));
+  uint8_t _mask_val = (uint8_t)(1 << (imm8 & 0x7));
+  vbool16_t mask = __riscv_vlm_v_b16(&_mask_val, 8);
   return vreinterpretq_i16_m128i(__riscv_vmerge_vxm_i16m1(_a, i, mask, 8));
 }
 
 FORCE_INLINE __m128i _mm_insert_epi32(__m128i a, int i, const int imm8) {
   vint32m1_t _a = vreinterpretq_m128i_i32(a);
-  vbool32_t mask = __riscv_vreinterpret_v_u8m1_b32(
-      __riscv_vmv_s_x_u8m1(((uint8_t)(1 << (imm8 & 0x3))), 4));
+  uint8_t _mask_val = (uint8_t)(1 << (imm8 & 0x3));
+  vbool32_t mask = __riscv_vlm_v_b32(&_mask_val, 4);
   return vreinterpretq_i32_m128i(__riscv_vmerge_vxm_i32m1(_a, i, mask, 4));
 }
 
 FORCE_INLINE __m128i _mm_insert_epi64(__m128i a, __int64 i, const int imm8) {
   vint64m1_t _a = vreinterpretq_m128i_i64(a);
-  vbool64_t mask = __riscv_vreinterpret_v_u8m1_b64(
-      __riscv_vmv_s_x_u8m1(((uint8_t)(1 << (imm8 & 0x1))), 2));
+  uint8_t _mask_val = (uint8_t)(1 << (imm8 & 0x1));
+  vbool64_t mask = __riscv_vlm_v_b64(&_mask_val, 2);
   return vreinterpretq_i64_m128i(__riscv_vmerge_vxm_i64m1(_a, i, mask, 2));
 }
 
 FORCE_INLINE __m128i _mm_insert_epi8(__m128i a, int i, const int imm8) {
   vint8m1_t _a = vreinterpretq_m128i_i8(a);
-  vbool8_t mask = __riscv_vreinterpret_v_u16m1_b8(
-      __riscv_vmv_s_x_u16m1(((uint16_t)(1 << (imm8 & 0xf))), 16));
+  uint16_t _mask_u16 = (uint16_t)(1 << (imm8 & 0xf));
+  vbool8_t mask = __riscv_vlm_v_b8((uint8_t *)&_mask_u16, 16);
   return vreinterpretq_i8_m128i(__riscv_vmerge_vxm_i8m1(_a, i, mask, 16));
 }
 
 FORCE_INLINE __m64 _mm_insert_pi16(__m64 a, int i, int imm8) {
   vint16m1_t _a = vreinterpretq_m64_i16(a);
-  vbool16_t mask = __riscv_vreinterpret_v_u8m1_b16(
-      __riscv_vmv_s_x_u8m1(((uint8_t)(1 << imm8)), 8));
+  uint8_t _mask_val = (uint8_t)(1 << imm8);
+  vbool16_t mask = __riscv_vlm_v_b16(&_mask_val, 8);
   return vreinterpretq_i16_m64(__riscv_vmerge_vxm_i16m1(_a, i, mask, 8));
 }
 
@@ -1897,11 +1951,11 @@ FORCE_INLINE __m128 _mm_insert_ps(__m128 a, __m128 b, const int imm8) {
   vint32m1_t _b = vreinterpretq_m128_i32(b);
   vint32m1_t tmp =
       __riscv_vrgather_vx_i32m1(_b, (((uint8_t)imm8) >> 6) & 0x3, 4);
-  vbool32_t mask1 = __riscv_vreinterpret_v_u32m1_b32(
-      __riscv_vmv_s_x_u32m1((1 << ((imm8 >> 4) & 0x3)), 4));
+  uint8_t _mask1_val = (uint8_t)(1 << ((imm8 >> 4) & 0x3));
+  vbool32_t mask1 = __riscv_vlm_v_b32(&_mask1_val, 4);
   vint32m1_t tmp2 = __riscv_vmerge_vvm_i32m1(_a, tmp, mask1, 4);
-  vbool32_t mask2 =
-      __riscv_vreinterpret_v_u32m1_b32(__riscv_vmv_s_x_u32m1(imm8 & 0xf, 4));
+  uint8_t _mask2_val = (uint8_t)(imm8 & 0xf);
+  vbool32_t mask2 = __riscv_vlm_v_b32(&_mask2_val, 4);
   return vreinterpretq_i32_m128(__riscv_vmerge_vxm_i32m1(tmp2, 0, mask2, 4));
 }
 
@@ -2020,14 +2074,16 @@ FORCE_INLINE __m128i _mm_loadu_si128(__m128i const *mem_addr) {
 FORCE_INLINE __m128i _mm_loadu_si16(void const *mem_addr) {
   vint16m1_t ld = __riscv_vle16_v_i16m1((int16_t const *)mem_addr, 1);
   vint16m1_t zeros = __riscv_vmv_v_x_i16m1(0, 8);
-  vbool16_t mask = __riscv_vreinterpret_v_u8m1_b16(__riscv_vmv_v_x_u8m1(1, 8));
+  uint8_t _mask_val = 1;
+  vbool16_t mask = __riscv_vlm_v_b16(&_mask_val, 8);
   return vreinterpretq_i16_m128i(__riscv_vmerge_vvm_i16m1(zeros, ld, mask, 8));
 }
 
 FORCE_INLINE __m128i _mm_loadu_si32(void const *mem_addr) {
   vint32m1_t ld = __riscv_vle32_v_i32m1((int32_t const *)mem_addr, 1);
   vint32m1_t zeros = __riscv_vmv_v_x_i32m1(0, 4);
-  vbool32_t mask = __riscv_vreinterpret_v_u8m1_b32(__riscv_vmv_v_x_u8m1(1, 4));
+  uint8_t _mask_val = 1;
+  vbool32_t mask = __riscv_vlm_v_b32(&_mask_val, 4);
   return vreinterpretq_i32_m128i(__riscv_vmerge_vvm_i32m1(zeros, ld, mask, 4));
 }
 
@@ -2054,7 +2110,7 @@ FORCE_INLINE __m128i _mm_maddubs_epi16(__m128i a, __m128i b) {
   vint16m2_t mul = __riscv_vmul_vv_i16m2(_a, _b, 16);
   vint16m2_t mul_s = __riscv_vslidedown_vx_i16m2(mul, 1, 16);
   vint32m4_t mul_add = __riscv_vwadd_vv_i32m4(mul, mul_s, 16);
-  vint16m2_t sat = __riscv_vnclip_wx_i16m2(mul_add, 0, __RISCV_VXRM_RDN, 16);
+  vint16m2_t sat = sse2rvv_vnclip_wx_i16m2(mul_add, 0, __RISCV_VXRM_RDN, 16);
   return vreinterpretq_i16_m128i(
       __riscv_vnsra_wx_i16m1(__riscv_vreinterpret_v_i16m2_i32m2(sat), 0, 16));
 }
@@ -2066,7 +2122,7 @@ FORCE_INLINE __m64 _mm_maddubs_pi16(__m64 a, __m64 b) {
   vint16m2_t mul = __riscv_vmul_vv_i16m2(_a, _b, 8);
   vint16m2_t mul_s = __riscv_vslidedown_vx_i16m2(mul, 1, 8);
   vint32m4_t mul_add = __riscv_vwadd_vv_i32m4(mul, mul_s, 8);
-  vint16m2_t sat = __riscv_vnclip_wx_i16m2(mul_add, 0, __RISCV_VXRM_RDN, 8);
+  vint16m2_t sat = sse2rvv_vnclip_wx_i16m2(mul_add, 0, __RISCV_VXRM_RDN, 8);
   return vreinterpretq_i16_m128i(
       __riscv_vnsra_wx_i16m1(__riscv_vreinterpret_v_i16m2_i32m2(sat), 0, 8));
 }
@@ -2326,30 +2382,34 @@ FORCE_INLINE __m128 _mm_movelh_ps(__m128 a, __m128 b) {
 
 FORCE_INLINE int _mm_movemask_epi8(__m128i a) {
   vint8m1_t _a = vreinterpretq_m128i_i8(a);
-  vuint16m1_t nonzeros =
-      __riscv_vreinterpret_v_b8_u16m1(__riscv_vmslt_vx_i8m1_b8(_a, 0, 16));
-  return (int)__riscv_vmv_x_s_u16m1_u16(nonzeros);
+  vbool8_t _mask = __riscv_vmslt_vx_i8m1_b8(_a, 0, 16);
+  uint16_t _result;
+  sse2rvv_vsm_v_b8(_mask, (uint8_t *)&_result, 16);
+  return (int)_result;
 }
 
 FORCE_INLINE int _mm_movemask_pd(__m128d a) {
   vint64m1_t _a = vreinterpretq_m128d_i64(a);
-  vuint8m1_t nonzeros =
-      __riscv_vreinterpret_v_b64_u8m1(__riscv_vmslt_vx_i64m1_b64(_a, 0, 2));
-  return (int)(__riscv_vmv_x_s_u8m1_u8(nonzeros) & 0x3);
+  vbool64_t _mask = __riscv_vmslt_vx_i64m1_b64(_a, 0, 2);
+  uint8_t _result;
+  sse2rvv_vsm_v_b64(_mask, &_result, 2);
+  return (int)(_result & 0x3);
 }
 
 FORCE_INLINE int _mm_movemask_pi8(__m64 a) {
   vint8m1_t _a = vreinterpretq_m128i_i8(a);
-  vuint8m1_t nonzeros =
-      __riscv_vreinterpret_v_b8_u8m1(__riscv_vmslt_vx_i8m1_b8(_a, 0, 8));
-  return (int)__riscv_vmv_x_s_u8m1_u8(nonzeros);
+  vbool8_t _mask = __riscv_vmslt_vx_i8m1_b8(_a, 0, 8);
+  uint8_t _result;
+  sse2rvv_vsm_v_b8(_mask, &_result, 8);
+  return (int)_result;
 }
 
 FORCE_INLINE int _mm_movemask_ps(__m128 a) {
   vint32m1_t _a = vreinterpretq_m128_i32(a);
-  vuint8m1_t nonzeros =
-      __riscv_vreinterpret_v_b32_u8m1(__riscv_vmslt_vx_i32m1_b32(_a, 0, 4));
-  return (int)(__riscv_vmv_x_s_u8m1_u8(nonzeros) & 0xf);
+  vbool32_t _mask = __riscv_vmslt_vx_i32m1_b32(_a, 0, 4);
+  uint8_t _result;
+  sse2rvv_vsm_v_b32(_mask, &_result, 4);
+  return (int)(_result & 0xf);
 }
 
 FORCE_INLINE __m64 _mm_movepi64_pi64(__m128i a) {
@@ -2439,7 +2499,7 @@ FORCE_INLINE __m128i _mm_mulhrs_epi16(__m128i a, __m128i b) {
   vint32m2_t ab_mul = __riscv_vwmul_vv_i32m2(_a, _b, 8);
   vint32m2_t sra = __riscv_vsra_vx_i32m2(ab_mul, 14, 8);
   return vreinterpretq_i16_m128i(
-      __riscv_vnclip_wx_i16m1(sra, 1, __RISCV_VXRM_RNU, 8));
+      sse2rvv_vnclip_wx_i16m1(sra, 1, __RISCV_VXRM_RNU, 8));
 }
 
 FORCE_INLINE __m64 _mm_mulhrs_pi16(__m64 a, __m64 b) {
@@ -2448,7 +2508,7 @@ FORCE_INLINE __m64 _mm_mulhrs_pi16(__m64 a, __m64 b) {
   vint32m2_t ab_mul = __riscv_vwmul_vv_i32m2(_a, _b, 8);
   vint32m2_t sra = __riscv_vsra_vx_i32m2(ab_mul, 14, 8);
   return vreinterpretq_i16_m64(
-      __riscv_vnclip_wx_i16m1(sra, 1, __RISCV_VXRM_RNU, 8));
+      sse2rvv_vnclip_wx_i16m1(sra, 1, __RISCV_VXRM_RNU, 8));
 }
 
 FORCE_INLINE __m128i _mm_mullo_epi16(__m128i a, __m128i b) {
@@ -2485,9 +2545,9 @@ FORCE_INLINE __m128i _mm_packs_epi16(__m128i a, __m128i b) {
   vint16m1_t _a = vreinterpretq_m128i_i16(a);
   vint16m1_t _b = vreinterpretq_m128i_i16(b);
   vint8m1_t a_sat = __riscv_vlmul_ext_v_i8mf2_i8m1(
-      __riscv_vnclip_wx_i8mf2(_a, 0, __RISCV_VXRM_RDN, 8));
+      sse2rvv_vnclip_wx_i8mf2(_a, 0, __RISCV_VXRM_RDN, 8));
   vint8m1_t b_sat = __riscv_vlmul_ext_v_i8mf2_i8m1(
-      __riscv_vnclip_wx_i8mf2(_b, 0, __RISCV_VXRM_RDN, 8));
+      sse2rvv_vnclip_wx_i8mf2(_b, 0, __RISCV_VXRM_RDN, 8));
   return vreinterpretq_i8_m128i(
       __riscv_vslideup_vx_i8m1_tu(a_sat, b_sat, 8, 16));
 }
@@ -2496,9 +2556,9 @@ FORCE_INLINE __m128i _mm_packs_epi32(__m128i a, __m128i b) {
   vint32m1_t _a = vreinterpretq_m128i_i32(a);
   vint32m1_t _b = vreinterpretq_m128i_i32(b);
   vint16m1_t a_sat = __riscv_vlmul_ext_v_i16mf2_i16m1(
-      __riscv_vnclip_wx_i16mf2(_a, 0, __RISCV_VXRM_RDN, 4));
+      sse2rvv_vnclip_wx_i16mf2(_a, 0, __RISCV_VXRM_RDN, 4));
   vint16m1_t b_sat = __riscv_vlmul_ext_v_i16mf2_i16m1(
-      __riscv_vnclip_wx_i16mf2(_b, 0, __RISCV_VXRM_RDN, 4));
+      sse2rvv_vnclip_wx_i16mf2(_b, 0, __RISCV_VXRM_RDN, 4));
   return vreinterpretq_i16_m128i(
       __riscv_vslideup_vx_i16m1_tu(a_sat, b_sat, 4, 8));
 }
@@ -2587,24 +2647,47 @@ FORCE_INLINE __m128 _mm_rcp_ss(__m128 a) {
 // FORCE_INLINE __m128d _mm_round_pd (__m128d a, int rounding) {}
 
 FORCE_INLINE __m128 _mm_round_ps(__m128 a, int rounding) {
+  // Use scalar rounding functions (same as _mm_floor_ps/_mm_ceil_ps) to
+  // correctly handle negative zero and NaN/Inf pass-through.  The
+  // float→int→float approach loses the sign of zero (e.g. truncf(-0.25f)
+  // returns -0.0f but int(0)→float gives +0.0f), causing bitwise mismatches.
   vfloat32m1_t _a = vreinterpretq_m128_f32(a);
+  float arr[4];
+  __riscv_vse32_v_f32m1(arr, _a, 4);
   switch (rounding) {
-  case (_MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC):
-    return vreinterpretq_f32_m128(__riscv_vfcvt_f_x_v_f32m1(
-        __riscv_vfcvt_x_f_v_i32m1_rm(_a, __RISCV_FRM_RNE, 4), 4));
-  case (_MM_FROUND_TO_NEG_INF | _MM_FROUND_NO_EXC):
-    return vreinterpretq_f32_m128(__riscv_vfcvt_f_x_v_f32m1(
-        __riscv_vfcvt_x_f_v_i32m1_rm(_a, __RISCV_FRM_RDN, 4), 4));
-  case (_MM_FROUND_TO_POS_INF | _MM_FROUND_NO_EXC):
-    return vreinterpretq_f32_m128(__riscv_vfcvt_f_x_v_f32m1(
-        __riscv_vfcvt_x_f_v_i32m1_rm(_a, __RISCV_FRM_RUP, 4), 4));
-  case (_MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC):
-    return vreinterpretq_f32_m128(__riscv_vfcvt_f_x_v_f32m1(
-        __riscv_vfcvt_x_f_v_i32m1_rm(_a, __RISCV_FRM_RTZ, 4), 4));
-  default: //_MM_FROUND_CUR_DIRECTION
-    return vreinterpretq_f32_m128(
-        __riscv_vfcvt_f_x_v_f32m1(__riscv_vfcvt_x_f_v_i32m1(_a, 4), 4));
+  case (_MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC): {
+    // Must use RNE regardless of the current FP rounding mode.
+    union {
+      fcsr_bitfield field;
+      uint32_t value;
+    } r;
+    __asm__ volatile("csrr %0, fcsr" : "=r"(r));
+    uint32_t saved = r.value;
+    r.field.frm = __RISCV_FRM_RNE;
+    __asm__ volatile("csrw fcsr, %0" : : "r"(r));
+    for (int i = 0; i < 4; i++)
+      arr[i] = nearbyintf(arr[i]);
+    __asm__ volatile("csrw fcsr, %0" : : "r"(saved));
+    break;
   }
+  case (_MM_FROUND_TO_NEG_INF | _MM_FROUND_NO_EXC):
+    for (int i = 0; i < 4; i++)
+      arr[i] = floorf(arr[i]);
+    break;
+  case (_MM_FROUND_TO_POS_INF | _MM_FROUND_NO_EXC):
+    for (int i = 0; i < 4; i++)
+      arr[i] = ceilf(arr[i]);
+    break;
+  case (_MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC):
+    for (int i = 0; i < 4; i++)
+      arr[i] = truncf(arr[i]);
+    break;
+  default: // _MM_FROUND_CUR_DIRECTION
+    for (int i = 0; i < 4; i++)
+      arr[i] = nearbyintf(arr[i]);
+    break;
+  }
+  return vreinterpretq_f32_m128(__riscv_vle32_v_f32m1(arr, 4));
 }
 
 // FORCE_INLINE __m128d _mm_round_sd (__m128d a, __m128d b, int rounding) {}
@@ -3354,7 +3437,8 @@ FORCE_INLINE __m128d _mm_sub_sd(__m128d a, __m128d b) {
   vfloat64m1_t _a = vreinterpretq_m128d_f64(a);
   vfloat64m1_t _b = vreinterpretq_m128d_f64(b);
   vfloat64m1_t sub = __riscv_vfsub_vv_f64m1(_a, _b, 2);
-  vbool64_t mask = __riscv_vreinterpret_v_u8m1_b64(__riscv_vmv_v_x_u8m1(1, 8));
+  uint8_t _mask_val = 1;
+  vbool64_t mask = __riscv_vlm_v_b64(&_mask_val, 2);
   return vreinterpretq_f64_m128d(__riscv_vmerge_vvm_f64m1(_a, sub, mask, 2));
 }
 
@@ -3368,7 +3452,8 @@ FORCE_INLINE __m128 _mm_sub_ss(__m128 a, __m128 b) {
   vfloat32m1_t _a = vreinterpretq_m128_f32(a);
   vfloat32m1_t _b = vreinterpretq_m128_f32(b);
   vfloat32m1_t sub = __riscv_vfsub_vv_f32m1(_a, _b, 4);
-  vbool32_t mask = __riscv_vreinterpret_v_u8m1_b32(__riscv_vmv_v_x_u8m1(1, 8));
+  uint8_t _mask_val = 1;
+  vbool32_t mask = __riscv_vlm_v_b32(&_mask_val, 4);
   return vreinterpretq_f32_m128(__riscv_vmerge_vvm_f32m1(_a, sub, mask, 4));
 }
 
