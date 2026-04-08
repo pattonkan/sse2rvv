@@ -14,7 +14,11 @@ endif
 
 ifndef CROSS_COMPILE
     processor := $(shell uname -m)
-	ARCH_CFLAGS = -maes -mpclmul -mssse3 -msse4.2
+    ifeq ($(processor),riscv64)
+        ARCH_CFLAGS = -march=rv64gcv_zba
+    else
+        ARCH_CFLAGS = -maes -mpclmul -mssse3 -msse4.2
+    endif
 else # CROSS_COMPILE was set
     CC = $(CROSS_COMPILE)gcc
     CXX = $(CROSS_COMPILE)g++
@@ -71,13 +75,13 @@ $(EXEC): $(OBJS)
 	$(CXX) $(LDFLAGS) -o $@ $^
 
 test: tests/main
-ifeq ($(processor),$(filter $(processor),rv32 rv64))
+ifeq ($(processor),$(filter $(processor),rv32 rv64 riscv64))
 	$(CC) $(ARCH_CFLAGS) -c sse2rvv.h
 endif
 	$(SIMULATOR) $(SIMULATOR_FLAGS) $(PROXY_KERNEL) $^
 
 build-test: tests/main
-ifeq ($(processor),$(filter $(processor),rv32 rv64))
+ifeq ($(processor),$(filter $(processor),rv32 rv64 riscv64))
 	$(CC) $(ARCH_CFLAGS) -c sse2rvv.h
 endif
 
