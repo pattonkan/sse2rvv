@@ -66,15 +66,26 @@ deps := $(OBJS:%.o=%.o.d)
 	$(CXX) -o $@ $(CXXFLAGS) $(DEFINED_FLAGS) -c -MMD -MF $@.d $<
 
 EXEC = tests/main
+COMPAT_TEST = tests/compat_test
 
 $(EXEC): $(OBJS)
 	$(CXX) $(LDFLAGS) -o $@ $^
+
+$(COMPAT_TEST): tests/compat_test.cpp sse2rvv.h
+	$(CXX) -o $@ $(CXXFLAGS) $(LDFLAGS) tests/compat_test.cpp
 
 test: tests/main
 ifeq ($(processor),$(filter $(processor),rv32 rv64))
 	$(CC) $(ARCH_CFLAGS) -c sse2rvv.h
 endif
 	$(SIMULATOR) $(SIMULATOR_FLAGS) $(PROXY_KERNEL) $^
+
+compat-test: $(COMPAT_TEST)
+ifeq ($(processor),$(filter $(processor),rv32 rv64))
+	$(SIMULATOR) $(SIMULATOR_FLAGS) $(PROXY_KERNEL) $^
+else
+	$^
+endif
 
 build-test: tests/main
 ifeq ($(processor),$(filter $(processor),rv32 rv64))
@@ -86,10 +97,10 @@ format:
 	@if ! hash clang-format; then echo "clang-format is required to indent"; fi
 	clang-format -i sse2rvv.h tests/*.cpp tests/*.h
 
-.PHONY: clean check format
+.PHONY: clean check format compat-test
 
 clean:
-	$(RM) $(OBJS) $(EXEC) $(deps) sse2rvv.h.gch
+	$(RM) $(OBJS) $(EXEC) $(COMPAT_TEST) $(deps) sse2rvv.h.gch
 
 clean-all: clean
 	$(RM) *.log
